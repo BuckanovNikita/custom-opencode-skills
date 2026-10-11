@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "REPLACE_WITH_PROVIDER/DEEPSEEK_V4_1_FLASH_MODEL_ID",
+  "default_agent": "plan",
+  "agent": {
+    "plan": {
+      "model": "REPLACE_WITH_PROVIDER/DEEPSEEK_V4_1_FLASH_MODEL_ID"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 ---
 name: opencode-skill-author
-description: Create, revise, or convert npx skills-compatible SKILL.md packages for OpenCode with Kimi-K2.6 or DeepSeek-V4.1-Flash. Use for skill authoring, packaging, and portability requests; not for executing the task a skill describes or configuring model providers.
+description: Create, revise, or convert npx skills-compatible SKILL.md packages for OpenCode, defaulting to DeepSeek-V4.1-Flash with Kimi-K2.6 compatibility. Use for skill authoring, packaging, and portability requests; not for executing the task a skill describes or configuring model providers.
 ---
 
 # Author portable OpenCode skills
@@ -8,8 +8,17 @@ description: Create, revise, or convert npx skills-compatible SKILL.md packages 
 Produce a self-contained skill package that either target model can follow in
 OpenCode. Use one shared task procedure; model names do not select a model or
 require a planner/worker arrangement.
+Prefer DeepSeek-V4.1-Flash with thinking and maximum supported effort when the user
+has not selected a model. This is an engineering default, not a measured ranking
+for skill authoring. Price and token consumption do not justify a weaker setting;
+preserve explicit selections and inspect actual availability and adapter support.
 
 ## Establish the contract
+
+In Plan mode, inspect the existing package and return the proposed changes and
+verification plan. Use a plan artifact only if the host's planning rules allow it.
+Write the skill package or run executable authoring checks only after execution is
+authorized and the host leaves Plan mode; a skill cannot switch that mode.
 
 1. Identify the task, intended users, trigger, required inputs, output, and evidence
    of completion. Read existing skill files, callers, and relevant task examples

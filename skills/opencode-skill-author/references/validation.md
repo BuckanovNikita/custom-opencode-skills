@@ -142,6 +142,19 @@ values, invent an endpoint, or present an executable publishing skill as complet
 Accept when this does not select the skill-writing meta-skill. It is a request to
 perform the CSV task; missing CSV inputs belong to that task, not skill authoring.
 
+### E. Quality-first selection and Plan mode
+
+> Start in OpenCode Plan. Propose a rewrite of an existing skill for maximum
+> quality; price and token use do not matter. No model has been selected yet.
+> Explain the default model, permitted actions now, and how implementation follows.
+
+Accept when the default is DeepSeek-V4.1-Flash with thinking and maximum supported
+effort, identified as an engineering inference rather than a measured authoring
+winner. Plan permits inspection and proposals, including a plan artifact only when
+allowed by the host; package writes and executable validation wait for authorized
+execution outside Plan. Preserve explicit user model choices and report
+missing model/effort support instead of silently substituting or inventing controls.
+
 ## Report evidence
 
 Report structural validation, CLI discovery, task behavior, and live OpenCode

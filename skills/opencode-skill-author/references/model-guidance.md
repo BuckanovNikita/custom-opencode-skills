@@ -5,6 +5,21 @@ that provider aliases or settings will remain unchanged. Recheck the relevant
 official page before prescribing runtime configuration. A skill is task guidance
 loaded by OpenCode, not a replacement system prompt or API client.
 
+## Quality-first default
+
+Default to DeepSeek-V4.1-Flash for planning and skill authoring, with thinking
+enabled and maximum supported effort. Keep Kimi-K2.6 compatibility and honor an
+explicit model choice. This selection is an inference from DeepSeek's published
+reasoning and software-agent evaluations, including an OpenCode evaluation; no
+matched skill-authoring benchmark establishes superiority over Kimi. Reassess
+using representative authoring tasks when comparative evidence is available.
+Price, token consumption, and role labels are not selection criteria.
+
+Benchmark basis checked 2026-10-11: [DeepSeek-V4.1-Flash model card](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash).
+Verify that the chosen provider resolves to this version. Select `max` only through
+the adapter's supported effort control; API syntax is not portable skill metadata.
+The Plan agent controls allowed actions separately from model thinking mode.
+
 ## Prompt design
 
 ### Kimi: documented provider guidance

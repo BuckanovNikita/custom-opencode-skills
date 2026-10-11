@@ -70,10 +70,12 @@ replace a requested real experiment with synthetic evidence and call it complete
 Request: repair an evaluation metric and improve throughput. Both touch the same
 module; one shared GPU is occupied.
 
-Kimi establishes the metric contract and captures current changes. DeepSeek checks
-the metric definition and designs a comparable benchmark read-only. Qwen owns the
-metric fix and regression test. After that fix is accepted, transfer implementation
+Use DeepSeek-V4.1-Flash with maximum supported thinking effort for each role by
+default. During Plan, the primary inspects the metric contract and proposes the
+dependency order and checks. After authorized execution begins, an investigator
+checks the metric definition and designs a comparable benchmark read-only. An
+implementer owns the metric fix and regression test. Once accepted, transfer implementation
 ownership for the optimization. Reserve an authorized GPU window; compare the fixed
 baseline with the optimized version using the same split/configuration. Start a new
-DeepSeek reviewer session for the final diff and evidence. A changed split, passing
+reviewer session for the final diff and evidence. A changed split, passing
 unit tests, or a single fast run alone does not prove the requested improvement.

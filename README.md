@@ -6,8 +6,8 @@
 
 | Навык | Назначение |
 | --- | --- |
-| [opencode-skill-author](skills/opencode-skill-author/SKILL.md) | Создание и адаптация навыков для OpenCode с Kimi-K2.6 или DeepSeek-V4.1-Flash. |
-| [opencode-orchestration](skills/opencode-orchestration/SKILL.md) | Оркестрация Python/ML-задач с Kimi-K2.6, DeepSeek-V4.1-Flash и Qwen3-Coder-Next: распределение работы, управление контекстом и проверка результатов. |
+| [opencode-skill-author](skills/opencode-skill-author/SKILL.md) | Создание и адаптация навыков для OpenCode: по умолчанию DeepSeek-V4.1-Flash, с сохранением совместимости с Kimi-K2.6. |
+| [opencode-orchestration](skills/opencode-orchestration/SKILL.md) | Планирование и оркестрация Python/ML-задач: DeepSeek-V4.1-Flash по умолчанию для всех ролей, Kimi-K2.6 и Qwen3-Coder-Next как явно выбранные альтернативы. |
 
 ## Просмотр и установка
 
@@ -34,7 +34,23 @@ npx --yes skills@1.7.1 add git@github.com:BuckanovNikita/corp-skills.git \
 
 ## Использование
 
-В OpenCode выберите настроенную Kimi-K2.6 или DeepSeek-V4.1-Flash и попросите:
+По умолчанию выберите **DeepSeek-V4.1-Flash**, включите thinking и максимальный
+поддерживаемый адаптером уровень рассуждения (`max` в официальном API).
+Используйте эту модель для планирования, реализации, исследования, проверки и
+создания навыков. Цена и расход токенов не служат основанием для снижения качества.
+Это предварительная рекомендация по опубликованным результатам, а не доказанная
+победа во всех задачах: [сравнение и ограничения](skills/opencode-orchestration/references/model-selection-2026-10-11.md).
+
+Для начала с планирования выберите встроенный агент **Plan** и задайте
+`default_agent: "plan"`. Модель и режим агента настраиваются отдельно.
+[Неактивный пример конфигурации](skills/opencode-orchestration/examples/opencode.plan.json)
+показывает выбор модели и стартового агента Plan; перед подключением замените
+идентификаторы-заглушки и проверьте существующие настройки.
+[Порядок перехода к реализации](skills/opencode-orchestration/references/opencode-setup.md#start-in-plan)
+сохраняет выбранную модель и разрешает запись только после выхода из Plan и
+авторизации выполнения. Навык не переключает режим и не устанавливает конфигурацию.
+
+После перехода к разрешённому выполнению можно попросить:
 
 ```text
 Use opencode-skill-author to create a standalone skill that reviews CSV quality
@@ -42,9 +58,11 @@ against a supplied schema and writes a Markdown report. Do not install it.
 ```
 
 Рекомендации для моделей и сценарии проверки находятся в каталоге навыка.
-Границы выполненных проверок описаны в
+Границы первоначальных проверок описаны в
 [отчёте](skills/opencode-skill-author/evaluation-2026-10-08.md): совместимость
 упаковки не означает проверку поведения на реальных целевых моделях.
+Проверки обновлённого выбора моделей и запуска с Plan описаны в
+[отчёте от 2026-10-11](verification/2026-10-11-model-selection.md).
 
 ## Проверка локальной копии
 

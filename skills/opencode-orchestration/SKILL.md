@@ -1,12 +1,13 @@
 ---
 name: opencode-orchestration
-description: Use when coordinating Python/ML research, experiments, or engineering in OpenCode with Kimi-K2.6, DeepSeek-V4.1-Flash, and Qwen3-Coder-Next, especially when work needs decomposition, independent verification, or recovery across agents.
+description: Use when coordinating Python/ML research, experiments, or engineering in OpenCode, including planning, decomposition, independent verification, and recovery across agents. Targets DeepSeek-V4.1-Flash by default, with Kimi-K2.6 and Qwen3-Coder-Next as explicit alternatives.
 ---
 
 # OpenCode orchestration
 
 Own the outcome from understanding the task through integration and verification.
-Optimize for work quality and relevant context, not model prices. A small task may
+Optimize for verified quality; price and token consumption do not determine model
+selection or effort. Keep context relevant to preserve accuracy. A small task may
 need no workers. This skill does not install agents, change the running model,
 grant permissions, or authorize releases or deployment.
 
@@ -16,6 +17,11 @@ Read the user's objective, repository instructions, existing changes, and releva
 implementation evidence. Establish observable acceptance criteria and ask only for
 material missing intent. Follow the destination's workflow and Python conventions.
 Respect planning-only and read-only modes throughout, including in worker briefs.
+When starting in Plan, inspect and propose the work, dependencies, and checks;
+do not implement changes, run experiments, or dispatch an implementation worker.
+Write a plan artifact only if the host's planning rules allow it. Begin execution
+only when the user's scope permits it and the host has left Plan mode. See
+[Plan startup](references/opencode-setup.md#start-in-plan) for model selection.
 
 Inspect available agents and live tool schemas. A role name is not proof of a model
 assignment. Report missing agents/models; do not silently substitute. Continue
@@ -23,17 +29,34 @@ independent work yourself when permitted, and ask about a substitute only if nee
 Read [OpenCode setup](references/opencode-setup.md) when checking configuration or
 tool compatibility; do not invent per-call model switches or context-fork controls.
 
-## Route by responsibility
+## Select for quality, then route by responsibility
 
-| Default model | Responsibility | Delegate when |
+Use **DeepSeek-V4.1-Flash with thinking enabled and maximum supported effort** as
+the default for every covered role: planning, orchestration, implementation, tests,
+investigation, and review. The [dated benchmark assessment](references/model-selection-2026-10-11.md)
+supports this as a provisional engineering choice among this package's three
+models, not a demonstrated win on every task. Recheck relevant evidence when model
+versions, providers, host adapters, or task requirements change.
+
+Preserve explicit user model choices. Prefer comparable task-specific results over
+general benchmark reputation: check exact model version, benchmark version/split,
+agent framework, tools, effort, and uncertainty. Do not average incompatible scores
+or infer a planning/review ranking from coding scores. Use Kimi-K2.6 or
+Qwen3-Coder-Next when the user selects one or relevant evidence favors it; disclose
+availability blockers instead of silently substituting. Do not downgrade a worker
+for price, token savings, a simple-looking task, or its role name.
+
+| Role | Responsibility | Delegate when |
 | --- | --- | --- |
-| Kimi-K2.6 | Primary orchestration, difficult cross-cutting decisions, integration | Keep the global contract and final acceptance here |
-| DeepSeek-V4.1-Flash | Investigation, mathematical analysis, independent review | A precise uncertainty or falsifiable claim can be checked separately |
-| Qwen3-Coder-Next | Implementation and tests | Interfaces, ownership, and acceptance criteria are sufficiently clear |
+| Primary | Planning, cross-cutting decisions, integration | Keep the global contract and final acceptance here |
+| Investigator | Investigation and mathematical analysis | A precise uncertainty or falsifiable claim can be checked separately |
+| Implementer | Implementation and tests | Execution is authorized; interfaces, ownership, and acceptance criteria are clear |
+| Reviewer | Independent assessment of the final state | The parent has integrated and verified substantive changes |
 
-These are workflow defaults, not capability rankings. Preserve explicit user model
-choices. Reassign a task when evidence shows a mismatch; narrow the brief or resolve
-an unknown before simply choosing another model. Do not use all models ceremonially.
+Separate roles and fresh sessions provide process independence even when they use
+the same model; they do not eliminate correlated model errors. A different model
+can supply an additional perspective, but diversity alone is not quality evidence.
+Reassign when evidence shows a mismatch; first narrow the brief or resolve unknowns.
 Read only the relevant model section in [prompting](references/model-prompting.md).
 
 ## Schedule and execute

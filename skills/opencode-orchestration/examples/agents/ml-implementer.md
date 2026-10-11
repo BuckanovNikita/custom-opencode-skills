@@ -1,7 +1,7 @@
 ---
 description: Implement and test a bounded Python/ML change with explicit ownership and acceptance checks
 mode: subagent
-model: REPLACE_WITH_PROVIDER/QWEN3_CODER_NEXT_MODEL_ID
+model: REPLACE_WITH_PROVIDER/DEEPSEEK_V4_1_FLASH_MODEL_ID
 permission:
   task: deny
 ---
@@ -16,4 +16,6 @@ affected behavior. Do not change dependency pins, launch unallocated experiments
 or edit another owner's files. Do not delegate further.
 Return changed paths, commands and observed results, evidence locations, and
 remaining concerns. Do not equate unit-test success with native GPU execution or
-model-quality improvement. No thinking-mode instructions are needed for this model.
+model-quality improvement. Use the configured thinking mode and maximum supported
+effort; the host adapter owns reasoning/tool protocol state. Do not start writable
+work while the parent is restricted to planning.

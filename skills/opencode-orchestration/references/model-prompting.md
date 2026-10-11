@@ -6,6 +6,21 @@ Exact-version sources largely specify runtime behavior, not a proven special
 prompt formula. The example prompts are proposed engineering practices, not vendor
 claims or measured superiority on Python/ML tasks.
 
+## Default model and effort
+
+Use DeepSeek-V4.1-Flash for all covered roles unless an explicit user selection or
+relevant task evidence justifies another model. The
+[2026-10-11 assessment](model-selection-2026-10-11.md) records the benchmark basis
+and its limits. Enable thinking and select the maximum effort the actual adapter
+supports; on the official API this is `max`. Verify the resolved model and effort,
+and disclose unsupported settings rather than silently claiming maximum effort.
+Do not invent an OpenCode option from an API parameter name.
+
+Planning mode and thinking mode are independent: a thinking model in Plan remains
+restricted to planning. A reviewer can use the same model as the implementer in a
+fresh session with separate permissions and raw evidence. Do not reuse an
+implementation conversation as its own independent review.
+
 ## Shared prompt design
 
 State the desired result first. Separate established facts, assumptions, and unknowns.
@@ -19,7 +34,7 @@ Do not paste this entire reference into every worker. Allow targeted exploration
 when supplied context is insufficient. Never instruct a worker to guess missing
 data, suppress failed checks, or fit a conclusion to a desired metric improvement.
 
-## Kimi-K2.6: orchestrator
+## Kimi-K2.6: explicit alternative
 
 **Documented behavior.** K2.6 supports thinking and instant modes. Its exact-version
 API guide does not support `reasoning_effort`; do not import that knob from other
@@ -28,9 +43,10 @@ concerns, not instructions to print thinking into the coordinator's visible answ
 See the [K2.6 guide](https://platform.kimi.ai/docs/guide/kimi-k2-6-quickstart) and
 [thinking guide](https://platform.kimi.ai/docs/guide/use-thinking-models).
 
-**Recommended workflow prompt.** Keep the global objective, acceptance criteria,
-dependencies, and decision ledger with Kimi. Make checkpoints explicit for long
-tasks so progress is tied to accepted artifacts rather than long conversation.
+**Role prompt, usable with either thinking model.** Keep the global objective,
+acceptance criteria, dependencies, and decision ledger with the primary. Make
+checkpoints explicit so progress is tied to accepted artifacts. During Plan,
+propose these assignments without starting writable work.
 
 ```text
 Coordinate correction of evaluation semantics and a throughput improvement.
@@ -41,7 +57,7 @@ Report verified outcomes, decisions needing input, and the next evidence-produci
 action. A throughput gain must preserve corrected outputs and use matched inputs.
 ```
 
-## DeepSeek-V4.1-Flash: investigator or independent reviewer
+## DeepSeek-V4.1-Flash: default for every covered role
 
 **Documented behavior.** The hosted `deepseek-flash` identifier is an alias; verify
 the resolved version when exact identity matters. Current thinking documentation
@@ -53,9 +69,13 @@ See [model identity](https://api-docs.deepseek.com/en/),
 [thinking mode](https://api-docs.deepseek.com/guides/thinking_mode/), and
 [chat messages](https://api-docs.deepseek.com/api/create-chat-completion/).
 
-**Recommended workflow prompt.** Ask a narrow, falsifiable question and give access
-to raw evidence. Separate investigation from review into distinct sessions. A
-reviewer should assess the final artifact, not defend an earlier proposed solution.
+**Recommended workflow prompts.** For planning and coordination, use the primary's
+objective, dependencies, acceptance criteria, and decision ledger described above.
+For implementation, specify the interfaces, ownership, failure reproduction, and
+checks in the implementation example below; enable thinking through the adapter.
+For investigation, ask a narrow, falsifiable question and provide raw evidence.
+Separate investigation from review into distinct sessions. A reviewer assesses
+the final artifact rather than defending an earlier proposed solution.
 
 ```text
 Independently assess whether this evaluation change implements the stated metric
@@ -67,7 +87,7 @@ evidence, missing checks, and accept / revise / blocked. Request any execution y
 cannot perform from the coordinator. Do not infer success from passing unit tests.
 ```
 
-## Qwen3-Coder-Next: implementation and tests
+## Qwen3-Coder-Next: explicit alternative
 
 **Documented behavior.** This exact model is non-thinking only; do not send `/think`
 instructions, require `<think>` blocks, or configure a reasoning budget. The model
@@ -75,9 +95,10 @@ card provides tool-use examples and sampling recommendations; those do not estab
 a model-specific chain-of-thought prompting recipe. See the
 [official model card](https://huggingface.co/Qwen/Qwen3-Coder-Next).
 
-**Recommended workflow prompt.** Give a concrete interface and a bounded result,
-with enough freedom to inspect code and diagnose failures. Avoid prescribing an
-unverified fix. Have the worker establish behavioral evidence before claiming done.
+**Implementation prompt, usable with the default model too.** Give a concrete
+interface and a bounded result, with freedom to inspect code and diagnose failures.
+Avoid prescribing an unverified fix. Establish behavioral evidence before claiming
+done. This example does not make Qwen the default implementer.
 
 ```text
 Implement the accepted metric correction in the assigned evaluator module and
