@@ -5,6 +5,20 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-14
+
+### Added tool usage skills
+
+- Portable cveta2 and clearml-yolo usage skills with source-grounded examples,
+  side-effect boundaries, failure handling and representative evaluation prompts.
+- A cross-repository maintenance workflow linking user-facing tool changes to
+  skill updates, validation and dated acceptance evidence.
+
+### Changed maintenance guidance
+
+- Extend collection checks to planning documentation and document outcome-first
+  tool prompting for DeepSeek V4.1 Flash without unsupported runtime controls.
+
 ## [0.1.1] - 2026-10-11
 
 ### Changed

@@ -24,7 +24,7 @@ From the repository root, with Node.js/npm and Git available:
 
 ```bash
 DISABLE_TELEMETRY=1 npx --yes skills@1.7.1 add . --list
-npx --yes markdownlint-cli2@0.23.3 '*.md' 'skills/**/*.md' 'verification/**/*.md'
+npx --yes markdownlint-cli2@0.23.3 '*.md' 'skills/**/*.md' 'verification/**/*.md' 'docs/**/*.md'
 git diff --check
 ```
 
@@ -37,6 +37,8 @@ provider/model placeholders explicit until an owner chooses to configure them.
 Record behavioral checks separately from live target-model execution; do not claim
 the latter based on linting or discovery. Obtain independent review for substantive
 skill changes and keep dated evidence with the affected skill or under `verification/`.
+For tool usage changes, follow [MAINTENANCE.md](MAINTENANCE.md): reconcile the skill
+with current source and native workflow evidence before releasing the collection.
 
 Before committing, inspect `git status`, the complete diff, and the staged diff.
 Stage explicit release paths only, preserving other changes. Commit with a

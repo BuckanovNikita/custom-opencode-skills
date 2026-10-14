@@ -8,6 +8,8 @@
 | --- | --- |
 | [opencode-skill-author](skills/opencode-skill-author/SKILL.md) | Создание и адаптация навыков для OpenCode: по умолчанию DeepSeek-V4.1-Flash, с сохранением совместимости с Kimi-K2.6. |
 | [opencode-orchestration](skills/opencode-orchestration/SKILL.md) | Планирование и оркестрация Python/ML-задач: DeepSeek-V4.1-Flash по умолчанию для всех ролей, Kimi-K2.6 и Qwen3-Coder-Next как явно выбранные альтернативы. |
+| [cveta2](skills/cveta2/SKILL.md) | Работа с CVAT: выгрузка и загрузка разметки, конвертация датасетов, метки, кэш и проверка результатов. |
+| [clearml-yolo](skills/clearml-yolo/SKILL.md) | Запуск и проверка обучения, предсказаний, метрик и сравнения моделей через Hydra; ClearML, конфигурация и отдельная очередь GPU. |
 
 ## Просмотр и установка
 
@@ -28,6 +30,8 @@ npx --yes skills@1.7.1 add git@github.com:BuckanovNikita/corp-skills.git \
 Для глобальной установки добавьте `--global`. Установка навыка не настраивает
 провайдера, модель или права инструментов OpenCode.
 Для навыка оркестрации замените имя после `--skill` на `opencode-orchestration`.
+Для работы с инструментами используйте `--skill cveta2` или `--skill clearml-yolo`.
+Каждый пакет устанавливается отдельно и содержит собственные примеры и проверки.
 Примеры агентов в его каталоге `examples/agents/` не активируются автоматически:
 перед отдельным подключением укажите доступные идентификаторы моделей и проверьте
 [совместимость конфигурации](skills/opencode-orchestration/references/opencode-setup.md).
@@ -57,6 +61,22 @@ Use opencode-skill-author to create a standalone skill that reviews CSV quality
 against a supplied schema and writes a Markdown report. Do not install it.
 ```
 
+Примеры запросов к навыкам инструментов:
+
+```text
+Use cveta2 to export project 123 to a new directory without images or ClearML
+publication. Check the CSV outputs and report partial results.
+
+Use clearml-yolo to prepare a training configuration for my ground_truth.csv.
+Inspect the schema and compose the config; do not launch training yet.
+```
+
+При добавлении возможностей в инструменты их этап обновления документации
+требует проверить и обновить соответствующий навык. Канонические пути, порядок
+проверки и обработка недоступного репозитория описаны в
+[MAINTENANCE.md](MAINTENANCE.md). Проверки этой версии и ограничения исполнения
+на целевой модели — в [отчёте](verification/2026-10-14-tool-usage.md).
+
 Рекомендации для моделей и сценарии проверки находятся в каталоге навыка.
 Границы первоначальных проверок описаны в
 [отчёте](skills/opencode-skill-author/evaluation-2026-10-08.md): совместимость
@@ -70,7 +90,7 @@ against a supplied schema and writes a Markdown report. Do not install it.
 
 ```bash
 DISABLE_TELEMETRY=1 npx --yes skills@1.7.1 add . --list
-npx --yes markdownlint-cli2@0.23.3 '*.md' 'skills/**/*.md' 'verification/**/*.md'
+npx --yes markdownlint-cli2@0.23.3 '*.md' 'skills/**/*.md' 'verification/**/*.md' 'docs/**/*.md'
 ```
 
 Если репозиторий недоступен, проверьте права GitHub и SSH-аутентификацию. Если

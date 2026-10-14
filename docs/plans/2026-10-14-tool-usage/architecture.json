@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "task": "Portable cveta2 and clearml-yolo usage skills and maintenance",
+  "scope": ["skills", "README.md", "RELEASE.md", "MAINTENANCE.md", "CHANGELOG.md", "VERSION", "docs/plans/2026-10-14-tool-usage", "verification"],
+  "impact": "none",
+  "rationale": "Inspected the collection's existing skill packages, release procedure and model guidance, plus both tools' CLI/configuration sources and native documentation workflow. Changes are Markdown skill instructions, workflow documentation, version metadata and dated evidence. No application runtime, dependency declarations, executable helper, import contract or checking tool changes are planned. Examples describe existing commands; required references remain inside each distributed skill package. Tool-repository documentation edits have their own no-impact records."
+}
