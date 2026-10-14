@@ -191,7 +191,8 @@ cy-queue worker
 cy-queue list --json
 ```
 
-Submit counts or exact `--devices 0,2`, never both. Remove native GPU selectors in queued
+Submit counts or exact `--devices 0,2`, never both. Submission integers use CUDA-visible
+logical order, including `CUDA_VISIBLE_DEVICES` remapping. Remove native GPU selectors in queued
 config: allocation supplies all training devices and first inference device; explicit
 CPU phases stay CPU. Submission validates and freezes the entire sweep, returning stable
 IDs. Worker execution uses the owning user's environment and revalidates installation
@@ -201,6 +202,45 @@ fail explicitly; inspect status rather than deleting coordination files.
 
 Retired `queue.*`, `autogpu.*`, `auto_gpu.*` and old Hydra launcher controls fail with
 migration guidance. Each multirun adds one shared random `multirun-...` ClearML tag.
+
+### Physical GPU controls (clearml-yolo 0.29.0+)
+
+These interfaces are available from clearml-yolo 0.29.0; confirm installed help
+before using them. `cy-queue gpu` integer selectors follow physical `nvidia-smi`/NVML
+order regardless of `CUDA_VISIBLE_DEVICES`. Full GPU
+UUIDs also work and are preferable after hardware/order changes. Do not translate a
+physical operator index through the submission's CUDA-visible map.
+
+```bash
+cy-queue gpu list --json
+cy-queue gpu disable 2 --reason 'Maintenance'
+cy-queue gpu enable 2
+cy-queue gpu release 2 --claim-token TOKEN_FROM_LIST --reason 'Reviewed stale allocation'
+```
+
+Holds persist per Unix UID and apply across queue roots on the host. Disable prevents
+new allocations while active work retains capacity. Enable removes only the caller's
+hold; other users' holds and quarantine remain. Upgrade all cooperating workers before
+controls are used: a persistent compatibility fence rejects old admission protocols.
+
+Release requires the current token from `gpu list`, a reason and ownership. It releases
+the entire claim, not just the selected GPU, marks the job failed and retains audit/history.
+Normal release performs verified cleanup. Add `--force` only for an explicitly requested
+operator override of inaccessible stale evidence: force never signals and refuses held
+locks, confirmed live guardians or owned descendants. The original queue root must be
+accessible. Preserve holds, never delete coordination files, and reread status after a
+stale-token refusal. Inspect before proposing recovery; an explanation request does not
+authorize release or cancellation.
+
+Version 0.29.0 also rejects missing Linux supervision capabilities such as `os.pidfd_open`
+before native work, checks the snapshot interpreter before queue admission and reports
+the affected interpreter. Verify its Python/kernel environment; do not add PID-only
+cleanup or alter dependencies as a guessed fix. Resubmit when installation identity changes.
+
+The opt-in `ddp_gpu` tests require multiple physical GPUs and real ClearML. Use the
+matching repository's [GPU DDP guide](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/ddp-testing.md)
+for exact options and evidence packaging. Offline/property or existing CPU/Gloo tests
+cannot establish GPU/NCCL/publication success.
 
 ## Evidence and failure handling
 

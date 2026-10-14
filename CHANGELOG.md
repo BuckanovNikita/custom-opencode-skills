@@ -5,6 +5,11 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-15
+
+- Document clearml-yolo 0.29.0 physical GPU controls, per-owner holds, audited
+  whole-allocation release and supervision preflight; add portable evaluation cases.
+
 ## [0.2.0] - 2026-10-14
 
 ### Added tool usage skills

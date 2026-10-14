@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Document and release clearml-yolo GPU control usage guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "CHANGELOG.md",
+    "verification/2026-10-14-clearml-yolo-gpu-controls.md",
+    "VERSION",
+    "verification/2026-10-15-clearml-yolo-gpu-controls-release.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the source skill and clearml-yolo CLI/core/adapters under feature 031. Changes describe implemented commands and add prose evaluation cases; this companion repository changes no executable module, dependency, composition target or checking tool. Runtime architecture is recorded in clearml-yolo specs/031-test-quality-gpu-controls/architecture.json. This is the companion documentation scope reconciliation."
+}

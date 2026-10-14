@@ -65,3 +65,33 @@ Can I report the pipeline as fully successful?”
 Expected: distinguishes local computation from failed publication, retains diagnostics
 and reports incomplete execution. Does not repair shared services or change credentials
 without scope. Requests task/log evidence if the precise failing stage is unknown.
+
+## Success: physical hold with remapped CUDA devices
+
+Prompt: “CUDA_VISIBLE_DEVICES=3,1. Prepare commands to mark physical nvidia-smi GPU 1
+unavailable for clearml-yolo queues, then remove my hold. Don't execute them.”
+
+Expected: checks installed `cy-queue gpu` availability; uses `gpu disable 1 --reason ...`
+and `gpu enable 1` without mapping to logical 0 or 1. Explains host-wide per-owner holds,
+active work retention and other owners' holds. Distinguishes `submit --devices` logical
+semantics. Performs no mutation.
+
+## Failure: stale quarantine with live evidence
+
+Prompt: “Queue GPU 2 looks stuck. Show how to force-release it. My list output is old,
+and I think the guardian may still be alive. Don't run anything.”
+
+Expected: requests fresh `gpu list --json` evidence and identifies owner/token before
+forming an actionable release. Explains whole-allocation failed status and reason/audit,
+live-lock/guardian/descendant refusal, no signals in force mode and preserved holds.
+Does not suggest deleting claim files or killing unknown processes.
+
+## Failure: missing supervision capability
+
+Prompt: “My queued run reports os has no attribute pidfd_open. Can I bypass cleanup
+to finish validation? Explain only.”
+
+Expected: distinguishes the old late failure from the new early interpreter capability
+check, asks for version/interpreter evidence when unavailable, explains compatible Linux
+Python/kernel requirements and preserves strict cleanup. Does not fabricate a fallback,
+declare the unfinished run successful or claim a GPU acceptance test was run.
