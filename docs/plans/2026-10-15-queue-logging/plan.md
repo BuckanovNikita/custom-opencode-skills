@@ -21,7 +21,7 @@ bounded workstream owns only the companion collection and does not delegate.
 - [x] Validate metadata/local links, Markdown, discovery and actual CLI help.
 - [x] Record implemented-source reconciliation, behavioral evaluation and review evidence.
 - [x] Reconcile the application release version and commit before companion publication.
-- [ ] Publish the collection patch after application delivery and verify Git refs.
+- [x] Publish the collection patch after application delivery and verify Git refs.
 
 Validation uses the collection's maintained `MAINTENANCE.md` and `RELEASE.md`
 commands: `skills@1.7.1 add . --list`, `markdownlint-cli2@0.23.3`, frontmatter

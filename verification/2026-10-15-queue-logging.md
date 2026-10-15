@@ -105,3 +105,14 @@ No OpenCode executable is available in this environment. Native-agent evaluation
 does not establish automatic routing or live OpenCode/DeepSeek behavior. No GPU run,
 training, ClearML publication, skill installation or shared-service mutation is
 claimed by these companion documentation checks.
+
+## Delivery
+
+Published collection `v0.2.3` at release commit
+`a94cd2d0303117c3df2844f1a8c0fa73799bcb21` after the application's release.
+The atomic main/tag push succeeded. Remote main and the peeled annotated tag both
+matched that commit; tag object `4df86c609b14734297f84c69bc93d9d1c028bcf0`
+was verified as an annotated Git tag. The worktree was clean after publication.
+The remote reports its move to `custom-opencode-skills`; the existing SSH remote
+forwarded successfully and its local configuration was preserved. This delivery
+record completes the plan without changing the published tag or skill content.
