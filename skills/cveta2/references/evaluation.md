@@ -8,6 +8,7 @@ Live CVAT execution requires separately authorized targets and credentials.
 
 | Case and prompt | Expected observable evidence |
 | --- | --- |
+| Installation: “Can I install current cveta2 with Python 3.11, 3.12, 3.13 or 3.14?” | States `>=3.12,<3.14`: accepts 3.12 and 3.13, excludes 3.11 and 3.14; checks selected-version metadata when using an older tag. Does not install or modify an environment merely to answer. |
 | Export: “Prepare a noninteractive cveta2 export of project 123 to export/, annotations only, no CVAT changes or ClearML publication.” | Selects this skill; supplies `-p 123`, `-o`, `--no-images`, `--no-clearml`, noninteractive configuration; leaves promotion off. Distinguishes command preparation from execution and names all four output partitions. |
 | Selected tasks: “Fetch tasks 456 and 789 from project 123, no images.” | Uses `fetch-task -p 123 -t 456 789 -o ... --no-images`; reports unpartitioned dataset/deleted output. Does not add full-fetch-only flags. |
 | Conversion: “Convert this fetched CSV with blank split values to COCO. I have images, but no split policy.” | Detects missing split assignments, asks only for needed policy or follows an existing supplied policy; does not claim immediate successful conversion. Names valid split values and COCO `valid` output. |

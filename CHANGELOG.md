@@ -5,6 +5,11 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-10-15
+
+- Align the cveta2 installation prerequisite with its Python 3.12/3.13 support
+  window and add an installation-version evaluation case.
+
 ## [0.2.1] - 2026-10-15
 
 - Document clearml-yolo 0.29.0 physical GPU controls, per-owner holds, audited

@@ -11,7 +11,7 @@ These follow the default branch; installed-version help takes precedence for fla
 
 ## Installation and configuration
 
-cveta2 requires Python 3.10 or newer. Install from a trusted Git host and selected
+Current cveta2 requires Python 3.12 or 3.13 (`>=3.12,<3.14`). Install from a trusted Git host and selected
 version tag; no public package registry availability is assumed:
 
 ```bash

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "cveta2 Python prerequisite alignment",
+  "scope": [
+    "skills/cveta2/SKILL.md",
+    "skills/cveta2/references/usage.md",
+    "skills/cveta2/references/evaluation.md",
+    "docs/plans/2026-10-15-python-compatibility",
+    "VERSION",
+    "CHANGELOG.md",
+    "verification/2026-10-15-python-compatibility.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected skill source and application compatibility metadata. Only prerequisite prose and its evaluation case change; there are no runtime modules, executable dependency contracts, composition changes or checker changes. Skill discovery, invocation and remote-effect boundaries remain unchanged."
+}
