@@ -15,4 +15,4 @@ release is published; publish Git refs only.
 - [x] Inspect source package and application compatibility change.
 - [x] Record no-impact architecture and correct prerequisite/evaluation case.
 - [x] Validate documentation, discovery, metadata/links and behavior.
-- [ ] Record evidence, reconcile diff, release collection patch and verify refs.
+- [x] Record evidence, reconcile diff, release collection patch and verify refs.

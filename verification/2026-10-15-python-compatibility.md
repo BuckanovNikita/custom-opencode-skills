@@ -41,3 +41,11 @@ the task-owned plan, architecture/evidence and collection release metadata. No
 executable module, dependency contract, invocation or effect boundary changed.
 Collection v0.2.2 uses the existing Git-tag-only release process after application
 delivery; no deployment or skill installation is part of this task.
+
+## Delivery
+
+Published collection v0.2.2 at `3d44ebc8d52db6de933145e34c0ed5176070eb61`.
+The atomic main/tag push succeeded; remote branch and peeled annotated tag match
+that commit. Tag object: `c846f14f380cee17b22b6bda6268099f4792eb81`. The
+remote reports the repository moved to `custom-opencode-skills`; the existing
+remote forwarded successfully and its local configuration was preserved.
