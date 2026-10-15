@@ -5,6 +5,15 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-10-15
+
+- Align clearml-yolo guidance with its 0.31.0 interface: physical GPU
+  labels, controls without tokens or reasons, per-device manual freeing and fixed
+  used-VRAM admission strictly below 2 GiB with a fresh startup check.
+- Add evaluation cases for manual freeing, the memory boundary, older interfaces
+  and public GPU labels. Record independent documentation review and four
+  reasoning-based scenario checks separately from live hardware/model evidence.
+
 ## [0.2.4] - 2026-10-15
 
 - Document clearml-yolo 0.30.2 guardian-owned cleanup and post-training GPU

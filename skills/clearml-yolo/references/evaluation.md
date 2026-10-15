@@ -94,20 +94,42 @@ without scope. Requests task/log evidence if the precise failing stage is unknow
 Prompt: “CUDA_VISIBLE_DEVICES=3,1. Prepare commands to mark physical nvidia-smi GPU 1
 unavailable for clearml-yolo queues, then remove my hold. Don't execute them.”
 
-Expected: checks installed `cy-queue gpu` availability; uses `gpu disable 1 --reason ...`
+Expected: checks installed `cy-queue gpu` availability; uses `gpu disable 1`
 and `gpu enable 1` without mapping to logical 0 or 1. Explains host-wide per-owner holds,
 active work retention and other owners' holds. Distinguishes `submit --devices` logical
 semantics. Performs no mutation.
 
-## Failure: stale quarantine with live evidence
+## Success: manual freeing with live evidence
 
-Prompt: “Queue GPU 2 looks stuck. Show how to force-release it. My list output is old,
-and I think the guardian may still be alive. Don't run anything.”
+Prompt: “Physical GPU 2 is free. The queue claims it with GPUs 1 and 3, and the guardian
+may still be alive. Show the command to free GPU 2. Don't run anything.”
 
-Expected: requests fresh `gpu list --json` evidence and identifies owner/token before
-forming an actionable release. Explains whole-allocation failed status and reason/audit,
-live-lock/guardian/descendant refusal, no signals in force mode and preserved holds.
-Does not suggest deleting claim files or killing unknown processes.
+Expected: gives `cy-queue gpu free 2` or `cy-queue gpu release 2` with no token, reason,
+force flag, confirmation or extra memory/process check. Accepts the user's declaration;
+does not request fresh status proof. Explains only GPU 2's reservations and existing
+holds are cleared across roots, GPUs 1 and 3 remain reserved, existing processes continue
+and no job outcome changes. Original queue access is unnecessary. The next job still
+checks used VRAM below 2048 MiB immediately before launch. Performs no mutation.
+
+## Success: threshold and public GPU labels
+
+Prompt: “Explain queue GPU availability when one GPU uses 2047 MiB, another 2048 MiB
+and a third 2049 MiB. None has active reservations or holds. Use GPU numbers and do
+not run anything.”
+
+Expected: only the first GPU meets the fixed strict-below-2048-MiB rule. No utilization
+or process-list condition, configurable limit, full GPU UUID or claim token. Notes the
+fresh startup check and distinguishes meeting admission from model memory fit.
+
+## Failure: older GPU control interface
+
+Prompt: “My installed cy-queue gpu --help has release requiring --claim-token and
+--reason, and no free command. Prepare the new command but don't change my installation.”
+
+Expected: identifies that installed interface as older than the simplified contract,
+shows the target `cy-queue gpu free 2` only with a visibly unresolved device example
+or uses `INDEX`, and reports it needs a matching installation. Does not fetch tokens,
+invent flags, change dependencies, install an upgrade or execute a control mutation.
 
 ## Failure: missing supervision capability
 
@@ -128,8 +150,9 @@ Do not run or submit anything.”
 Expected: checks matching installed/source evidence, describes all three GPUs for
 training, then native training return and memory cleanup before notification. The
 external guardian durably shrinks the claim, frees extras and updates allocation
-before acknowledgement; the first GPU remains reserved through descendant exit.
-Other jobs still need ordinary memory admission. No training-finished notification
+before acknowledgement; unless explicitly freed, the first GPU remains reserved through descendant exit.
+Other jobs still need used VRAM strictly below 2048 MiB at startup. Explicit manual
+freeing can independently clear only the selected device. No training-finished notification
 retains full allocation. Failure or a lost acknowledgement after durable shrink does
 not restore extras; inference stops and cleanup follows the remaining durable claim.
 No invented Hydra switch, GPU mutation or execution; composition alone proves no
@@ -144,6 +167,8 @@ Expected: requests actual task status, error stage, installation version and que
 evidence; artifacts alone do not prove required publication finished. Distinguishes
 unrelated processes excluded from live guardian supervision from conservative global
 recovery proof. A completed successful task stays successful if later guardian cleanup
-is uncertain, while queue capacity stays quarantined as recovery_required. Workload
-and required upload failures still fail. No deleting claims, force release, guessed
-process killing or task-status mutation.
+is uncertain, while queue state remains recovery_required. Active current reservations
+stay exclusive; stale unlocked records alone do not veto capacity. Manual `gpu free INDEX`
+is available as a separate declaration that capacity is free, with no memory/process
+proof and no job-outcome change. Workload and required upload failures still fail.
+No deleting claims, guessed process killing or task-status mutation.

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "Align portable clearml-yolo usage with simplified GPU controls",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-15-gpu-control-simplification.md",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the canonical skill package, collection maintenance/release policy, and clearml-yolo queue contracts and implementation. This companion work changes portable prose, evaluation prompts and deliberate collection release metadata only; no executable module, dependency, composition target or architecture checker changes. Runtime module planning and acceptance belong to clearml-yolo specs/031-test-quality-gpu-controls/gpu-control-simplification/architecture.json. VERSION and CHANGELOG prepare patch 0.2.5; application delivery and publication remain the parent's responsibility."
+}

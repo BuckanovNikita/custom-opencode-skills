@@ -199,6 +199,12 @@ IDs. Worker execution uses the owning user's environment and revalidates install
 identity. Changed installations require resubmission. Unsupported Linux ownership/locking
 conditions fail explicitly; inspect status rather than deleting coordination files.
 
+Automatic availability uses only used VRAM strictly below 2 GiB (2048 MiB); exactly
+2 GiB is busy. This fixed limit is rechecked immediately before each workload launch.
+Current queue allocations and explicit holds stay exclusive unless released; stale
+unlocked records alone do not veto capacity. Process lists and utilization are not
+availability criteria. The limit does not establish model/compiler memory fit.
+
 ### Training GPU handoff (clearml-yolo 0.30.2)
 
 Check the installed version against its matching queue contract before relying on this
@@ -207,7 +213,7 @@ model memory is released, the job sends a bounded handoff request to its externa
 guardian. The guardian durably retains the first GPU, releases extra locks and updates
 public allocation before acknowledging. Those extra GPUs may serve other eligible jobs
 during inference/comparison; memory admission still applies. The first GPU remains
-reserved through pipeline/descendant exit. Without a training-finished notification,
+reserved through pipeline/descendant exit unless explicitly freed. Without a training-finished notification,
 the full allocation stays reserved. After durable shrink, later record-write failure
 or a lost acknowledgement does not restore released extras. A failed or unacknowledged
 handoff stops before inference; cleanup/recovery follows the remaining durable claim.
@@ -216,12 +222,13 @@ GPU locks.
 
 The external guardian also owns descendant cleanup outside ClearML task finalization.
 Unrelated same-UID `/proc` access denials do not poison live scoped supervision. Later
-supervisor cleanup uncertainty reports queue `recovery_required` and quarantines capacity
+supervisor cleanup uncertainty reports queue `recovery_required` and retains recovery evidence
 without retroactively failing a completed successful ClearML task. Required computation
 and upload failures still fail. Inspect the task and queue state separately; artifacts
 alone prove neither successful required publication nor safe resource release. Owner
 recovery keeps conservative global ownership proof, so inaccessible or ambiguous process
-evidence can still block it. Do not bypass that proof or delete coordination files.
+evidence can still block recovery. Manual GPU freeing is a separate capacity operation
+that needs no process-cleanup proof. Do not delete coordination files.
 
 Retired `queue.*`, `autogpu.*`, `auto_gpu.*` and old Hydra launcher controls fail with
 migration guidance. Each multirun adds one shared random `multirun-...` ClearML tag.
@@ -251,34 +258,41 @@ The queued pipeline's combined stdout/stderr is retained in the submitted projec
 file for detailed workload output and inspect `cy-queue list --json` for current
 job state. A heartbeat alone does not prove training, GPU use or publication success.
 
-### Physical GPU controls (clearml-yolo 0.29.0+)
+### Simplified physical GPU controls (clearml-yolo 0.31.0)
 
-These interfaces are available from clearml-yolo 0.29.0; confirm installed help
-before using them. `cy-queue gpu` integer selectors follow physical `nvidia-smi`/NVML
-order regardless of `CUDA_VISIBLE_DEVICES`. Full GPU
-UUIDs also work and are preferable after hardware/order changes. Do not translate a
-physical operator index through the submission's CUDA-visible map.
+These commands describe the clearml-yolo 0.31.0 contract. Confirm installed help before
+using them; the 0.29.0 controls had different release semantics. `cy-queue gpu` integer
+selectors follow physical `nvidia-smi`/NVML order regardless of `CUDA_VISIBLE_DEVICES`.
+Do not translate a physical operator index through the submission's CUDA-visible map.
+Queue text, JSON, TUI, status logs and errors show physical indexes or short unambiguous
+absent-device labels. Never show full GPU UUIDs or claim tokens in user-facing output.
 
 ```bash
 cy-queue gpu list --json
-cy-queue gpu disable 2 --reason 'Maintenance'
+cy-queue gpu disable 2
 cy-queue gpu enable 2
-cy-queue gpu release 2 --claim-token TOKEN_FROM_LIST --reason 'Reviewed stale allocation'
+cy-queue gpu free 2
+cy-queue gpu release 2
 ```
 
 Holds persist per Unix UID and apply across queue roots on the host. Disable prevents
 new allocations while active work retains capacity. Enable removes only the caller's
-hold; other users' holds and quarantine remain. Upgrade all cooperating workers before
-controls are used: a persistent compatibility fence rejects old admission protocols.
+hold. Free/release immediately clears the selected GPU's existing reservations and all
+holds, including live reservations; other GPUs in the allocation stay reserved.
 
-Release requires the current token from `gpu list`, a reason and ownership. It releases
-the entire claim, not just the selected GPU, marks the job failed and retains audit/history.
-Normal release performs verified cleanup. Add `--force` only for an explicitly requested
-operator override of inaccessible stale evidence: force never signals and refuses held
-locks, confirmed live guardians or owned descendants. The original queue root must be
-accessible. Preserve holds, never delete coordination files, and reread status after a
-stale-token refusal. Inspect before proposing recovery; an explanation request does not
-authorize release or cancellation.
+Accept the user's declaration that the GPU is free. No token, reason, force flag,
+confirmation or extra memory/process check is required. Free/release sends no signals,
+requires no access to the original queue root and leaves job outcomes unchanged.
+Repeated freeing succeeds. Internal generation events fence earlier guardian writes,
+handoff, recovery and cleanup so they cannot recreate a freed reservation or affect
+a newer one. New jobs still need fresh memory admission below 2048 MiB: manual freeing
+does not create a persistent bypass. Upgrade cooperating workers to the matching
+protocol; an explanation-only request still authorizes no mutation or cancellation.
+
+Remove `worker --max-used-memory-gib` from updated worker commands. Remove `--reason`,
+`--claim-token` and `--force` from GPU controls. If installed help still requires the
+old arguments or lacks `free`, report that version mismatch; do not invent a workaround
+or silently upgrade the installation.
 
 Version 0.29.0 also rejects missing Linux supervision capabilities such as `os.pidfd_open`
 before native work, checks the snapshot interpreter before queue admission and reports

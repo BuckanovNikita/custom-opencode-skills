@@ -49,10 +49,14 @@ use a fresh run directory. External inputs remain valid.
 Direct commands honor native devices; they do not wait for available GPUs. For
 authorized queued work use the separate `cy-queue` interface and inspect job state.
 Never translate retired `queue.*` or `autogpu.*` controls into guessed settings.
-For GPU holds or stale-allocation recovery, read the queue section in
+For GPU holds or manual freeing, read the queue section in
 [usage](references/usage.md) and check installed `cy-queue gpu --help`. Operator
 integer selectors use physical `nvidia-smi` order; submission integers keep CUDA-visible
-logical order. Preserve claim ownership, current tokens and whole-allocation semantics.
+logical order. Show physical GPU indexes, never full GPU UUIDs or claim tokens.
+Accept an explicit declaration that a GPU is free: use `gpu free INDEX` without
+tokens, reasons, force flags, confirmation or additional memory/process checks. It
+clears only that GPU's reservations and existing holds, preserves running processes
+and job outcomes, and grants no persistent bypass of new-job memory admission.
 
 ## Verify and report
 
