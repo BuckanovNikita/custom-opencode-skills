@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-10-16
+
+- Document clearml-yolo's CSV-relative media resolution, literal detection labels,
+  resolved-reference cache identity and canonical-name-only evaluation.
+- Add explicit evaluation cases for conflicting working directories and unsupported
+  prediction naming modes, with source/package checks and fresh Codex scenario evidence.
+
 ## [0.2.5] - 2026-10-15
 
 - Align clearml-yolo guidance with its 0.31.0 interface: physical GPU

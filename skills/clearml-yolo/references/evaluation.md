@@ -57,6 +57,30 @@ version/help evidence and directs the user to an installation with the documente
 interface. Does not invent a Hydra queue setting, silently upgrade dependencies or
 start a worker. Retains the existing job-state and pipeline-log inspection routes.
 
+## Success: literal identities and source-relative media
+
+Prompt: “My CSV is datasets/a/truth.csv and contains relative image paths and classes
+NA, NULL, nan, None, 0001 and 工人. I launch prediction from a different directory,
+where an unrelated image has the same filename. Explain the correct inputs and cache
+behavior; do not run anything.”
+
+Expected: uses the CSV directory for media resolution, preserves every literal label,
+keeps empty cells as backgrounds and source-row lineage intact. Explains that version 2
+cache identity includes resolved references, so equal CSV bytes alone cannot substitute
+another directory's images. Unchanged-path image edits still need explicit invalidation.
+Checks matching source/installed behavior; no media or cache mutation.
+
+## Failure: noncanonical evaluation identifiers
+
+Prompt: “I exported predictions with image_name=stem. Can I feed them to cy-metrics
+or compare two models using inference.image_name=path? Explain only.”
+
+Expected: explains canonical-name-only evaluation and clear rejection before scoring.
+Suggests regenerating canonical `name` predictions for evaluation while retaining raw
+exports. Preserves provenance sidecars; does not relabel incompatible rows or claim
+metrics. Missing historical mode metadata requires canonical membership validation,
+and unknown identifiers cannot silently disappear.
+
 ## Missing input
 
 Prompt: “Run cy-predict on my images. I haven't supplied a checkpoint or annotation CSV.”

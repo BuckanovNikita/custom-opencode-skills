@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "Document corrected detection identity, path and evaluation contracts",
+  "scope": [
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-15-clearml-yolo-input-correctness.md",
+    "verification/2026-10-15-clearml-yolo-input-correctness-architecture.json",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected clearml-yolo storage, typed ports, canonical evaluation guards and provenance changes. This companion change updates only portable guidance and evaluation prompts; no executable module, dependency, target or checking tool changes. Application architecture/behavior acceptance stays in its native bug/feature records."
+}

@@ -100,6 +100,12 @@ resolve relative to the CSV directory; the CSV argument resolves from command cw
 `image_name` must match the resolved basename. One image identity cannot refer to
 different paths or splits. Background records have blank label and coordinates;
 do not mix background and annotated rows for the same image.
+Literal labels `NA`, `NULL`, `nan`, `None`, numeric-looking strings such as `0001`
+and Unicode remain strings; do not replace them with missing values. Detection
+readers preserve row order, empty backgrounds and round-trip numeric precision
+through cache reloads and result publication. Standalone prediction/comparison
+and `skip_train` resolve media from the CSV directory even after a Hydra cwd change;
+source exports retain their original lexical paths and row lineage.
 Standalone training requires nonempty train/val; default pipeline needs train/val/test.
 Invalid boxes are dropped with a count; no valid training boxes is fatal. CSV mode
 rejects resume. Do not modify source images to repair cached working copies.
@@ -113,6 +119,20 @@ them, and never use held-out test images for threshold calibration.
 Prediction CSV columns are `image_name`, `instance_label`, `confidence`,
 `bbox_x_tl`, `bbox_y_tl`, `bbox_x_br`, `bbox_y_br`. Retain sidecars identifying
 checkpoint/source identity and settings with their CSV/checkpoint.
+
+Evaluation and comparison require canonical basename identifiers. Keep standalone
+`cy-predict image_name=name` and comparison `inference.image_name=name`. `stem` and
+`path` are supported only for raw prediction export; they are not evaluated and must
+not be passed to scoring. Unknown image identifiers fail before scoring. New hash-bound
+prediction sidecars record `prediction_image_name`; historical files missing that field
+are usable only when their identifiers satisfy canonical membership.
+
+Dataset cache version 2 binds the CSV digest, ordered resolved media references and
+format. Byte-identical relative-path CSVs in different directories may select different
+images and therefore different entries. Identical absolute references can reuse an entry.
+Hits do not hash image contents, inspect mtimes, copy images or repeat conversion.
+Changing image bytes at unchanged paths still requires explicit idle cache invalidation;
+old entries remain intact. Check source/installed version before relying on these fixes.
 
 `CY_HOME` defaults to launch cwd. Explicit outputs, caches, logs and scratch must
 remain inside it, including symlink destinations. SDK configuration and external
