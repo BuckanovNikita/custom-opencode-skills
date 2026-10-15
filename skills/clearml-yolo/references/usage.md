@@ -203,6 +203,31 @@ fail explicitly; inspect status rather than deleting coordination files.
 Retired `queue.*`, `autogpu.*`, `auto_gpu.*` and old Hydra launcher controls fail with
 migration guidance. Each multirun adds one shared random `multirun-...` ClearML tag.
 
+### Worker diagnostics (clearml-yolo 0.30.1+)
+
+`cy-queue worker` logs at INFO to stderr by default: startup queue root, host and UID;
+changes to the owner's job state, allocation, waiting reason, progress and errors;
+and clean shutdown. An immediate heartbeat and another every 60 seconds report idle
+or active status with job-state counts. Existing terminal history contributes to
+counts without replaying each old job. A pending job's `waiting=` detail explains
+admission delays; an idle heartbeat means there are no active jobs for this owner.
+
+Check installed `cy-queue worker --help` before using the verbosity option:
+
+```bash
+cy-queue worker --log-level DEBUG
+```
+
+DEBUG adds a summary on every poll; INFO is the default, while WARNING or ERROR
+reduces output. This option belongs after `worker`. These commands start a worker;
+an explanation-only request does not authorize running them. Submission IDs and
+`list --json` remain on stdout, separate from worker diagnostics.
+
+The queued pipeline's combined stdout/stderr is retained in the submitted project's
+`.cy/queue-logs/<JOB_ID>.log`, not streamed into worker status messages. Read that
+file for detailed workload output and inspect `cy-queue list --json` for current
+job state. A heartbeat alone does not prove training, GPU use or publication success.
+
 ### Physical GPU controls (clearml-yolo 0.29.0+)
 
 These interfaces are available from clearml-yolo 0.29.0; confirm installed help

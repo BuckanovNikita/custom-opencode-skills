@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Document clearml-yolo queue worker diagnostics and release companion guidance",
+  "scope": [
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "docs/plans/2026-10-15-queue-logging/plan.md",
+    "docs/plans/2026-10-15-queue-logging/architecture.json",
+    "verification/2026-10-15-queue-logging.md",
+    "CHANGELOG.md",
+    "VERSION"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the clearml-yolo package entrypoint and usage/evaluation references together with the application's queue CLI, runtime and guardian. The companion changes only describe implemented logging behavior, add prose evaluation cases, and record documentation/release evidence. No executable modules, dependency contracts, composition targets or architecture-checking tools change in this repository. Application runtime architecture remains owned by its native bug workflow."
+}

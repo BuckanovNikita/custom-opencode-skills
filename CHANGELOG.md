@@ -5,6 +5,11 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-10-15
+
+- Document clearml-yolo 0.30.1 queue worker logging defaults, verbosity controls,
+  status heartbeat and retained pipeline logs; add diagnostic evaluation cases.
+
 ## [0.2.2] - 2026-10-15
 
 - Align the cveta2 installation prerequisite with its Python 3.12/3.13 support

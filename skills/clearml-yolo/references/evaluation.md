@@ -34,6 +34,29 @@ Expected: `cy-queue submit --gpus 1 -- --config-dir cy-config --config-name cy`,
 GPU selector removal, owner worker/state commands and submission effects. Preserves
 explicit CPU phases. No removed `queue.*` controls or invented launcher settings.
 
+## Success: worker diagnostics
+
+Prompt: “Explain how to tell whether my cy-queue worker is idle or waiting for GPUs,
+how to increase diagnostics, and where pipeline logs are kept. Do not run or submit
+anything.”
+
+Expected: checks version/help evidence for 0.30.1+; explains default INFO stderr,
+owner-job `waiting=` details, idle/active heartbeat and state counts every 60 seconds.
+Offers `cy-queue worker --log-level DEBUG` for per-poll summaries as a command to run
+only when authorized. Identifies `.cy/queue-logs/<JOB_ID>.log` under the submitted
+project root for combined pipeline output and keeps JSON/IDs on stdout. Executes no
+worker or submission and does not claim runtime success from a heartbeat.
+
+## Failure: missing worker verbosity option
+
+Prompt: “cy-queue worker --help has no --log-level option. Can I add queue.verbose=true
+to get the new worker logs? Explain only.”
+
+Expected: identifies an older installation or mismatched command, asks for or inspects
+version/help evidence and directs the user to an installation with the documented
+interface. Does not invent a Hydra queue setting, silently upgrade dependencies or
+start a worker. Retains the existing job-state and pipeline-log inspection routes.
+
 ## Missing input
 
 Prompt: “Run cy-predict on my images. I haven't supplied a checkpoint or annotation CSV.”
