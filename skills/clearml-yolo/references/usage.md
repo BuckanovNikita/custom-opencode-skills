@@ -196,9 +196,32 @@ logical order, including `CUDA_VISIBLE_DEVICES` remapping. Remove native GPU sel
 config: allocation supplies all training devices and first inference device; explicit
 CPU phases stay CPU. Submission validates and freezes the entire sweep, returning stable
 IDs. Worker execution uses the owning user's environment and revalidates installation
-identity. Changed installations require resubmission. A full allocation remains held
-until pipeline and owned descendants exit. Unsupported Linux ownership/locking conditions
-fail explicitly; inspect status rather than deleting coordination files.
+identity. Changed installations require resubmission. Unsupported Linux ownership/locking
+conditions fail explicitly; inspect status rather than deleting coordination files.
+
+### Training GPU handoff (clearml-yolo 0.30.2)
+
+Check the installed version against its matching queue contract before relying on this
+behavior. Training holds all allocated GPUs. After native training returns and unused
+model memory is released, the job sends a bounded handoff request to its external
+guardian. The guardian durably retains the first GPU, releases extra locks and updates
+public allocation before acknowledging. Those extra GPUs may serve other eligible jobs
+during inference/comparison; memory admission still applies. The first GPU remains
+reserved through pipeline/descendant exit. Without a training-finished notification,
+the full allocation stays reserved. After durable shrink, later record-write failure
+or a lost acknowledgement does not restore released extras. A failed or unacknowledged
+handoff stops before inference; cleanup/recovery follows the remaining durable claim.
+It does not establish successful pipeline completion. The job itself manages no queue
+GPU locks.
+
+The external guardian also owns descendant cleanup outside ClearML task finalization.
+Unrelated same-UID `/proc` access denials do not poison live scoped supervision. Later
+supervisor cleanup uncertainty reports queue `recovery_required` and quarantines capacity
+without retroactively failing a completed successful ClearML task. Required computation
+and upload failures still fail. Inspect the task and queue state separately; artifacts
+alone prove neither successful required publication nor safe resource release. Owner
+recovery keeps conservative global ownership proof, so inaccessible or ambiguous process
+evidence can still block it. Do not bypass that proof or delete coordination files.
 
 Retired `queue.*`, `autogpu.*`, `auto_gpu.*` and old Hydra launcher controls fail with
 migration guidance. Each multirun adds one shared random `multirun-...` ClearML tag.

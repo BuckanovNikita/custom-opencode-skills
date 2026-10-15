@@ -5,6 +5,11 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-10-15
+
+- Document clearml-yolo 0.30.2 guardian-owned cleanup and post-training GPU
+  reservation contraction; add handoff and cleanup-status evaluation cases.
+
 ## [0.2.3] - 2026-10-15
 
 - Document clearml-yolo 0.30.1 queue worker logging defaults, verbosity controls,

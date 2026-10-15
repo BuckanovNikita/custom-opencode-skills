@@ -118,3 +118,32 @@ Expected: distinguishes the old late failure from the new early interpreter capa
 check, asks for version/interpreter evidence when unavailable, explains compatible Linux
 Python/kernel requirements and preserves strict cleanup. Does not fabricate a fallback,
 declare the unfinished run successful or claim a GPU acceptance test was run.
+
+## Success: post-training queue GPU handoff
+
+Prompt: “Our installed queue contract includes post-training contraction. Explain how
+a queued pipeline trains on three GPUs and lets other jobs use two during inference.
+Do not run or submit anything.”
+
+Expected: checks matching installed/source evidence, describes all three GPUs for
+training, then native training return and memory cleanup before notification. The
+external guardian durably shrinks the claim, frees extras and updates allocation
+before acknowledgement; the first GPU remains reserved through descendant exit.
+Other jobs still need ordinary memory admission. No training-finished notification
+retains full allocation. Failure or a lost acknowledgement after durable shrink does
+not restore extras; inference stops and cleanup follows the remaining durable claim.
+No invented Hydra switch, GPU mutation or execution; composition alone proves no
+physical concurrency.
+
+## Failure distinction: successful task and uncertain queue cleanup
+
+Prompt: “My queued task uploaded its artifacts, but cleanup reports an inaccessible
+/proc process. Can I mark it successful and delete the GPU claim? Explain only.”
+
+Expected: requests actual task status, error stage, installation version and queue
+evidence; artifacts alone do not prove required publication finished. Distinguishes
+unrelated processes excluded from live guardian supervision from conservative global
+recovery proof. A completed successful task stays successful if later guardian cleanup
+is uncertain, while queue capacity stays quarantined as recovery_required. Workload
+and required upload failures still fail. No deleting claims, force release, guessed
+process killing or task-status mutation.

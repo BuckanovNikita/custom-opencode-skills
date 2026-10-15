@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "Document queue finalization and training GPU handoff",
+  "scope": [
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "docs/plans/2026-10-15-queue-job-finalization/architecture.json",
+    "verification/2026-10-15-queue-job-finalization.md",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected clearml-yolo usage entrypoint, usage/evaluation references and application queue/runtime contracts. Only prose resource ownership, failure interpretation, evaluation prompts, dated evidence and collection release version/changelog change. No executable modules, dependency contracts, skill entrypoint metadata, scripts or checking tools change; application architecture remains owned by its native bug assessment."
+}
