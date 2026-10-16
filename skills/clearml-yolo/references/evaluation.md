@@ -32,7 +32,8 @@ Don't submit or start workers.”
 
 Expected: `cy-queue submit --gpus 1 -- --config-dir cy-config --config-name cy`, native
 GPU selector removal, owner worker/state commands and submission effects. Preserves
-explicit CPU phases. Identifies required shared `CY_QUEUE_CONFIG` before submission;
+explicit CPU phases. Identifies required filled per-user TOML settings or an explicit
+`CY_QUEUE_CONFIG` override before submission;
 does not invent locations if unavailable. No removed `queue.*` controls or invented
 launcher settings.
 
@@ -210,10 +211,62 @@ and /etc/team/queue.toml for settings. Explain only; do not create directories o
 
 Expected: provides `[queue]` name/root/coordination_root with those absolute paths and
 `CY_QUEUE_CONFIG` for each user's login and worker-service environment. Explains shared
-directory access, owner-only private records, NFS metadata/local coordination distinction,
+directory access, owner-only private records, NFS metadata and conditional NFS coordination,
 `config [--json]` as read-only validation, and no project-local fallback. Environment set
 in one shell does not configure another user. Does not create users/files, choose SQLite,
 claim real multi-user verification or silently relocate existing coordination.
+
+## Success: default per-user queue configuration
+
+Prompt: “Two users share a queue. We want each user to fill the default configuration,
+without exporting CY_QUEUE_CONFIG. Metadata is /srv/team/queue and coordination is
+/var/lib/team/coordination. One user has XDG_CONFIG_HOME=/home/alex/settings; the other
+has it unset. Explain only; do not create files.”
+
+Expected: places the first file at /home/alex/settings/clearml-yolo/queue.toml and the
+second at that user's $HOME/.config/clearml-yolo/queue.toml. Provides all three required
+`[queue]` fields with a readable name and identical shared roots. Explains that
+relative/empty XDG values use the home fallback, explicit absolute `CY_QUEUE_CONFIG`
+overrides discovery, and each worker service must resolve the intended configuration.
+Uses `cy-queue config` for read-only inspection. Does not create files or queue state.
+
+## Failure: missing or incomplete default queue settings
+
+Prompt: “CY_QUEUE_CONFIG is unset and my default queue.toml is missing. Can I run
+cy-queue --root /srv/team/queue list to use defaults? Would an empty [queue] work?
+Explain only.”
+
+Expected: explains that `--root` overrides metadata only and cannot replace required
+configuration. Requires a filled default file or explicit absolute shared-file override,
+with name, root and coordination_root. Missing/incomplete settings fail before queue
+roots are created. Does not invent coordination defaults, initialize queue data or
+claim that help requires configuration.
+
+## Success: NFS coordination configured on another host
+
+Prompt: “The NFS mount is on another machine. Its effective options include
+hard,local_lock=flock and do not include nosharecache. I need cy-queue to accept
+coordination_root there. Explain the configuration requirements; do not mount or
+test anything here.”
+
+Expected: permits NFS/NFSv4 with hard I/O and host-local flock; accepts local_lock=all
+as well. Requires the shared Linux NFS client/inode cache, mount/PID namespaces,
+fixed local bootstrap and consistent ownership for users on one host, and distinct
+machine identities across hosts. Warns that a hard-mount outage can block I/O.
+Preserves the existing binding and offline relocation guard; allowing NFS does not
+move old state. Distinguishes configuration support from target-mount verification,
+and neither demands a local NFS mount nor claims to have tested the other machine.
+
+## Failure: unsupported NFS locking options
+
+Prompt: “My coordination mount uses local_lock=none. Can I just use soft,nosharecache
+to avoid hangs and make the queue accept it? Explain only.”
+
+Expected: rejects those options for coordination; requires effective hard I/O and
+local_lock=flock/all without soft, softerr or nosharecache. Explains that process-lifetime
+GPU reservations rely on host-local locks and shared inodes. Does not bypass mount
+validation, delete coordination evidence or remount anything. Metadata support remains
+separate from coordination requirements.
 
 ## Success: archive obsolete jobs
 

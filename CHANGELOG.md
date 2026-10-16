@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.8] - 2026-10-16
+
+- Document clearml-yolo per-user queue settings discovery and required filled fields,
+  retaining explicit shared-file overrides for users and worker services.
+- Explain eligible NFS coordination, effective local-lock settings, outage limits
+  and preserved offline relocation; add setup and failure scenarios.
+
 ## [0.2.7] - 2026-10-16
 
 - Align clearml-yolo usage with required shared TOML queue configuration, readable

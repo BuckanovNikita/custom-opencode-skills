@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Align clearml-yolo usage with required per-user queue settings and supported NFS coordination",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-16-queue-user-config-nfs.md",
+    "verification/2026-10-16-queue-user-config-nfs-architecture.json",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the canonical clearml-yolo package, collection maintenance/release policy and current queue settings and coordination implementation. This companion changes portable usage instructions, evaluation prompts and dated evidence only. It adds no executable module, dependency, composition target or checking tool. Runtime configuration discovery and NFS mount validation remain owned and accepted in the application repository. Source reconciliation, documentation validation and fresh independent evaluation must finish before publication; actual NFS execution is unavailable and must not be inferred from modeled mount checks. VERSION and CHANGELOG only label the checked documentation collection; they add no runtime effects."
+}

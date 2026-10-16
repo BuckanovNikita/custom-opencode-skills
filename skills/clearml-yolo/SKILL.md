@@ -49,7 +49,9 @@ use a fresh run directory. External inputs remain valid.
 Direct commands honor native devices; they do not wait for available GPUs. For
 authorized queued work use the separate `cy-queue` interface and inspect job state.
 Read the queue section in [usage](references/usage.md): current queue commands require
-shared `CY_QUEUE_CONFIG` settings. Use stable `job-N` references and readable task names;
+filled per-user TOML settings, or an explicit `CY_QUEUE_CONFIG` shared-file override.
+NFS coordination needs the documented mount and same-host locking conditions.
+Use stable `job-N` references and readable task names;
 archive/restore changes visibility without deleting results or releasing resources.
 Never translate retired `queue.*` or `autogpu.*` controls into guessed settings.
 For GPU holds or manual freeing, read the queue section in

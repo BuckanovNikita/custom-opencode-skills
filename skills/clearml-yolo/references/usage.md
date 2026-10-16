@@ -207,8 +207,12 @@ Direct `cy -m` is sequential. Inspect installed `cy-queue --help` before using t
 shared-configuration and archive interface; older installations require an upgrade
 under the user's existing authorization, not invented compatibility flags.
 
-Current queue commands require `CY_QUEUE_CONFIG`, an absolute path to one shared TOML
-file. Configure it for every participating user's shell and each worker service:
+In clearml-yolo 0.34.0+, every queue command except help requires a filled TOML
+configuration. By default, each
+user creates `$XDG_CONFIG_HOME/clearml-yolo/queue.toml` when `XDG_CONFIG_HOME` is
+absolute and nonempty; otherwise use `$HOME/.config/clearml-yolo/queue.toml`.
+Relative XDG values are ignored. If `HOME` is unavailable, the user's account home
+supplies the fallback. Fill all three fields with the team's agreed locations:
 
 ```toml
 [queue]
@@ -217,22 +221,34 @@ root = "/srv/clearml-yolo/queue"
 coordination_root = "/var/lib/clearml-yolo/coordination"
 ```
 
+These paths are portable examples, not discovered host settings. All paths must be
+absolute. Metadata may use NFS with consistent UIDs. Coordination accepts supported
+local Linux filesystems and Linux NFS/NFSv4 mounts whose effective superblock options
+include `hard` and `local_lock=flock` or `local_lock=all`, with none of `soft`,
+`softerr` or `nosharecache`. Default remote NFS locking is rejected. The queue needs
+host-local process-lifetime locks; all queue users on one host must share the Linux
+NFS client/inode cache, mount namespace, PID namespace and fixed local bootstrap.
+Different hosts need distinct machine identities. Hard NFS I/O can block during a
+server outage even though locks are local. Validate the actual target mount; a local
+configuration check or modeled mount test does not establish remote NFS behavior.
+
+Administrators provision shared-directory access; newly created roots use sticky
+permissions even with a private umask, while existing roots/parents remain unchanged.
+Snapshots stay owner-only, and private logs/progress stay in the submitting project.
+An explicit absolute `CY_QUEUE_CONFIG` selects another file, including one shared by
+all users. Set the override in each participating login and worker-service environment;
+exporting it in one shell does not configure another user or service:
+
 ```bash
 export CY_QUEUE_CONFIG=/etc/clearml-yolo/queue.toml
 cy-queue config
 cy-queue config --json
 ```
 
-These paths are portable examples, not discovered host settings. All paths must be
-absolute. Metadata may use NFS with consistent UIDs; coordination requires a supported
-local Linux filesystem and shared native locks/PID namespace. Administrators provision
-shared-directory access; newly created roots use sticky permissions even with a private
-umask, while existing roots/parents remain unchanged. Snapshots stay owner-only, and
-private logs/progress stay in the submitting project. Exporting a variable in one shell
-does not set another user's or service's environment.
-
 `config` validates and reports settings without creating queue state or binding a host.
-There is no project-local fallback. `cy-queue --root /absolute/path ...` overrides only
+Missing or incomplete settings fail without creating metadata or coordination roots.
+There is no project-local fallback, generated configuration or implicit queue location.
+`cy-queue --root /absolute/path ...` overrides only
 metadata; legacy `CY_QUEUE_ROOT` must agree or the command fails. Host-wide binding
 rejects conflicting coordination locations across users and queue roots. Initially
 configure an existing stand's current location. Relocation requires all workers and
