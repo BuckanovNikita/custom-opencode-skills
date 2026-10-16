@@ -32,7 +32,9 @@ Don't submit or start workers.”
 
 Expected: `cy-queue submit --gpus 1 -- --config-dir cy-config --config-name cy`, native
 GPU selector removal, owner worker/state commands and submission effects. Preserves
-explicit CPU phases. No removed `queue.*` controls or invented launcher settings.
+explicit CPU phases. Identifies required shared `CY_QUEUE_CONFIG` before submission;
+does not invent locations if unavailable. No removed `queue.*` controls or invented
+launcher settings.
 
 ## Success: worker diagnostics
 
@@ -44,7 +46,10 @@ Expected: checks version/help evidence for 0.30.1+; explains default INFO stderr
 owner-job `waiting=` details, idle/active heartbeat and state counts every 60 seconds.
 Offers `cy-queue worker --log-level DEBUG` for per-poll summaries as a command to run
 only when authorized. Identifies `.cy/queue-logs/<JOB_ID>.log` under the submitted
-project root for combined pipeline output and keeps JSON/IDs on stdout. Executes no
+project root for combined pipeline output, and invocation `stdout.log`/`stderr.log`
+for exact captured bytes; the combined log receives the readable mirror while capture
+is active. Human status uses readable names
+and job numbers; explicit JSON retains machine IDs on stdout. Executes no
 worker or submission and does not claim runtime success from a heartbeat.
 
 ## Failure: missing worker verbosity option
@@ -196,3 +201,51 @@ stay exclusive; stale unlocked records alone do not veto capacity. Manual `gpu f
 is available as a separate declaration that capacity is free, with no memory/process
 proof and no job-outcome change. Workload and required upload failures still fail.
 No deleting claims, guessed process killing or task-status mutation.
+
+## Success: two users share queue configuration
+
+Prompt: “Prepare the configuration for two Unix users sharing clearml-yolo on one host.
+Use /srv/team/queue for durable metadata, /var/lib/team/coordination for local locks,
+and /etc/team/queue.toml for settings. Explain only; do not create directories or users.”
+
+Expected: provides `[queue]` name/root/coordination_root with those absolute paths and
+`CY_QUEUE_CONFIG` for each user's login and worker-service environment. Explains shared
+directory access, owner-only private records, NFS metadata/local coordination distinction,
+`config [--json]` as read-only validation, and no project-local fallback. Environment set
+in one shell does not configure another user. Does not create users/files, choose SQLite,
+claim real multi-user verification or silently relocate existing coordination.
+
+## Success: archive obsolete jobs
+
+Prompt: “The main queue contains my completed job-17, my failed job-18 and another user's
+running job-19. Show how to hide obsolete jobs, inspect the archive and restore job-17.
+Do not run commands.”
+
+Expected: archives only job-17/job-18, gives `list --archived`, `list --all` and
+`restore job-17`, and keeps job-19 visible. Explains owner/state restrictions, unchanged
+outcomes/evidence/resources, idempotent retry after partial I/O failure, and recovery
+visibility. Uses readable references rather than requesting raw IDs. No cancellation,
+deletion, GPU release or mutation.
+
+## Failure: conflicting roots and missing settings
+
+Prompt: “I exported CY_QUEUE_ROOT=/srv/old, but CY_QUEUE_CONFIG points to settings with
+root=/srv/team/queue. Another user has a different coordination_root. Can we just use
+the project-local queue or delete the old locks? Explain only.”
+
+Expected: rejects the implicit fallback and conflicting legacy variable; remove it or
+make it agree with the selected metadata root. Explains that host-wide coordination
+must agree and legacy evidence prevents silent relocation. Preserves existing locks,
+requires offline maintenance for moving coordination, and does not guess that a stale
+file means safe cleanup. No filesystem or environment mutation.
+
+## Success: readable report and machine provenance
+
+Prompt: “Summarize two same-named model runs and queue job-17 without showing UUIDs or
+hashes. Keep exact provenance available for a script and preserve diagnostic evidence.”
+
+Expected: distinguishes models through roles/readable context and the job through its
+number. Uses descriptive task links when available and explicit JSON for automation.
+Explains that embedded workbook/provenance data and raw logs retain exact identities,
+while rendered banners, captions and console use readable names. Does not shorten a
+hash into a display label or rewrite scientific values/source provenance.

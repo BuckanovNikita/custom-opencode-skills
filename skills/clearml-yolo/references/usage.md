@@ -203,7 +203,44 @@ generation or compose success.
 ## Direct execution and shared queue
 
 Direct execution honors selected devices without admission, reservation or waiting.
-Direct `cy -m` is sequential. For authorized scheduled runs:
+Direct `cy -m` is sequential. Inspect installed `cy-queue --help` before using the
+shared-configuration and archive interface; older installations require an upgrade
+under the user's existing authorization, not invented compatibility flags.
+
+Current queue commands require `CY_QUEUE_CONFIG`, an absolute path to one shared TOML
+file. Configure it for every participating user's shell and each worker service:
+
+```toml
+[queue]
+name = "Team training"
+root = "/srv/clearml-yolo/queue"
+coordination_root = "/var/lib/clearml-yolo/coordination"
+```
+
+```bash
+export CY_QUEUE_CONFIG=/etc/clearml-yolo/queue.toml
+cy-queue config
+cy-queue config --json
+```
+
+These paths are portable examples, not discovered host settings. All paths must be
+absolute. Metadata may use NFS with consistent UIDs; coordination requires a supported
+local Linux filesystem and shared native locks/PID namespace. Administrators provision
+shared-directory access; newly created roots use sticky permissions even with a private
+umask, while existing roots/parents remain unchanged. Snapshots stay owner-only, and
+private logs/progress stay in the submitting project. Exporting a variable in one shell
+does not set another user's or service's environment.
+
+`config` validates and reports settings without creating queue state or binding a host.
+There is no project-local fallback. `cy-queue --root /absolute/path ...` overrides only
+metadata; legacy `CY_QUEUE_ROOT` must agree or the command fails. Host-wide binding
+rejects conflicting coordination locations across users and queue roots. Initially
+configure an existing stand's current location. Relocation requires all workers and
+guardians stopped, uncertain jobs recovered, and offline administrator maintenance
+preserving complete ownership/evidence and the protected binding. No automatic migration
+or SQLite conversion occurs; never delete coordination records to bypass a conflict.
+
+For authorized scheduled runs after configuration:
 
 ```bash
 cy-queue submit --gpus 1 -- --config-dir cy-config --config-name cy
@@ -215,9 +252,39 @@ Submit counts or exact `--devices 0,2`, never both. Submission integers use CUDA
 logical order, including `CUDA_VISIBLE_DEVICES` remapping. Remove native GPU selectors in queued
 config: allocation supplies all training devices and first inference device; explicit
 CPU phases stay CPU. Submission validates and freezes the entire sweep, returning stable
-IDs. Worker execution uses the owning user's environment and revalidates installation
+job numbers and task names. `submit --label "Training experiment"` overrides the
+configured task name. Commands accept `job-17` and legacy raw job identifiers; numbers
+remain stable across reorder, archive and restart. Add `--json` for automation: exact
+machine identifiers remain available. Worker execution uses the owning user's environment and revalidates installation
 identity. Changed installations require resubmission. Unsupported Linux ownership/locking
 conditions fail explicitly; inspect status rather than deleting coordination files.
+
+### Archive and readable queue views
+
+```bash
+cy-queue list
+cy-queue archive job-17 job-18
+cy-queue list --archived
+cy-queue list --all --json
+cy-queue restore job-17
+```
+
+Only owners archive or restore their jobs. Archive accepts completed, failed and
+cancelled outcomes; pending, active and recovery-required jobs remain visible. Default
+list/TUI views hide archived jobs. Owner-authored sidecars preserve execution records,
+snapshots, logs and order history. Restoring does not rerun a job or change its outcome.
+Repeated requests are idempotent. A storage error may leave earlier targets archived;
+the error is surfaced and retrying the command is safe. A job later requiring recovery
+reappears in the main view regardless of its stored archive flag. No archive operation
+releases GPUs or provides process-cleanup proof.
+
+The optional TUI uses readable rows and a pending-job dropdown for `b`/`a` ordering.
+`x` archives, `s` restores, `v` cycles Main/Archived/All and `o` opens the selected task.
+Closing the TUI does not stop workers. Human output uses names, job numbers, physical
+GPU indexes and word aliases; explicit JSON, provenance and URL targets retain exact
+identifiers. Visible report banners/captions omit opaque identifiers and checkpoint
+hashes, which remain in embedded metadata. Raw capture bytes remain available locally;
+terminal and published console streams use readable formatting.
 
 Automatic availability uses only used VRAM strictly below 2 GiB (2048 MiB); exactly
 2 GiB is busy. This fixed limit is rechecked immediately before each workload launch.
@@ -251,7 +318,8 @@ evidence can still block recovery. Manual GPU freeing is a separate capacity ope
 that needs no process-cleanup proof. Do not delete coordination files.
 
 Retired `queue.*`, `autogpu.*`, `auto_gpu.*` and old Hydra launcher controls fail with
-migration guidance. Each multirun adds one shared random `multirun-...` ClearML tag.
+migration guidance. Each new multirun adds one shared readable ClearML tag containing
+UTC date/time and a random word phrase; queued snapshots retain that one group tag.
 
 ### Worker diagnostics (clearml-yolo 0.30.1+)
 
@@ -270,8 +338,8 @@ cy-queue worker --log-level DEBUG
 
 DEBUG adds a summary on every poll; INFO is the default, while WARNING or ERROR
 reduces output. This option belongs after `worker`. These commands start a worker;
-an explanation-only request does not authorize running them. Submission IDs and
-`list --json` remain on stdout, separate from worker diagnostics.
+an explanation-only request does not authorize running them. Readable submission results
+and explicitly selected `--json` remain on stdout, separate from worker diagnostics.
 
 The queued pipeline's combined stdout/stderr is retained in the submitted project's
 `.cy/queue-logs/<JOB_ID>.log`, not streamed into worker status messages. Read that
@@ -284,8 +352,9 @@ These commands describe the clearml-yolo 0.31.0 contract. Confirm installed help
 using them; the 0.29.0 controls had different release semantics. `cy-queue gpu` integer
 selectors follow physical `nvidia-smi`/NVML order regardless of `CUDA_VISIBLE_DEVICES`.
 Do not translate a physical operator index through the submission's CUDA-visible map.
-Queue text, JSON, TUI, status logs and errors show physical indexes or short unambiguous
-absent-device labels. Never show full GPU UUIDs or claim tokens in user-facing output.
+Queue text, JSON, TUI, status logs and errors show physical indexes or word aliases
+for absent devices. Older hexadecimal aliases remain accepted inputs. Never show full
+GPU UUIDs or claim tokens in user-facing output.
 
 ```bash
 cy-queue gpu list --json

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Align portable clearml-yolo usage with readable shared queues and archives",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-16-readable-shared-queue.md",
+    "verification/2026-10-16-readable-shared-queue-architecture.json",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the canonical package, maintenance/release policy and implemented clearml-yolo settings, host binding, archive, presentation and reporting boundaries. This companion changes portable guidance, evaluation prompts, dated evidence and collection release metadata only. It changes no executable module, dependency, composition target or checking tool. Runtime architecture acceptance belongs to clearml-yolo specs/034-readable-shared-queue/architecture.json. Initial prose edits were already present when this no-impact record was persisted; plan validation preceded companion delivery and release metadata preparation. Fresh independent review accepted the corrected guidance; dated evidence records the actual scenarios and checks. Publication follows application delivery."
+}

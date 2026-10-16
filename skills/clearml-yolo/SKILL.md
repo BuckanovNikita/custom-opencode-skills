@@ -48,6 +48,9 @@ use a fresh run directory. External inputs remain valid.
 
 Direct commands honor native devices; they do not wait for available GPUs. For
 authorized queued work use the separate `cy-queue` interface and inspect job state.
+Read the queue section in [usage](references/usage.md): current queue commands require
+shared `CY_QUEUE_CONFIG` settings. Use stable `job-N` references and readable task names;
+archive/restore changes visibility without deleting results or releasing resources.
 Never translate retired `queue.*` or `autogpu.*` controls into guessed settings.
 For GPU holds or manual freeing, read the queue section in
 [usage](references/usage.md) and check installed `cy-queue gpu --help`. Operator
@@ -66,6 +69,9 @@ thresholds on the same current images. Do not claim native/GPU/publication succe
 from composition or mocked checks. Preserve diagnostics on failure; distinguish
 missing inputs, configuration errors, workload failures and publication failures.
 
-Return the selected command, meaningful configuration choices, output paths/task ID,
+Return the selected command, meaningful configuration choices, readable output/task links,
 checks actually performed and remaining limitations. For skill evaluation, read
 [evaluation cases](references/evaluation.md); expected evidence is not a test result.
+Use task/model names, queue job numbers and physical GPU indexes or word aliases in
+user-facing explanations. Keep exact IDs and hashes in explicit machine output,
+provenance, retained raw diagnostics and link targets.

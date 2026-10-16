@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.7] - 2026-10-16
+
+- Align clearml-yolo usage with required shared TOML queue configuration, readable
+  job references, reversible archives and updated terminal controls.
+- Preserve exact machine provenance while documenting readable messages, reports
+  and console output; add shared-user, archive and configuration-failure scenarios.
+
 ## [0.2.6] - 2026-10-16
 
 - Document clearml-yolo's CSV-relative media resolution, literal detection labels,
