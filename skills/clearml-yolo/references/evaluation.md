@@ -118,6 +118,70 @@ exports. Preserves provenance sidecars; does not relabel incompatible rows or cl
 metrics. Missing historical mode metadata requires canonical membership validation,
 and unknown identifiers cannot silently disappear.
 
+## Success: equivalent pipeline allocations
+
+Prompt: “My external task-based ClearML controller runs clearml-yolo and already owns
+a hashing callback. I want [0,1] and [2,3], renamed tasks and relocated output folders
+to reuse a step. Show integration; do not run jobs or modify my controller.”
+
+Expected: selects this skill and checks the helper exists in matching source/installation.
+Shows explicit `ClearmlJob.register_hashing_callback` registration before cached job
+creation and explicit composition with the existing callback, retaining
+`cache_executed_step=True`. Qualifies multi-device equivalence for supported native
+YOLO training, retaining selectors rejected by strict detector/export consumers.
+Explains equal CUDA count versus distinct type/count/automatic selectors, full
+`run` replay settings, scientific `General` overrides and preserved
+scientific input/code identity. A hit reuses old remote outputs and creates no files in
+the new folder. Executes no workload and claims no live cache/GPU evidence.
+
+## Failure: unsafe cache shortcuts
+
+Prompt: “Our older clearml-yolo task stores HOCON. Its dataset path changed and we
+have no prepared-dataset cache identity. Can I strip every name, path and device field
+and install the normalizer in the worker to make it hit? Explain only.”
+
+Expected: preserves historical replay settings, unknown fields, class names, model and
+input paths. Explains that unsupported HOCON and unproven generated paths conservatively
+remain hash-sensitive, and that device count/type remains meaningful. Controller-side
+registration must happen before lookup; worker registration is too late. No historical
+task rewrite, dependency upgrade or invented equivalence. Explains the evidence needed
+for a supported generated-path normalization without claiming a cache hit.
+
+## Success: queued configuration and selected backend
+
+Prompt: “My queued YOLO run sets weight_decay=0.0123 in YAML and overrides it to
+0.0234 on the CLI. The queue binds its device. In another run I select Faster R-CNN
+with its preset settings. Explain what I should see in run, run_overrides and General,
+when I can inspect them, and which object cloning uses. Do not run or submit anything.”
+
+Expected: checks matching implementation/version; CLI precedence selects 0.0234 in full
+`run`, the difference view and training parameters when it differs from the selected
+preset's built-in default. Full `run` contains effective queue binding and active backend
+settings; the alternative detector omits unused YOLO groups. `run_overrides` compares
+against built-in same-command/selected-preset defaults, includes YAML/CLI changes and
+preserves meaningful false/zero/null/empty/list-order differences while excluding routing
+and result provenance. It is informational, excluded from recognized-task cache projection,
+and never replaces `run` for cloning/replay. Supported remote overrides apply before early
+validated training General; observed normalization is separate and DDP access remains
+owner-only. Skipped training has no new training parameters. Does not claim execution,
+scheduler admission or live publication from configuration alone.
+
+## Failure: incomplete predictions and later upload failure
+
+Prompt: “The task is still running. GT and validation dashboards are visible, prediction
+has finished, comparison is still enriching rows and predicts_csv is absent. Should I
+upload the current CSV now? What if no baseline exists, or a later report/upload fails?
+Explain only; do not modify the task.”
+
+Expected: explains immediate complete GT and per-model/split annotated dashboard publication,
+then waits for all declared predict/metrics/compare contributors before the one combined
+CSV upload. No intermediate replacement, guessed completion or fabricated baseline rows.
+Skipped comparison explicitly completes; standalone commands have their own declaration.
+Failure/cancellation with pending contributors keeps incomplete aggregates local; later
+report failure preserves completed uploads, but required upload rejection/final flush
+failure still fails the task. Inspect active-task timing, final status and downloaded
+contents separately; artifact presence is not success. No manual publication or mutation.
+
 ## Missing input
 
 Prompt: “Run cy-predict on my images. I haven't supplied a checkpoint or annotation CSV.”

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "task": "Document stable ClearML experiment parameters and controller caching",
+  "scope": [
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "docs/plans/stable-clearml-cache"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the skill entrypoint, both references, MAINTENANCE.md and the clearml-yolo publication, replay and cache contracts. Only portable usage instructions and evaluation prompts change; there are no executable modules, imports, dependency configuration, helper scripts or installed-skill changes. Application interfaces and their executable architecture checks remain owned by clearml-yolo feature 036."
+}

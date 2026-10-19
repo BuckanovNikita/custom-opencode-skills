@@ -5,6 +5,14 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.10] - 2026-10-19
+
+- Explain stable experiment parameters and opt-in controller cache identity while
+  retaining full executable replay settings.
+- Document active `run`, selected-preset `run_overrides`, startup training parameters
+  and publication of complete artifacts as soon as they are ready.
+- Add configuration, cache-reuse and result-completion evaluation scenarios.
+
 ## [0.2.9] - 2026-10-19
 
 - Explain per-job queue monitoring warnings, retained summaries and archive-aware
