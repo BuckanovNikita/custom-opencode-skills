@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "queue-view-refresh-isolation-portable-guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/queue-view-refresh-isolation.md",
+    "VERSION",
+    "CHANGELOG.md",
+    "docs/plans/queue-view-refresh-isolation"
+  ],
+  "impact": "none",
+  "rationale": "Inspected usage/evaluation prose, unchanged routing metadata and release version notes. This collection changes no executable helper, runtime module, import contract, dependency or composition. Application runtime architecture is accepted in its own bug record."
+}

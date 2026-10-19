@@ -294,6 +294,25 @@ the error is surfaced and retrying the command is safe. A job later requiring re
 reappears in the main view regardless of its stored archive flag. No archive operation
 releases GPUs or provides process-cleanup proof.
 
+Current `list`/TUI monitoring keeps a readable public summary when an owned job's
+private snapshot or status is unreadable or invalid, including missing, malformed or
+hash-mismatched snapshots. The affected row says
+`Status unavailable; showing last recorded state`; healthy jobs continue refreshing.
+Text and TUI output show a warning count. `list --json` adds `warning_count` and
+`refresh_issues` entries containing `job_id`, readable `reference` and safe `message`.
+Warnings apply only to jobs visible in Main/Archived/All, disappear on successful
+refresh and do not replace durable outcomes. Messages exclude private configuration
+and raw validation details. Check matching installed source/output before relying
+on these fields; older installations can still fail the whole view.
+
+Viewing old package identities and legacy fields does not import Hydra or evaluate
+saved pipeline overrides. Monitoring neither recovers jobs nor changes outcomes or
+releases reservations. Admission, execution and recovery retain strict validation;
+viewability is no evidence that an old snapshot can run. Do not migrate or rewrite
+old tasks to make them visible. Invalid shared metadata, queue settings and
+coordination failures remain queue-wide errors; a later failed TUI refresh retains
+previously displayed rows while reporting the error.
+
 The optional TUI uses readable rows and a pending-job dropdown for `b`/`a` ordering.
 `x` archives, `s` restores, `v` cycles Main/Archived/All and `o` opens the selected task.
 Closing the TUI does not stop workers. Human output uses names, job numbers, physical

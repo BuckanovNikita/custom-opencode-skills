@@ -5,6 +5,12 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.9] - 2026-10-19
+
+- Explain per-job queue monitoring warnings, retained summaries and archive-aware
+  warning counts while preserving strict execution and reservation behavior.
+- Add partial-monitoring and shared-refresh-failure evaluation scenarios.
+
 ## [0.2.8] - 2026-10-16
 
 - Document clearml-yolo per-user queue settings discovery and required filled fields,

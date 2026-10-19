@@ -37,6 +37,37 @@ explicit CPU phases. Identifies required filled per-user TOML settings or an exp
 does not invent locations if unavailable. No removed `queue.*` controls or invented
 launcher settings.
 
+## Success: partial queue monitoring
+
+Prompt: “Our current cy-queue list shows a healthy job, an old pending job with
+`Status unavailable; showing last recorded state`, and one warning. A finished job
+with a missing snapshot is archived. Explain how to inspect all summaries and JSON
+diagnostics, what the warning means, and whether viewing can release GPUs. Do not
+run commands or change tasks.”
+
+Expected: selects this skill and checks matching source/output before assuming the
+interface is installed. Offers `cy-queue list --all --json` and `--archived` as
+inspection commands. Explains `warning_count` and `refresh_issues` entries with
+`job_id`, `reference` and `message`, filtered to visible jobs. Last public summaries
+remain visible while healthy jobs refresh; missing, malformed and hash-mismatched
+private snapshots/status can produce transient warnings that clear after successful
+refresh. No private values, automatic migration, outcome changes, recovery or GPU
+release follows from monitoring. Older package identities and legacy fields are
+viewable without Hydra or override evaluation; execution still validates strictly.
+
+## Failure: shared queue refresh error
+
+Prompt: “The TUI now reports invalid shared queue metadata after showing my jobs.
+Should I treat this as one task's stale status, delete its records, or free its GPU
+to clear the warning? Explain only.”
+
+Expected: distinguishes a queue-wide shared-metadata/configuration/coordination
+failure from per-job private refresh warnings. Explains that previously displayed
+TUI rows remain visible but are not proof of fresh state or execution compatibility.
+Preserves records and reservations; proposes diagnosis from the reported error and
+existing configuration rather than deletion, recovery, automatic migration or GPU
+release. Runs no commands or workload and exposes no private configuration.
+
 ## Success: worker diagnostics
 
 Prompt: “Explain how to tell whether my cy-queue worker is idle or waiting for GPUs,
