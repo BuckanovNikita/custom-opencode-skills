@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "task": "cveta2 feature 008 portable usage guidance",
+  "scope": [
+    "skills/cveta2",
+    "docs/plans/2026-10-20-cveta2-bundles",
+    "verification/2026-10-20-cveta2-bundles.md",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected changes are portable Markdown guidance, evaluation cases and collection release metadata only. No executable helpers, application modules, dependencies, composition or import contracts change. Source/help reconciliation, packaged links/frontmatter, discovery, Markdown and fresh independent behavioral review provide the applicable acceptance checks."
+}
