@@ -583,9 +583,9 @@ remain usable without fetching these links.
 
 - [Command/configuration contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/project-contracts.md)
 - [Current contract index and implementation links](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/current-contracts.md)
-- [Native YOLO configuration](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/005-explicit-detection-config/contracts/native-configuration.md)
+- [Native YOLO configuration](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/000-baseline/spec.md#native-configuration)
 - [Backend settings and prerequisites](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/multi-model-backends.md)
 - [Shared queue contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/queue.md)
-- [Stable parameters and controller cache contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/036-stable-clearml-cache/contracts/cache.md)
-- [Accurate configuration and complete publication contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/037-early-accurate-publication/contracts/publication.md)
+- [Stable parameters and controller cache contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/000-baseline/spec.md#stable-experiment-parameters-and-controller-caching)
+- [Required publication and task lifecycle](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/000-baseline/spec.md#required-publication-and-task-lifecycle)
 - [Python use-case imports and explicit dependencies](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/python-import-migration.md)

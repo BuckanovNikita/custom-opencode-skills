@@ -5,6 +5,11 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.11] - 2026-10-20
+
+- Point clearml-yolo native configuration, cache and publication guidance to its consolidated
+  stage-zero specification; preserve existing commands and examples.
+
 ## [0.2.10] - 2026-10-19
 
 - Explain stable experiment parameters and opt-in controller cache identity while
