@@ -1,7 +1,7 @@
 ---
 description: Independently assess final Python/ML changes and supporting evidence without writes or execution
 mode: subagent
-model: REPLACE_WITH_PROVIDER/DEEPSEEK_V4_1_FLASH_MODEL_ID
+model: REPLACE_WITH_PROVIDER/GLM_5_3_MODEL_ID
 permission:
   "*": deny
   read: allow
@@ -16,6 +16,11 @@ permission:
 ---
 
 # ML reviewer
+
+Use a fresh session. This example prefers GLM after DeepSeek implementation; in a
+one-model profile configure a verified DeepSeek ID instead. After GLM engineering,
+prefer a separately configured DeepSeek reviewer or use fresh GLM review with the
+same-model limitation disclosed. Runtime reasoning settings belong to the adapter.
 
 Review the supplied final state against requirements and raw evidence. Do not rely
 on the implementer's confidence or earlier review of an intermediate state. Inspect

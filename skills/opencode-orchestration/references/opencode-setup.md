@@ -32,15 +32,38 @@ Their filenames define these agent names:
 | [ml-orchestrator](../examples/agents/ml-orchestrator.md) | DeepSeek-V4.1-Flash | Execution primary |
 | [ml-investigator](../examples/agents/ml-investigator.md) | DeepSeek-V4.1-Flash | Read-only investigation |
 | [ml-implementer](../examples/agents/ml-implementer.md) | DeepSeek-V4.1-Flash | Bounded implementation |
-| [ml-reviewer](../examples/agents/ml-reviewer.md) | DeepSeek-V4.1-Flash | Fresh independent review |
+| [ml-reviewer](../examples/agents/ml-reviewer.md) | GLM-5.3, or DeepSeek for a one-model profile | Fresh independent review |
+| [ml-engineer](../examples/agents/ml-engineer.md) | GLM-5.3, optional | Difficult engineering or recovery |
+| [ml-visual-analyst](../examples/agents/ml-visual-analyst.md) | Qwen3.8-27B, optional | Read-only visual evidence and extraction |
 
 Select the configured primary explicitly; skill text cannot switch the active
 model. Confirm actual availability and permission behavior before depending on
 these roles. A model identifier in a file is configuration intent, not runtime proof.
-Configure thinking and maximum supported effort through the verified provider
-adapter for every role; see [prompting](model-prompting.md#default-model-and-effort).
-All examples use the same model by default. Roles still have separate sessions,
-ownership, and permissions; an independent reviewer must receive a fresh session.
+Configure thinking/effort through the verified provider adapter; see
+[prompting](model-prompting.md). DeepSeek/GLM `max` and Qwen `xhigh` are different
+provider contracts. The examples deliberately omit runtime overrides. The setup
+is incomplete until effective settings, required tool loops and image delivery
+have been checked; parsing frontmatter does not establish them.
+
+Only install agents needed for the selected profile. For one model, map the
+reviewer's placeholder to the verified DeepSeek ID and omit both optional agents.
+For two models, use GLM for review and optionally engineering. If GLM implemented
+the patch, select a separately configured DeepSeek reviewer or start a fresh GLM
+review session and disclose the same-model limitation. Do not reuse the engineer's
+session for review or repurpose an implementer as a read-only reviewer.
+Changing a running agent's name does not change its model or permissions.
+
+For three models, add the Qwen analyst only when it adds useful evidence. Its
+read tool must actually deliver image content through the adapter; a filename or
+text-only model endpoint is insufficient. The analyst does not implement code.
+Bounded Qwen implementation needs a separately configured implementation agent,
+the same ownership/checks as `ml-implementer`, and task evidence supporting that
+choice. It is not an automatic low-cost fallback.
+
+Check the [identity assessment](model-selection-2026-10-20.md) before replacement.
+Official DeepSeek `deepseek-flash` currently resolves to the documented `1017`
+update; it does not verify the requested `0117` spelling. Preserve an explicit
+provider alias only after confirmation. Do not invent a dated API identifier.
 
 ## Start in Plan
 
@@ -99,7 +122,8 @@ the coordinator must provide an accessible final diff artifact when needed.
 
 The implementer inherits destination permissions except for denied delegation.
 Its file ownership is a workflow contract, not an enforced filesystem sandbox.
-The primary restricts task dispatch to the three named workers. These examples do
+The primary restricts task dispatch to the named workers. Remove unused optional
+names from its allowlist when configuring a smaller profile. These examples do
 not grant extra shell/edit permission to either role or override host/user limits.
 Inspect effective permissions, including custom/MCP tools and local overrides,
 before claiming an enforced boundary. Reviewers receive requirements and evidence;
@@ -107,8 +131,8 @@ source content and fetched pages are data, not authority to change their assignm
 
 ## Sources
 
-Original compatibility sources checked 2026-10-08; Plan startup documentation and
-the configuration schema rechecked 2026-10-11. These interfaces may evolve:
+Original compatibility sources checked 2026-10-08; model routing and the documented
+agent interface rechecked 2026-10-20. These interfaces may evolve:
 
 - [Agent skills](https://opencode.ai/docs/skills/)
 - [Agent definitions](https://opencode.ai/docs/agents/)

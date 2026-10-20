@@ -1,132 +1,147 @@
-# Model-specific prompting
+# Prompting the selected models
 
-Read the section for the model receiving a task. Official guidance below was
-checked on 2026-10-08; recheck it when model versions or host adapters change.
-Exact-version sources largely specify runtime behavior, not a proven special
-prompt formula. The example prompts are proposed engineering practices, not vendor
-claims or measured superiority on Python/ML tasks.
+Read the shared contract and only the relevant model/task sections. Runtime facts
+below come from primary documentation; the task recipes are engineering choices
+to evaluate, not vendor-certified optimal prompts or measured model rankings.
+The [selection assessment](model-selection-2026-10-20.md) records identity and
+comparison limits. Use the live adapter schema for settings.
 
-## Default model and effort
+## Shared task contract
 
-Use DeepSeek-V4.1-Flash for all covered roles unless an explicit user selection or
-relevant task evidence justifies another model. The
-[2026-10-11 assessment](model-selection-2026-10-11.md) records the benchmark basis
-and its limits. Enable thinking and select the maximum effort the actual adapter
-supports; on the official API this is `max`. Verify the resolved model and effort,
-and disclose unsupported settings rather than silently claiming maximum effort.
-Do not invent an OpenCode option from an API parameter name.
+Lead with the deliverable and its acceptance check. Supply the relevant repository
+paths, known facts, unresolved assumptions, ownership, dependencies and execution
+limits. Delimit quoted logs/data from instructions. Put the expected return shape
+at the end: status, result, changed paths, observed checks, evidence and blockers.
 
-Planning mode and thinking mode are independent: a thinking model in Plan remains
-restricted to planning. A reviewer can use the same model as the implementer in a
-fresh session with separate permissions and raw evidence. Do not reuse an
-implementation conversation as its own independent review.
+Use one example only when a schema, edge case or output format is ambiguous.
+For a structured extraction, show the schema and an unknown-value representation;
+validate the returned data. For coding, supply observable behavior and relevant
+interfaces, allowing the worker to diagnose the implementation. For investigation,
+ask which evidence distinguishes competing explanations. For review, ask for
+actionable defects or an explicit finding of none.
 
-## Shared prompt design
+Ask for concise conclusions, assumptions and verification evidence. Do not request
+private reasoning transcripts, embed model control tokens, or prescribe an
+unverified solution. Tool calls must use actual host schemas; a proposed command
+is not an executed check. Keep a compact decision ledger across long tasks.
 
-State the desired result first. Separate established facts, assumptions, and unknowns.
-Give actionable constraints and acceptance evidence; avoid repeated motivational
-instructions, theatrical personas, or requests to narrate every reasoning step.
-Use one concrete example only when it resolves a real ambiguity. Ask for a concise
-decision rationale or derivation when auditing it matters, not private reasoning.
+## DeepSeek: coordination, investigation and implementation
 
-Keep durable role instructions in the agent and task-specific facts in the dispatch.
-Do not paste this entire reference into every worker. Allow targeted exploration
-when supplied context is insufficient. Never instruct a worker to guess missing
-data, suppress failed checks, or fit a conclusion to a desired metric improvement.
+Use an outcome-first brief with acceptance criteria and a small dependency graph.
+For ambiguous work, separate the observation from the hypothesized cause and ask
+for the next discriminating check. Resolve interface questions before parallel
+writes. For implementation, add owned files and the regression to preserve.
 
-## Kimi-K2.6: explicit alternative
-
-**Documented behavior.** K2.6 supports thinking and instant modes. Its exact-version
-API guide does not support `reasoning_effort`; do not import that knob from other
-Kimi models. Thinking/tool continuity has protocol requirements. These are adapter
-concerns, not instructions to print thinking into the coordinator's visible answer.
-See the [K2.6 guide](https://platform.kimi.ai/docs/guide/kimi-k2-6-quickstart) and
-[thinking guide](https://platform.kimi.ai/docs/guide/use-thinking-models).
-
-**Role prompt, usable with either thinking model.** Keep the global objective,
-acceptance criteria, dependencies, and decision ledger with the primary. Make
-checkpoints explicit so progress is tied to accepted artifacts. During Plan,
-propose these assignments without starting writable work.
+Example investigation brief (paths are illustrative; replace with real inputs):
 
 ```text
-Coordinate correction of evaluation semantics and a throughput improvement.
-First establish the metric contract and a comparable baseline from repository
-evidence. Identify decisions blocking implementation. Assign bounded tasks only
-after ownership and dependencies are clear. Keep acceptance and integration here.
-Report verified outcomes, decisions needing input, and the next evidence-producing
-action. A throughput gain must preserve corrected outputs and use matched inputs.
+Determine why macro-F1 changes when the same evaluation set is rebatched.
+Read src/evaluation.py, its callers, tests/test_evaluation.py and the attached
+reproduction. Read-only; no experiments or delegation.
+Distinguish per-batch averaging, masking and label-order hypotheses using source
+locations and a minimal numerical counterexample. Do not assume the suspected fix.
+Return the supported cause, remaining uncertainty, affected contract and smallest
+regression check needed. Mark proposed checks as not run.
 ```
 
-## DeepSeek-V4.1-Flash: default for every covered role
+For implementation, extend this brief with the accepted aggregation contract,
+exclusive writable paths and required commands. For orchestration, request a
+dependency/ownership ledger and acceptance decisions instead of a full transcript.
 
-**Documented behavior.** The hosted `deepseek-flash` identifier is an alias; verify
-the resolved version when exact identity matters. Current thinking documentation
-requires retaining historical assistant `reasoning_content` when supplying tools,
-including turns without tool calls. Do not apply older DeepSeek advice about
-discarding reasoning history or avoiding system prompts. Let the host adapter
-maintain protocol state; do not manually strip messages to save context.
-See [model identity](https://api-docs.deepseek.com/en/),
-[thinking mode](https://api-docs.deepseek.com/guides/thinking_mode/), and
-[chat messages](https://api-docs.deepseek.com/api/create-chat-completion/).
+The hosted API enables thinking by default and exposes `low`, `high`, `max`.
+This package selects `max` for substantive work when supported. In thinking mode,
+temperature and presence/frequency penalties have no effect. When requests include
+tools, the adapter must retain all required assistant `reasoning_content`,
+including turns without calls. Do not strip history or fabricate reasoning fields.
+Source: [DeepSeek thinking mode](https://api-docs.deepseek.com/guides/thinking_mode/).
 
-**Recommended workflow prompts.** For planning and coordination, use the primary's
-objective, dependencies, acceptance criteria, and decision ledger described above.
-For implementation, specify the interfaces, ownership, failure reproduction, and
-checks in the implementation example below; enable thinking through the adapter.
-For investigation, ask a narrow, falsifiable question and provide raw evidence.
-Separate investigation from review into distinct sessions. A reviewer assesses
-the final artifact rather than defending an earlier proposed solution.
+Do not transplant R1-era rules about banning system messages or examples. Diagnose
+tool-loop/protocol errors at the adapter boundary before rewriting a valid brief.
+
+## GLM: difficult engineering and independent review
+
+Give multi-file work a stable contract and observable milestones: reproduce,
+implement within the assigned boundary, run focused checks, then report evidence.
+Include accepted architecture decisions and the exact failing output when handing
+over recovery work. Let feedback from checks guide the next action; repeated
+unchanged retries do not advance the task.
 
 ```text
-Independently assess whether this evaluation change implements the stated metric
-and whether the claimed improvement follows from the attached run artifacts.
-Read the metric contract, final diff, and both run configurations. Check aggregation,
-split comparability, leakage, and numerical edge cases where applicable. You own no
-writes and may not launch experiments. Return blocking findings with locations and
-evidence, missing checks, and accept / revise / blocked. Request any execution you
-cannot perform from the coordinator. Do not infer success from passing unit tests.
+Implement the accepted batching fix across src/evaluation.py and
+tests/test_evaluation.py. The metric is defined over the complete dataset and must
+be invariant to batch boundaries; preserve the public result schema.
+Inspect callers and existing edits. Reproduce the supplied failing case, implement
+the correction and run the named regression and relevant integration checks.
+You own only those two paths. Do not change dependency pins, start GPU work or
+delegate. If the contract requires another file, report it before editing there.
+Return complete/partial/blocked, changed paths, exact checks/results and evidence.
 ```
 
-## Qwen3-Coder-Next: explicit alternative
+This recipe is useful for DeepSeek too. Choosing GLM for it is conditional on
+availability and a concrete need for an alternative, not a requirement to hand off
+all large tasks. Z.ai describes GLM-5.3 as oriented toward complex engineering and
+long tasks; that supports evaluating it here, not asserting universal superiority.
+Source: [GLM-5.3 overview](https://docs.z.ai/guides/llm/glm-5.3).
 
-**Documented behavior.** This exact model is non-thinking only; do not send `/think`
-instructions, require `<think>` blocks, or configure a reasoning budget. The model
-card provides tool-use examples and sampling recommendations; those do not establish
-a model-specific chain-of-thought prompting recipe. See the
-[official model card](https://huggingface.co/Qwen/Qwen3-Coder-Next).
+For local GLM-5.3 templates, documented effort levels are `low`, `high`, `max`,
+defaulting to `max`. The template defaults `clear_thinking` to `false`; the card
+separately recommends `true` for chat. Keep agent tool-loop settings and ordinary
+chat settings distinct. Confirm hosted-provider controls separately; benchmark
+sampling values are not portable OpenCode settings.
+Source: [GLM-5.3 model card](https://huggingface.co/zai-org/GLM-5.3#note).
 
-**Implementation prompt, usable with the default model too.** Give a concrete
-interface and a bounded result, with freedom to inspect code and diagnose failures.
-Avoid prescribing an unverified fix. Establish behavioral evidence before claiming
-done. This example does not make Qwen the default implementer.
+Preserved thinking is adapter-managed protocol state. Z.ai's guide requires
+unchanged, complete reasoning blocks when preserving them. A reviewer must start
+a fresh task, rather than inheriting an implementer's hidden history.
+Source: [Z.ai thinking modes](https://docs.z.ai/guides/capabilities/thinking-mode).
+
+## Qwen: optional visual and bounded work
+
+Qwen3.8-27B is a thinking vision-language model; Qwen3-Coder-Next's non-thinking
+instructions do not apply. Use actual images/documents together with a narrow
+question and an explicit evidence table. For code/extraction tasks, supply a
+bounded interface, expected format, unknown-value handling and a check the parent
+can reproduce. A smaller parameter count is not evidence of task suitability.
 
 ```text
-Implement the accepted metric correction in the assigned evaluator module and
-regression tests. Use the repository's metric contract and existing test conventions.
-Confirm shapes, masking, aggregation, and empty-input behavior from their callers.
-Reproduce the reported failure where feasible, then verify the corrected behavior.
-Own only the assigned paths. Do not change dependency pins or run GPU experiments.
-Return changed paths, exact checks/results, decisive evidence, and unresolved issues.
+Inspect the supplied confusion-matrix image and its numeric CSV. Read-only.
+For each claimed discrepancy, return image location, visible label/value,
+corresponding CSV coordinate/value, and observation or uncertainty.
+Check axis order, missing labels and normalization against the stated convention.
+Do not infer exact values from indistinct pixels. If the image is not accessible
+through your tools, report visual inspection blocked; analyze the CSV separately.
+Do not claim a model-quality gain from the plot. No edits, experiments or delegation.
 ```
 
-## Optional runtime notes, separate from prompts
+The model card recommends thinking with `xhigh` effort by default (`medium` and
+`low` also exist), and retained thinking by default. Its thinking sampling recipe
+uses temperature `1.0`, top_p `0.95`, top_k `20`; non-thinking uses `0.7`, `0.80`,
+`20`. These are provider/template settings, not slash commands. Use sufficient
+output capacity within actual server limits; do not force advertised maxima or
+apply another model's sampling preset. Self-hosted `chat_template_kwargs` and
+hosted Qwen controls can differ.
+Source: [Qwen3.8-27B usage and practices](https://huggingface.co/Qwen/Qwen3.8-27B#api-usage).
 
-These are source-specific recommendations, not portable OpenCode frontmatter to
-copy blindly. Leave examples free of sampling/effort overrides until the adapter's
-supported settings are known. Provider setup is outside this package's scope.
+Confirm the endpoint and OpenCode adapter both accept images; some deployments
+serve text only. DeepSeek can also handle visual tasks through supported adapters.
+If Qwen is absent or unvalidated, skip it. If no available path can inspect the
+image, report that gap rather than treating CSV analysis as visual verification.
 
-| Model | Source-specific notes |
-| --- | --- |
-| Kimi-K2.6 | Hosted guidance uses temperature 1.0 in thinking, 0.6 in instant, and top_p 0.95; unsupported overrides may error. Do not set a generic low coding temperature. |
-| DeepSeek-V4.1-Flash | Hosted thinking uses low/high/max effort levels and ignores temperature. Model-card benchmark parameters are a different interface, not API defaults. |
-| Qwen3-Coder-Next | Model-card recommendation is temperature 1.0, top_p 0.95, top_k 40. Pass only settings supported by the actual adapter. |
+## Fresh review prompt for GLM or DeepSeek
 
-For DeepSeek's distinction, consult the thinking guide above and the
-[V4.1 model card](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash).
-For Kimi's mode and sampling distinction, consult its API guides above and the
-[K2.6 model card](https://huggingface.co/moonshotai/Kimi-K2.6).
+Give the reviewer the final diff, requirements, contracts and raw check results,
+without the author's persuasive summary. Omit any previous task/session handle.
 
-Context hygiene means focused inputs, useful summaries, and fresh task sessions.
-It does not mean deleting required reasoning/tool messages from an active API loop.
-Do not assume advertised maximum context is the served limit, a quality target, or
-permission to fill a worker with unrelated history.
+```text
+Independently review this final evaluator change against the supplied metric
+contract. Inspect the final diff, affected callers and raw regression results.
+Check batching invariance, empty/masked inputs, label ordering and compatibility
+where affected. For improvement claims, check matched data/configuration and
+baseline provenance. You own no writes; request parent-run checks if needed.
+Return accept/revise/blocked, blocking defects with locations and evidence (or
+none), nonblocking observations, and unverified claims. No delegation.
+```
+
+Use fresh same-model review when a second model is unavailable. Different models
+do not replace checks or settle disagreements by voting. Resolve competing claims
+with a reproducible counterexample or discriminating test.

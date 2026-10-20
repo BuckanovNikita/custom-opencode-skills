@@ -19,3 +19,9 @@ remaining concerns. Do not equate unit-test success with native GPU execution or
 model-quality improvement. Use the configured thinking mode and maximum supported
 effort; the host adapter owns reasoning/tool protocol state. Do not start writable
 work while the parent is restricted to planning.
+
+Use the accepted interface and reproduction to guide the work; do not assume a
+suggested cause is correct. Return complete, partial or blocked before the evidence.
+When checks fail, report the observation and test a changed hypothesis. Hand off
+to another model only after the coordinator inspects partial edits and transfers
+ownership.

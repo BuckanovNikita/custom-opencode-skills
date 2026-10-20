@@ -1,6 +1,6 @@
 ---
 name: opencode-orchestration
-description: Use when coordinating Python/ML research, experiments, or engineering in OpenCode, including planning, decomposition, independent verification, and recovery across agents. Targets DeepSeek-V4.1-Flash by default, with Kimi-K2.6 and Qwen3-Coder-Next as explicit alternatives.
+description: Use when coordinating Python/ML research, experiments, or engineering in OpenCode across agents, including task decomposition, model routing, independent verification, and recovery. Covers DeepSeek-V4.1-Flash, GLM-5.3, and optional Qwen3.8-27B.
 ---
 
 # OpenCode orchestration
@@ -31,33 +31,41 @@ tool compatibility; do not invent per-call model switches or context-fork contro
 
 ## Select for quality, then route by responsibility
 
-Use **DeepSeek-V4.1-Flash with thinking enabled and maximum supported effort** as
-the default for every covered role: planning, orchestration, implementation, tests,
-investigation, and review. The [dated benchmark assessment](references/model-selection-2026-10-11.md)
-supports this as a provisional engineering choice among this package's three
-models, not a demonstrated win on every task. Recheck relevant evidence when model
-versions, providers, host adapters, or task requirements change.
+Use **DeepSeek-V4.1-Flash** as the primary and general implementation default.
+Add **GLM-5.3** for independent review or a difficult engineering task needing a
+different approach. **Qwen3.8-27B** is optional for image-backed investigation and
+bounded work supported by task evidence. One model can cover the whole workflow;
+using all three is not an acceptance requirement.
 
-Preserve explicit user model choices. Prefer comparable task-specific results over
-general benchmark reputation: check exact model version, benchmark version/split,
-agent framework, tools, effort, and uncertainty. Do not average incompatible scores
-or infer a planning/review ranking from coding scores. Use Kimi-K2.6 or
-Qwen3-Coder-Next when the user selects one or relevant evidence favors it; disclose
-availability blockers instead of silently substituting. Do not downgrade a worker
-for price, token savings, a simple-looking task, or its role name.
+These are provisional routing choices, not measured winners for each role. Read
+the [selection assessment](references/model-selection-2026-10-20.md) when choosing
+or changing a profile. Verify the exact provider revision: the requested DeepSeek
+`0117` label is unverified; the documented release is `1017`. Never silently map
+one to the other or treat a moving alias as an immutable pin.
 
-| Role | Responsibility | Delegate when |
+| Task | Starting choice | Prompt emphasis and routing condition |
 | --- | --- | --- |
-| Primary | Planning, cross-cutting decisions, integration | Keep the global contract and final acceptance here |
-| Investigator | Investigation and mathematical analysis | A precise uncertainty or falsifiable claim can be checked separately |
-| Implementer | Implementation and tests | Execution is authorized; interfaces, ownership, and acceptance criteria are clear |
-| Reviewer | Independent assessment of the final state | The parent has integrated and verified substantive changes |
+| Planning, integration, mathematical/ML investigation | DeepSeek | Objective, evidence, competing hypotheses, dependency decisions and acceptance |
+| Implementation and tests | DeepSeek | Bounded interface, reproduced failure, owned paths and executable checks |
+| Difficult multi-file engineering or recovery | GLM, optional | Accepted interfaces, milestones and feedback from failing checks; switch for a concrete unresolved problem |
+| Final independent review | GLM after DeepSeek work; DeepSeek after GLM work | Fresh session, final diff and raw evidence; ask for defects and missing checks, not agreement |
+| Plots, screenshots, documents or bounded extraction | Qwen, optional | Actual accessible inputs, precise observations, output contract and cross-checks |
+
+Use thinking and the highest verified supported effort for substantive reasoning:
+DeepSeek `max`, GLM `max`, Qwen `xhigh` where their adapters support those controls.
+Preserve explicit user selections. Provider settings belong to configuration,
+not prompt incantations. If a preferred optional model is absent, disclose that
+and use a capable available model or keep the task with the parent. An explicit
+model pin or required capability must be satisfied before that dependent dispatch.
+For images, verify both model and adapter image support; numerical checks alone
+do not establish visual inspection.
 
 Separate roles and fresh sessions provide process independence even when they use
 the same model; they do not eliminate correlated model errors. A different model
 can supply an additional perspective, but diversity alone is not quality evidence.
-Reassign when evidence shows a mismatch; first narrow the brief or resolve unknowns.
-Read only the relevant model section in [prompting](references/model-prompting.md).
+Before reassignment, resolve missing context and narrow the failure hypothesis.
+Prefer matched task results over reputation, size or cost. Read the selected model
+and task section in [prompting](references/model-prompting.md) before dispatch.
 
 ## Schedule and execute
 
@@ -95,11 +103,13 @@ Outcome and acceptance:
 Relevant facts, inputs, and source paths:
 Unknowns to resolve (do not assume):
 Starting state and dependencies:
+Agent/model and verified capabilities:
 Owned writable paths / read-only scope:
 Permitted execution and resource allocation:
 Constraints and non-goals:
 Checks required and evidence location:
-Return: result, changed paths, commands/results, uncertainties, blockers.
+Return: status (complete / partial / blocked), result, changed paths,
+checks actually run and results, evidence locations, uncertainties and blockers.
 Do not delegate further. Preserve other changes. Escalate ownership conflicts.
 ```
 

@@ -70,12 +70,16 @@ replace a requested real experiment with synthetic evidence and call it complete
 Request: repair an evaluation metric and improve throughput. Both touch the same
 module; one shared GPU is occupied.
 
-Use DeepSeek-V4.1-Flash with maximum supported thinking effort for each role by
-default. During Plan, the primary inspects the metric contract and proposes the
+Use DeepSeek for coordination, investigation and the initial fix; optional GLM
+can review or handle an unresolved engineering problem. Use Qwen only if visual
+artifacts or validated bounded analysis justify it. During Plan, the primary
+inspects the metric contract and proposes the
 dependency order and checks. After authorized execution begins, an investigator
 checks the metric definition and designs a comparable benchmark read-only. An
 implementer owns the metric fix and regression test. Once accepted, transfer implementation
 ownership for the optimization. Reserve an authorized GPU window; compare the fixed
 baseline with the optimized version using the same split/configuration. Start a new
-reviewer session for the final diff and evidence. A changed split, passing
+reviewer session for the final diff and evidence, preferably GLM after DeepSeek
+implementation. If only DeepSeek is available, fresh DeepSeek review remains
+valid with correlated-error limits. A changed split, passing
 unit tests, or a single fast run alone does not prove the requested improvement.

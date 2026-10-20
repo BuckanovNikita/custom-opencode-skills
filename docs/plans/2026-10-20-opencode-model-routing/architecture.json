@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Upgrade OpenCode model routing and prompting",
+  "scope": [
+    "skills/opencode-orchestration",
+    "skills/opencode-skill-author",
+    "README.md",
+    "VERSION",
+    "CHANGELOG.md",
+    "verification",
+    "docs/plans/2026-10-20-opencode-model-routing"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the two instruction-only OpenCode packages and their callers. Changes cover skill prose, reference/evaluation documents, inactive example agent/configuration templates, and collection release metadata. Examples remain outside OpenCode discovery/configuration locations and contain unresolved provider placeholders. No runtime modules, active composition, dependencies, executable import contracts or architecture-checking tools change."
+}

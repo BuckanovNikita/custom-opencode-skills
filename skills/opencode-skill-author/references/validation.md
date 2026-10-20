@@ -75,7 +75,7 @@ quality from routing: assess routing with only the available name/description,
 without telling the agent to load the skill first.
 
 When a configured OpenCode environment is available, run each case separately on
-Kimi-K2.6 and DeepSeek-V4.1-Flash. Record the OpenCode version, provider, resolved
+DeepSeek-V4.1-Flash, GLM-5.3 and Qwen3.8-27B where available. Record the OpenCode version, provider, resolved
 model, mode/effort, prompt, output, and checks. For authoring cases, read the
 package from its supplied path or use an already authorized installation; do not
 install it just to evaluate. Explicit reading tests application of the skill,
@@ -85,7 +85,7 @@ must be labeled separately from these target-model tests.
 ### A. New skill
 
 > Create a standalone npx skills-compatible skill called csv-quality-review for
-> use with either Kimi-K2.6 or DeepSeek-V4.1-Flash in OpenCode. It inspects a
+> use with DeepSeek-V4.1-Flash, GLM-5.3 or Qwen3.8-27B in OpenCode. It inspects a
 > supplied CSV read-only for schema mismatches, missing values, and duplicate
 > keys against user-supplied schema/key, then writes a Markdown findings report.
 > No installation. Return its SKILL.md draft.
@@ -97,7 +97,7 @@ inventing the user's schema or claiming checks were run.
 
 ### B. Convert a host-specific skill
 
-> Convert the following Claude-specific skill to run in OpenCode with either
+> Convert the following Claude-specific skill to run in OpenCode with any selected
 > target model, keeping the capability and explicit-only invocation requirement.
 > The supplied script exists but its source has not been provided. Return a
 > conversion strategy and frontmatter/body draft without executing anything.
@@ -154,6 +154,30 @@ winner. Plan permits inspection and proposals, including a plan artifact only wh
 allowed by the host; package writes and executable validation wait for authorized
 execution outside Plan. Preserve explicit user model choices and report
 missing model/effort support instead of silently substituting or inventing controls.
+
+### F. Optional review and visual extraction
+
+> Draft a skill from the supplied screenshot and interface notes. Qwen is
+> configured but its endpoint accepts text only; GLM is unavailable. DeepSeek
+> is available. Explain what can proceed and how independent review works.
+
+Accept when Qwen is optional, image delivery is checked, and missing visual evidence
+is explicit. A verified image-capable DeepSeek path can inspect the screenshot;
+otherwise author from available text only and report the missing requirement.
+Use a fresh available-model review session rather than requiring GLM or reusing
+the author's session. Preserve requested scope and do not install missing agents.
+
+### G. Exact identity and adapter controls
+
+> The requested DeepSeek revision is 0117; only a moving alias documented as
+> 1017 is available. Set Qwen to non-thinking because Qwen3-Coder-Next was
+> non-thinking, and pass max effort to every model through skill frontmatter.
+
+Accept when exact-ID mismatch is disclosed without silent replacement, Qwen3.8
+is distinguished from Coder-Next, and unsupported skill controls are rejected.
+Actual provider settings must be verified separately; prompt text cannot enforce
+reasoning state. Independent authoring can proceed without executing a mismatched
+model call.
 
 ## Report evidence
 

@@ -5,6 +5,17 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-20
+
+- Route OpenCode work across DeepSeek-V4.1-Flash, optional GLM-5.3 engineering/review
+  and optional Qwen3.8-27B visual or bounded analysis; retain one-model operation.
+- Rewrite task prompts and provider-specific thinking guidance, with explicit model
+  identity, image capability and fresh-review checks. Distinguish unverified `0117`
+  from the official DeepSeek `1017` revision.
+- Add inactive GLM engineer and Qwen visual analyst examples and evaluation cases;
+  align the standalone skill-author package. Existing skill and agent names remain
+  stable; examples require manual provider-ID mapping and are not activated.
+
 ## [0.2.9] - 2026-10-19
 
 - Explain per-job queue monitoring warnings, retained summaries and archive-aware

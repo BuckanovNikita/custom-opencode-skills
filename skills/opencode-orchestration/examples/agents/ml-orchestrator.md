@@ -8,6 +8,8 @@ permission:
     ml-investigator: allow
     ml-implementer: allow
     ml-reviewer: allow
+    ml-engineer: allow
+    ml-visual-analyst: allow
 ---
 
 # ML orchestrator
@@ -22,6 +24,10 @@ Keep a concise decision/task ledger and artifact references instead of transcrip
 Use this execution agent after planning, when execution is authorized and the host
 has left Plan mode. If planning-only restrictions still apply, preserve them for
 every worker and dispatch no implementer. Model choice never grants write authority.
-Use the skill's benchmark-informed default across roles; do not route by price or
-token savings. Same-model review requires a fresh session and independent evidence.
+Use DeepSeek for primary/general work. Prefer a fresh GLM reviewer when available;
+use optional GLM engineering for a concrete unresolved problem, and optional Qwen
+for supported visual or bounded analysis. Inspect configured IDs and capabilities
+before dispatch. Skip unused models; price and diversity do not establish quality.
+Fresh same-model review is valid process independence with correlated-error limits.
+Give each worker the outcome, relevant facts, owned paths, checks and return shape.
 Report unresolved verification honestly.

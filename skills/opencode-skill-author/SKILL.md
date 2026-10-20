@@ -1,17 +1,20 @@
 ---
 name: opencode-skill-author
-description: Create, revise, or convert npx skills-compatible SKILL.md packages for OpenCode, defaulting to DeepSeek-V4.1-Flash with Kimi-K2.6 compatibility. Use for skill authoring, packaging, and portability requests; not for executing the task a skill describes or configuring model providers.
+description: Use when creating, revising, or converting npx skills-compatible SKILL.md packages for OpenCode with DeepSeek-V4.1-Flash, GLM-5.3 or Qwen3.8-27B. Covers skill authoring, packaging and portability; excludes executing the task a skill describes or configuring model providers.
 ---
 
 # Author portable OpenCode skills
 
-Produce a self-contained skill package that either target model can follow in
+Produce a self-contained skill package that any selected target model can follow in
 OpenCode. Use one shared task procedure; model names do not select a model or
 require a planner/worker arrangement.
 Prefer DeepSeek-V4.1-Flash with thinking and maximum supported effort when the user
 has not selected a model. This is an engineering default, not a measured ranking
-for skill authoring. Price and token consumption do not justify a weaker setting;
-preserve explicit selections and inspect actual availability and adapter support.
+for skill authoring. Use optional GLM-5.3 for fresh review or difficult engineering,
+and optional Qwen3.8-27B for supported visual/bounded extraction. One model can
+cover the workflow, with fresh review sessions where required. Price and token
+consumption do not justify a weaker setting; preserve explicit selections and
+inspect actual availability, exact revision and adapter support.
 
 ## Establish the contract
 
@@ -34,7 +37,7 @@ authorized and the host leaves Plan mode; a skill cannot switch that mode.
 
 ## Write the skill
 
-Read [model guidance](references/model-guidance.md) before authoring for either
+Read [model guidance](references/model-guidance.md) before authoring for a selected
 target model. Apply its prompting guidance; consult runtime notes only when a
 request depends on model settings or provider compatibility.
 
@@ -101,5 +104,5 @@ discovery, and representative behavior. Verify new helpers with realistic inputs
 in an isolated workspace. A parser or `--list` pass does not prove model behavior.
 
 Return the package path, material changes, checks performed, and remaining
-limitations. State which host and model were actually tested; if neither target
+limitations. State which host and model were actually tested; if no target
 model was available, provide runnable evaluation prompts and say so.
