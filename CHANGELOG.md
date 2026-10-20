@@ -5,6 +5,16 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-20
+
+- Add cveta2 v0.11.0 guidance for report-only CSV verification, explicit cleanup,
+  reviewed four-source preparation and later three-file ClearML publication.
+- Explain structured missing decisions, changed evidence or prerequisites, legacy
+  parents and uncertain child failures; expand routing and evaluation cases.
+- Migrate examples away from removed automatic fetch publication, `--no-clearml`,
+  `publish_clearml`, `setup-clearml` and automatic mappings. Check installed help
+  before applying these interfaces to an older cveta2 version.
+
 ## [0.3.0] - 2026-10-20
 
 - Route OpenCode work across DeepSeek-V4.1-Flash, optional GLM-5.3 engineering/review
