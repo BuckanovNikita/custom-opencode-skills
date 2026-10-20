@@ -24,7 +24,7 @@ secret mechanism; optional `CVAT_ORGANIZATION` sets the default organization.
 Do not log credential values. Default YAML location is
 `~/.config/cveta2/config.yaml`; `CVETA2_CONFIG` selects another file.
 Connection precedence is explicit API connection fields, environment, YAML,
-then built-in preset. `--config` is available on setup/setup-clearml,
+then built-in preset. `--config` is available on setup/setup-cache,
 rather than being a global flag on data commands.
 
 Portable YAML skeleton (credentials supplied separately):
@@ -55,7 +55,7 @@ first. Image downloads need configured image cache or `--images-dir`; choose
 ```bash
 export CVETA2_NO_INTERACTIVE=true
 export CVETA2_RAISE_ON_FAILURE=true
-cveta2 fetch -p 123 -o export --no-images --no-clearml
+cveta2 fetch -p 123 -o export --no-images
 cveta2 fetch-task -p 123 -t 456 789 -o selected --no-images
 cveta2 whats-new -p 123 --dataset export/dataset.csv
 ```
@@ -71,7 +71,7 @@ Full fetch produces:
 | `raw.csv` | Additional full unpartitioned rows with `--raw` |
 
 `fetch-task` produces unpartitioned `dataset.csv` and `deleted.csv`; it has no
-`--raw`, `--no-clearml`, or `--skip-validation` option. `--completed-only` filters
+`--raw` or `--skip-validation` option. `--completed-only` filters
 task selection. Completion requires every job to be acceptance/completed;
 highest task ID determines recency and deletion wins same-task ties.
 
@@ -82,11 +82,11 @@ jobs to acceptance/completed after strict cache invalidation, then refreshes
 selection. Failures abort export; successful prior changes persist without
 rollback. It is disabled by default and requires authorization for that change.
 
-Full fetch may publish CSVs as a ClearML Dataset when the optional SDK is
-installed, `clearml.enabled` is true, and a project mapping is configured.
-`--no-clearml`, API `publish_clearml=False`, or `CVETA2_CLEARML=false` disables
-publication. `setup-clearml` configures mappings. Publication warnings can occur
-after local export succeeds; inspect publication evidence separately.
+Fetch no longer automatically publishes to ClearML. Legacy automatic mappings,
+`CVETA2_CLEARML`, `setup-clearml`, `--no-clearml` and `publish_clearml` are removed
+without compatibility shims in cveta2 v0.11.0. Existing
+user configuration is not automatically rewritten. Check installed help for the
+version in use rather than passing removed controls.
 
 Task annotation cache: normal fetch reads/updates, `--force` refreshes,
 `--no-cache` disables reads/writes. `CVETA2_DISABLE_CACHE=true` also disables it.
@@ -177,7 +177,7 @@ import cveta2
 
 result = cveta2.fetch(
     123, output_dir="export", download_images=False,
-    publish_clearml=False, cache="off",
+    cache="off",
 )
 print(result.dataset)
 rows = cveta2.fetch_task([456], output_dir="selected", project=123, download_images=False)
@@ -196,3 +196,106 @@ aborts; reduce concurrency and inspect the error. Non-idempotent writes retry
 429 but not ambiguous 5xx, to prevent duplicate annotations/tasks. Report skipped
 tasks/images and failed publication separately from local CSV creation. Do not
 assert complete coverage from exit status alone.
+
+## Verification and reviewed publication
+
+These commands were introduced in cveta2 v0.11.0 (feature 008). Reconcile against
+installed-version help before execution; they are not a claim about older tags.
+Local CSV verification works without optional ClearML. Preparation/publication
+needs the optional `clearml` extra, its normal SDK credentials and access to
+configured roots. No registry release is assumed.
+
+```bash
+cveta2 verify export/dataset.csv --profile cveta2 --output-dir inspection
+cveta2 verify split.csv --profile clearml-yolo --check-images \
+  --image-root /data/images --iou-threshold 0.99 --clean --output-dir cleaned
+cveta2 verify export --bundle --output-dir prepared \
+  --project CV/datasets --dataset-name reviewed \
+  --api-url https://classes.example.org/api/classes \
+  --local-root /data/images --s3-root s3://images/project \
+  --empty-class 17 --accept-default-classes --accept-class-changes --non-interactive
+# Separate action after inspecting the prepared directory:
+cveta2 upload-dataset prepared
+```
+
+Start report-only. `--clean` explicitly accepts repairs and removal of rejected
+rows; never overwrite source files. Structural failures cannot be cleaned away.
+Literal `NA`/`001` values and original rejected rows/positions survive reporting.
+`--output-dir` is required for --clean and --bundle; ordinary checks can report
+to the console without it. `--image-root` fills absent image_path cells only;
+existing relative paths use the CSV directory (DataFrame: base_dir or cwd).
+`--check-images` decodes local images with EXIF-aware dimensions; URI inputs do
+not trigger automatic download. `--iou-threshold` is in `(0, 1]`. Reports go to a
+new directory: `report.json`, `broken.csv`, and `clean.csv` only with cleanup.
+
+Bundle input is the complete four-table fetch export, including header-only
+empty tables. Assign splits externally; require nonempty train and val, with at
+least one training box in train. Validation may contain only background images.
+Bundle media checks are mandatory: absolute readable supported
+local images, sides at least ten pixels, training box sides and area greater
+than two. No split generation or automatic end-to-end pipeline is included.
+
+Here `--project` is an exact ClearML project name. Repeat `--local-root`,
+`--s3-root` and `--empty-class` as needed. Roots are independent; verify all source
+path coverage before filtering and reject symlink escapes. S3 keys may be URIs
+or bucket-relative keys; a bare key must identify exactly one approved bucket.
+The public HTTP(S) class API's `number` becomes stable `prod_id`; renames retain
+aliases and empty policy. Unknown/empty classes quarantine whole images.
+Disappeared parent IDs and ambiguous identities block preparation.
+
+New class decisions prompt only in an interactive CLI. `--accept-default-classes`
+explicitly assigns remaining new classes `empty=false`; `--accept-class-changes`
+accepts additions/renames. `--empty-class ID` excludes that class. Supply missing
+decisions for `--non-interactive`; never invent them. API callers receive
+`MissingDecisions.decisions` instead of prompts.
+
+Inspect `prepared/dataset.csv`, `dataset.yaml`, `tasks.yaml`, `report.json`,
+`broken-images.csv`, exact four source copies under `sources/`, and
+`preparation.json` and its local-only exact-byte checksum `preparation.sha256`.
+Only a ready bundle is uploadable. The record binds options,
+classes/roots, parent and source/payload hashes. Fix inputs/settings then prepare
+a new directory; do not patch reviewed files or alter the record to bypass checks.
+
+Upload accepts only that directory on the same machine, repeats full validation,
+checks current classes, root/image access and latest exact finalized nonarchived
+parent, and publishes stable bytes. A newer parent or changed evidence blocks.
+Legacy CSV-only parents without metadata require choosing a new dataset name.
+Only dataset.csv, dataset.yaml and tasks.yaml are uploaded, after removing
+inherited child files/links; images, reports and source evidence remain local.
+Success requires confirmed finalization. A failure after creation identifies the
+known child; inspect it before retrying and never claim rollback or finalization.
+
+Verify exit codes: 0 for valid or explicitly cleaned valid data, 1 for unresolved
+findings/cancellation, 2 for input/config/operational failure. Upload exit codes:
+0 after finalization, 1 cancellation, 2 blocked/error. CVAT `upload` is unchanged.
+
+```python
+import cveta2
+
+report = cveta2.verify(
+    "export/dataset.csv", profile="cveta2",
+    options=cveta2.ValidationOptions(check_images=True),
+    output_dir="inspection", clean=False,
+)
+print(report.is_valid, report.requires_cleanup, report.broken_row_positions)
+prepared = cveta2.prepare_dataset(
+    "export", output_dir="prepared",
+    options=cveta2.PrepareOptions(
+        project="CV/datasets", dataset_name="reviewed",
+        api_url="https://classes.example.org/api/classes",
+        local_roots=("/data/images",), s3_roots=("s3://images/project",),
+        class_empty={17: True}, accept_default_classes=True,
+        accept_class_changes=True, clean=False,
+    ),
+)
+# After the separate review, when publication is authorized:
+publication = cveta2.upload_dataset("prepared")
+print(publication.dataset_id, publication.version)
+```
+
+`verify_dataframe(frame, *, profile="cveta2", options=None)` leaves caller data
+unchanged; `schema_for(profile)` exposes the profile schema. `ValidationResult`
+separates original validity and cleanup requirement, retains clean/broken rows,
+zero-based row positions and issues. `PreparedDataset.ready` controls eligibility;
+`Publication` returns dataset_id/version. Operational failures derive from
+`Cveta2Error`; missing preparation choices are structured `MissingDecisions`.
