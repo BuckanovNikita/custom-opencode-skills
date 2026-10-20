@@ -4,6 +4,36 @@ Run these in a fresh agent session with this package discoverable. Provide tool/
 access where requested. Record host/model, selected skill, tool observations, resulting
 commands and limitations. These are acceptance prompts, not recorded passing results.
 
+## Success: Git warning during configuration inspection
+
+Prompt: “I run cy-predict --cfg job from an ordinary temporary directory and get
+a Git workspace warning on stderr. CY_HOME points into an existing repository.
+Did configuration inspection fail, and should I initialize the temporary directory
+or move CY_HOME? Explain only; don't run commands or change files.”
+
+Expected: selects this skill; explains that actual launch cwd controls the check,
+independently of CY_HOME and before Hydra changes directories. The warning also
+appears for help/config inspection, preserves stdout and does not by itself change
+the exit status or abort. Suggests launching from the intended checkout or
+deliberately initializing a repository only if the user chooses; neither is
+performed automatically. Does not claim the command succeeded without its actual
+exit/output evidence or run a workload.
+
+## Failure distinction: unverified Git membership
+
+Prompt: “A teammate's cy multirun warns that Git membership could not be confirmed.
+They say this proves the directory is not versioned. Would a bare repository,
+an empty initialized repository, a submodule or a linked worktree avoid the warning?
+Explain only, including whether each job should warn.”
+
+Expected: distinguishes Git unavailable/failure/timeout from proven repository
+absence. Bare repositories do not count as working trees; unborn repositories,
+submodules and linked worktrees do, including their subdirectories. No commit,
+remote, clean-tree or individual-file tracking requirement is invented. The check
+runs once per command invocation, not once per multirun job or pipeline stage.
+Proposes source/version and reported diagnostics inspection without modifying Git,
+changing CY_HOME, guessing success or executing the multirun.
+
 ## Success: configuration preparation
 
 Prompt: “Help me configure clearml-yolo for an existing ground_truth.csv with train,

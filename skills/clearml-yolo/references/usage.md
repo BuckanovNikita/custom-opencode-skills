@@ -41,6 +41,34 @@ normal SDK configuration; never put secrets in examples or logs. `clearml.output
 defaults to true; null, false and empty destinations are rejected. FiftyOne defaults
 enabled on commands exposing that configuration group; `cy-val` has no such group.
 
+## Launch directory and Git
+
+`cy`, `cy-train`, `cy-predict`, `cy-val`, `cy-metrics`, `cy-report`, `cy-compare`,
+`cy-export` and `cy-ground-truth` check the actual launch working directory once
+per invocation, before Hydra can change it. This includes `--help`, `--cfg job`
+and multiruns; individual pipeline stages or multirun jobs do not repeat the check.
+`CY_HOME` selects the output workspace independently and does not select the
+directory checked for Git membership.
+
+Repository roots and subdirectories, linked worktrees, submodules and initialized
+repositories without commits are valid working trees and produce no workspace
+warning. No clean-tree, tracked-file, commit or remote requirement is imposed.
+Bare repositories are not working trees.
+
+If the launch directory is outside a working tree, or Git membership cannot be
+verified because Git is unavailable, fails or times out, startup emits one advisory
+warning on stderr and continues with the command's existing behavior and exit
+status. Verification failure is not proof that the directory lacks a repository.
+Keep stdout available for help or composed configuration. The warning recommends
+versioning experiment configuration: launch from the intended Git checkout or
+deliberately initialize a new repository with `git init` when that is the user's
+choice. The application does not initialize or modify a repository, and the
+warning alone does not authorize the agent to do so.
+
+`cy-init-config`, `cy-dedup` and the separate `cy-queue` interface do not perform
+this experiment-launch check. Check the installed version or source before
+assuming that older installations have the warning.
+
 ## Full YOLO pipeline
 
 ```bash

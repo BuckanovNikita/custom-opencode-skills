@@ -5,6 +5,14 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-20
+
+- Explain the clearml-yolo experiment-command Git workspace warning, including
+  help/config inspection, launch cwd independence from CY_HOME, valid working-tree
+  forms and nonfatal verification failures.
+- Add explanation-only evaluation scenarios that preserve command output,
+  repository ownership and the boundary between warnings and execution evidence.
+
 ## [0.4.0] - 2026-10-20
 
 - Add cveta2 v0.11.0 guidance for report-only CSV verification, explicit cleanup,

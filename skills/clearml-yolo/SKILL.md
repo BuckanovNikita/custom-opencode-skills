@@ -27,6 +27,10 @@ does not provide credentials or administer infrastructure.
    `cy-init-config` writes YAML. Execution commands create a ClearML task, run their
    workload and publish results. Queue submission persists jobs; workers execute them.
    An explanation-only request authorizes neither a workload nor queue submission.
+   Experiment commands also warn on stderr when the launch directory cannot be
+   confirmed as a Git working tree, including during help/config inspection. This
+   advisory does not block execution or initialize Git; see the launch-directory
+   guidance in [usage](references/usage.md#launch-directory-and-git).
 
 ## Configure and execute
 
