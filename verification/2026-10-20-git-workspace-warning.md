@@ -70,8 +70,8 @@ were preserved. These are parent-reported application results, not collection
 tests. See the companion
 [application verification](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/002-git-workspace-warning/verification.md)
 for the executed commands, environment distinctions and earlier failure observations.
-The application must be published before this guidance is released as available
-behavior. No tag or push has been performed.
+The application publication prerequisite was satisfied before collection release,
+as recorded below.
 
 No native training, ClearML publication, live GPU operation or target OpenCode/model
 execution is part of this documentation task. Application command tests belong to
@@ -115,4 +115,27 @@ plan and architecture record, this evidence, VERSION and CHANGELOG. Upstream
 cveta2 changes and the original shared checkout are preserved. Residual limits
 are the application's bounded five-second Git probe and the stated absence of
 physical-GPU, remote-publication or alternate-host execution claims. Collection
-publication waits for the application release to be verified remotely.
+publication follows the remotely verified application release below.
+
+## Application delivery
+
+The parent published clearml-yolo
+[v0.37.0](https://github.com/BuckanovNikita/clearml-yolo/tree/v0.37.0)
+with feature commit
+[`a609fd7e8ac5d781b8f418e7dad2986dc80dc225`](https://github.com/BuckanovNikita/clearml-yolo/commit/a609fd7e8ac5d781b8f418e7dad2986dc80dc225)
+and master release commit
+[`018450a24c6043bba174ceeddc01c81113b3b70f`](https://github.com/BuckanovNikita/clearml-yolo/commit/018450a24c6043bba174ceeddc01c81113b3b70f).
+The atomic master/tag push succeeded. The parent verified remote master, annotated
+tag object `20d2c516e97b620acc9497685df8ce53b0ff2455` and the peeled target
+`018450a24c6043bba174ceeddc01c81113b3b70f` with `git ls-remote`.
+
+All feature commit hooks, including the full pytest check, passed; the checked
+native release helper completed its commit/tag workflow. The parent confirmed
+that release changes contain only the root project/lock version update from
+0.36.0 to 0.37.0 and generated changelog, with dependency lock content unchanged.
+Local source overrides were restored unstaged and are absent from both commits.
+No package artifacts, GitHub Release object or deployment was created.
+
+Collection 0.4.1 is prepared on a clean main checkout from the reviewed companion
+commit `f652e7ae7010d121d08192e19424f4d0a55dd77e`, with this application-delivery
+record committed before its annotated tag and atomic main/tag push.

@@ -39,5 +39,6 @@ the application release. No delegated writers are needed within this bounded tas
 
 Planning, skill edits, source reconciliation, package/document checks and fresh
 independent review are complete. Collection 0.4.1 is accepted for commit;
-publication follows verified application delivery. Results are recorded in the
+application v0.37.0 delivery is verified remotely, satisfying the collection
+publication prerequisite. Results are recorded in the
 [dated evidence](../../../verification/2026-10-20-git-workspace-warning.md).
