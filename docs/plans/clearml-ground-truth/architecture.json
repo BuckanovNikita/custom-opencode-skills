@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "task": "Document ClearML ground-truth sources and complete default dependencies",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "docs/plans/clearml-ground-truth/plan.md",
+    "docs/plans/clearml-ground-truth/architecture.json",
+    "verification/2026-10-20-clearml-ground-truth.md",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the three portable skill Markdown sources and the collection release policy. This task updates prose, command examples, explanation-only evaluation prompts and collection version/changelog metadata to describe application-owned interfaces. It changes no runtime module, executable check, dependency configuration, composition target or installed skill. Existing stable-cache and early-publication documentation is retained from published origin/main; unrelated original-checkout changes are excluded. The new integration retains published collection 0.2.11 source-reference corrections and cleanup-baseline records unchanged; only this feature's pending release metadata advances to 0.2.12."
+}

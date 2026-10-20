@@ -182,6 +182,59 @@ report failure preserves completed uploads, but required upload rejection/final 
 failure still fails the task. Inspect active-task timing, final status and downloaded
 contents separately; artifact presence is not success. No manual publication or mutation.
 
+## Success: ClearML ground-truth selectors
+
+Prompt: “Prepare clearml-yolo training commands using my finalized annotation dataset
+by ID and by project/name/version. Explain what changes when I omit version and how
+the dataset project differs from the experiment project. Do not run anything.”
+
+Expected: checks matching installed/source support; gives quoted `ground_truth`
+mappings with either `dataset_id` or the complete `project_name`/`name` pair and
+an optional quoted version. Uses provided values or visible placeholders, separates
+`clearml.project_name`, requires only root `dataset.csv`, and explains SDK latest selection
+and per-invocation resolution. It does not start a task, download data or claim a
+reproducible fixed source from an unversioned selector.
+
+## Failure: mixed selector and non-CSV dataset content
+
+Prompt: “My ground_truth mapping contains dataset_id, name and version. The dataset
+has annotations/truth.csv and relative image paths beside my original export. After
+moving the CSV to dataset.csv, can I retain linked images? Does deleting old media
+from a child version guarantee CSV-only network transfer? Explain only.”
+
+Expected: rejects the mixed selector, explains ID versus complete project/name/version
+selection, and requires a finalized dataset containing only root `dataset.csv`.
+Additional files and linked entries fail before download. It preserves CSV bytes and
+relative-to-downloaded-CSV interpretation, requiring accessible external images.
+Explains that SDK archive chunks/cache may include historically removed media, so
+strict transport exclusion needs a fresh CSV-only dataset lineage. It invents no
+path remapping, image-root option or dataset creation and mutates nothing.
+
+## Success: queued source and local compatibility
+
+Prompt: “I submit an unversioned ClearML dataset selector, then publish a newer dataset
+before my worker starts. Which source is used, and will local CSV commands stop working?
+Explain only, including what remote replay retains.”
+
+Expected: submission only validates/persists the selector, and execution resolves it
+once using SDK selection then. Explains that pinning an ID or explicit version fixes
+the dataset; replay preserves the requested selector with actual identity/version/digest
+as separate provenance. Local CSV remains supported with one warning per executing
+invocation, and nested stages do not repeatedly warn or fetch. No job is submitted.
+
+## Success: default runtime installation
+
+Prompt: “Which clearml-yolo extras do I need for RF-DETR, ONNX export and cy-queue tui?
+Does the default installation also provide the DEIMv2 checkout and TensorRT runtime?
+Explain only; do not install or upgrade anything.”
+
+Expected: checks matching source/version, explains all former project extras install
+as runtime dependencies by default and does not suggest removed extras. Keeps `dev`
+separate and points to package metadata for bounds rather than inventing versions.
+Retains required upstream extras and approved external source revisions. DEIMv2's
+source checkout and TensorRT/CUDA remain external prerequisites; it performs no setup
+and claims no successful minimum-version execution.
+
 ## Missing input
 
 Prompt: “Run cy-predict on my images. I haven't supplied a checkpoint or annotation CSV.”

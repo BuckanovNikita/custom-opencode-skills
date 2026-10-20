@@ -5,6 +5,14 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.2.12] - 2026-10-20
+
+- Document ClearML dataset selectors for ground truth, CSV-only inventory, source
+  provenance, local-input compatibility and deferred queue/replay resolution.
+- Explain default detector, ONNX and terminal UI dependencies while preserving
+  external source/system prerequisites and the separate development group.
+- Add selector, media-path, queued-input and default-installation evaluation cases.
+
 ## [0.2.11] - 2026-10-20
 
 - Point clearml-yolo native configuration, cache and publication guidance to its consolidated

@@ -2,7 +2,22 @@
 
 These examples assume the installed commands are available. Replace paths and run
 identity with actual inputs. Commands without `--help` or `--cfg` execute real work.
-Do not install optional backends or change dependency revisions as a usage side effect.
+Do not install packages or change dependency revisions as a usage side effect.
+
+## Installation contract
+
+Check the matching installed package or source before relying on these interfaces.
+The default runtime includes detector backends, ONNX/ONNX Runtime and the Textual
+queue UI. Project extras `detectors`, `export` and `queue-ui` have been removed;
+do not recommend package extras or `uv sync --extra` for those capabilities.
+From a prepared source checkout, `uv sync --frozen --no-dev` installs runtime packages;
+`uv sync --frozen` includes the default development group. Lower bounds, exact pins
+and upper bounds are authoritative in the application's `pyproject.toml`; the
+normal lock records selected versions, not proof of minimum-version compatibility.
+Required upstream extras such as `rfdetr[train]` and `pandera[pandas]` remain.
+Approved `digital-metrics` and `report-generator` source copies, the DEIMv2 source
+checkout and TensorRT/CUDA deployment prerequisites still need their documented
+setup. Do not substitute revisions or claim these external prerequisites were installed.
 
 ## Select a stage
 
@@ -84,6 +99,56 @@ An explicit unavailable baseline is an error:
 cy --config-dir cy-config --config-name cy compare.baseline_model.task_id=TASK_ID
 ```
 
+## Ground-truth source selection
+
+All existing `ground_truth` consumers accept a local CSV or a mapping selecting a
+finalized ClearML dataset. This includes `cy`, `cy-train`, `cy-predict`, `cy-val`,
+`cy-metrics`, `cy-compare` and optional `ground_truth` for `cy-export`.
+`cy-ground-truth` still converts YOLO annotations through its separate `data_yaml` input.
+
+```yaml
+ground_truth: {dataset_id: DATASET_ID}
+# Or:
+# ground_truth: {project_name: annotations, name: ground-truth}
+# ground_truth: {project_name: annotations, name: ground-truth, version: "1.2.0"}
+```
+
+Use the same mapping in a quoted CLI override:
+
+```bash
+cy-train 'ground_truth={dataset_id:DATASET_ID}' ultralytics.model=yolo11n.pt \
+  ultralytics.device=cpu clearml.project_name=detection \
+  clearml.task_name=dataset-train 'clearml.tags=[training]'
+```
+
+Replace the visible dataset placeholder and experiment identity before execution;
+CPU is a real workload device. The dataset's `project_name` is independent of
+the experiment's `clearml.project_name`. Select exactly an ID or a complete
+project/name pair. `version` is accepted only with the pair; mixed selectors,
+unknown fields and empty or incomplete values fail before lookup. Quote version
+strings. Without a version, the SDK selects the latest available version
+(highest semantic version when available, otherwise most recently updated).
+
+The finalized dataset's current logical inventory must contain only root
+`dataset.csv`; additional files or linked entries are rejected before download.
+Lookup failure, an incomplete dataset or missing root CSV is an error; it does not
+create a dataset. The selected and materialized input is the unchanged CSV. The SDK
+may fetch whole archive chunks and populate its cache, including historically
+removed media. Use a fresh CSV-only dataset lineage if transport must exclude that
+media too. No image upload, conversion or path remapping is added. Absolute media
+references remain absolute; relative references resolve beside the downloaded CSV.
+Require accessible images at those paths.
+
+Local `ground_truth=./ground_truth.csv` still works and emits one recommendation
+to use a ClearML dataset during execution. Nested stages, including stages using
+cleaned training CSVs, reuse the resolved source without another lookup or warning.
+Help, configuration inspection/export and queue submission do not download datasets.
+Queued jobs validate and preserve selectors; execution and remote replay resolve
+the selector once in that invocation. Saved executable configuration keeps the
+requested selector, with actual dataset identity, version and CSV digest recorded
+separately. An unversioned selector can change between invocations; pin an ID or
+explicit project/name/version when reproducibility needs a fixed dataset.
+
 ## CSV and path contracts
 
 Training uses this header and absolute pixel corner coordinates:
@@ -96,7 +161,8 @@ test.jpg,images/test.jpg,helmet,10,20,100,120,test
 ```
 
 These rows describe existing images; they do not create fixture data. CSV image paths
-resolve relative to the CSV directory; the CSV argument resolves from command cwd.
+resolve relative to the CSV directory; a local CSV argument resolves from command cwd.
+For a ClearML source, the CSV directory is the downloaded dataset location.
 `image_name` must match the resolved basename. One image identity cannot refer to
 different paths or splits. Background records have blank label and coordinates;
 do not mix background and annotated rows for the same image.

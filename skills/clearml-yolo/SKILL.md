@@ -16,8 +16,9 @@ does not provide credentials or administer infrastructure.
    maintained documentation, and existing outputs before changing anything. Read
    [usage](references/usage.md) for command selection and configuration examples.
    Preserve the user's chosen model, device, environment and dependency revisions.
-2. Identify the annotation CSV and images, checkpoint or model references, requested
-   stage/splits, output workspace, and ClearML project/task/tags. Ask only for essential
+2. Identify the local annotation CSV or ClearML dataset selector, accessible images,
+   checkpoint or model references, requested stage/splits, output workspace, and
+   ClearML project/task/tags. Ask only for essential
    missing inputs that cannot be recovered from context. Do useful inspection while
    resolving them; do not invent paths, model thresholds or credentials.
 3. Separate configuration inspection from execution. `--help` and `--cfg job` display
@@ -40,6 +41,16 @@ For YOLO, put native keys at the root of `ultralytics/default.yaml` and
 do not substitute `ultralytics.data` or raw `cfg` for wrapper inputs. Select other
 backends through `model=...` and their `model.train`/`model.predict` controls after
 checking that the chosen backend is already available.
+
+For ClearML ground truth, use a dataset ID or project/name pair with an optional
+version; read the source rules and SDK archive/cache caveat in
+[usage](references/usage.md). Require only root `dataset.csv` in the finalized
+dataset; additional files or linked entries are rejected. Images must remain
+accessible through unchanged CSV paths. Local inputs still work with one warning.
+Dataset resolution
+occurs during execution, not configuration inspection or queue submission.
+Default installations include detector, ONNX and TUI dependencies; do not suggest
+removed project extras or change external source/system prerequisites.
 
 All execution stages require ClearML with remote artifact storage. There is no
 `clearml.enabled=false` switch. FiftyOne is optional on commands exposing its group;
