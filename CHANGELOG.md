@@ -16,6 +16,27 @@ no packages or release assets are published.
   align the standalone skill-author package. Existing skill and agent names remain
   stable; examples require manual provider-ID mapping and are not activated.
 
+## [0.2.12] - 2026-10-20
+
+- Document ClearML dataset selectors for ground truth, CSV-only inventory, source
+  provenance, local-input compatibility and deferred queue/replay resolution.
+- Explain default detector, ONNX and terminal UI dependencies while preserving
+  external source/system prerequisites and the separate development group.
+- Add selector, media-path, queued-input and default-installation evaluation cases.
+
+## [0.2.11] - 2026-10-20
+
+- Point clearml-yolo native configuration, cache and publication guidance to its consolidated
+  stage-zero specification; preserve existing commands and examples.
+
+## [0.2.10] - 2026-10-19
+
+- Explain stable experiment parameters and opt-in controller cache identity while
+  retaining full executable replay settings.
+- Document active `run`, selected-preset `run_overrides`, startup training parameters
+  and publication of complete artifacts as soon as they are ready.
+- Add configuration, cache-reuse and result-completion evaluation scenarios.
+
 ## [0.2.9] - 2026-10-19
 
 - Explain per-job queue monitoring warnings, retained summaries and archive-aware

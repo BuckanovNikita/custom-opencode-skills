@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "task": "Redirect clearml-yolo usage to consolidated baseline",
+  "scope": [
+    "skills/clearml-yolo/references/usage.md",
+    "docs/plans/cleanup-baseline",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected current usage references, upstream v0.2.10 cache guidance, release procedure and the application stage-zero specification. Only three external contract destinations and collection release evidence change. There are no executable modules, dependencies, examples, interfaces or installed-copy changes; existing application checks remain authoritative."
+}

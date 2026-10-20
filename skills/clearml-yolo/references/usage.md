@@ -2,7 +2,22 @@
 
 These examples assume the installed commands are available. Replace paths and run
 identity with actual inputs. Commands without `--help` or `--cfg` execute real work.
-Do not install optional backends or change dependency revisions as a usage side effect.
+Do not install packages or change dependency revisions as a usage side effect.
+
+## Installation contract
+
+Check the matching installed package or source before relying on these interfaces.
+The default runtime includes detector backends, ONNX/ONNX Runtime and the Textual
+queue UI. Project extras `detectors`, `export` and `queue-ui` have been removed;
+do not recommend package extras or `uv sync --extra` for those capabilities.
+From a prepared source checkout, `uv sync --frozen --no-dev` installs runtime packages;
+`uv sync --frozen` includes the default development group. Lower bounds, exact pins
+and upper bounds are authoritative in the application's `pyproject.toml`; the
+normal lock records selected versions, not proof of minimum-version compatibility.
+Required upstream extras such as `rfdetr[train]` and `pandera[pandas]` remain.
+Approved `digital-metrics` and `report-generator` source copies, the DEIMv2 source
+checkout and TensorRT/CUDA deployment prerequisites still need their documented
+setup. Do not substitute revisions or claim these external prerequisites were installed.
 
 ## Select a stage
 
@@ -84,6 +99,56 @@ An explicit unavailable baseline is an error:
 cy --config-dir cy-config --config-name cy compare.baseline_model.task_id=TASK_ID
 ```
 
+## Ground-truth source selection
+
+All existing `ground_truth` consumers accept a local CSV or a mapping selecting a
+finalized ClearML dataset. This includes `cy`, `cy-train`, `cy-predict`, `cy-val`,
+`cy-metrics`, `cy-compare` and optional `ground_truth` for `cy-export`.
+`cy-ground-truth` still converts YOLO annotations through its separate `data_yaml` input.
+
+```yaml
+ground_truth: {dataset_id: DATASET_ID}
+# Or:
+# ground_truth: {project_name: annotations, name: ground-truth}
+# ground_truth: {project_name: annotations, name: ground-truth, version: "1.2.0"}
+```
+
+Use the same mapping in a quoted CLI override:
+
+```bash
+cy-train 'ground_truth={dataset_id:DATASET_ID}' ultralytics.model=yolo11n.pt \
+  ultralytics.device=cpu clearml.project_name=detection \
+  clearml.task_name=dataset-train 'clearml.tags=[training]'
+```
+
+Replace the visible dataset placeholder and experiment identity before execution;
+CPU is a real workload device. The dataset's `project_name` is independent of
+the experiment's `clearml.project_name`. Select exactly an ID or a complete
+project/name pair. `version` is accepted only with the pair; mixed selectors,
+unknown fields and empty or incomplete values fail before lookup. Quote version
+strings. Without a version, the SDK selects the latest available version
+(highest semantic version when available, otherwise most recently updated).
+
+The finalized dataset's current logical inventory must contain only root
+`dataset.csv`; additional files or linked entries are rejected before download.
+Lookup failure, an incomplete dataset or missing root CSV is an error; it does not
+create a dataset. The selected and materialized input is the unchanged CSV. The SDK
+may fetch whole archive chunks and populate its cache, including historically
+removed media. Use a fresh CSV-only dataset lineage if transport must exclude that
+media too. No image upload, conversion or path remapping is added. Absolute media
+references remain absolute; relative references resolve beside the downloaded CSV.
+Require accessible images at those paths.
+
+Local `ground_truth=./ground_truth.csv` still works and emits one recommendation
+to use a ClearML dataset during execution. Nested stages, including stages using
+cleaned training CSVs, reuse the resolved source without another lookup or warning.
+Help, configuration inspection/export and queue submission do not download datasets.
+Queued jobs validate and preserve selectors; execution and remote replay resolve
+the selector once in that invocation. Saved executable configuration keeps the
+requested selector, with actual dataset identity, version and CSV digest recorded
+separately. An unversioned selector can change between invocations; pin an ID or
+explicit project/name/version when reproducibility needs a fixed dataset.
+
 ## CSV and path contracts
 
 Training uses this header and absolute pixel corner coordinates:
@@ -96,7 +161,8 @@ test.jpg,images/test.jpg,helmet,10,20,100,120,test
 ```
 
 These rows describe existing images; they do not create fixture data. CSV image paths
-resolve relative to the CSV directory; the CSV argument resolves from command cwd.
+resolve relative to the CSV directory; a local CSV argument resolves from command cwd.
+For a ClearML source, the CSV directory is the downloaded dataset location.
 `image_name` must match the resolved basename. One image identity cannot refer to
 different paths or splits. Background records have blank label and coordinates;
 do not mix background and annotated rows for the same image.
@@ -430,6 +496,134 @@ cannot establish GPU/NCCL/publication success.
 
 ## Evidence and failure handling
 
+### ClearML parameters and cached pipeline steps
+
+Check that the installed source exposes
+`clearml_yolo.adapters.clearml.cache.normalize_task_hash` before using this interface;
+older installations retain their existing behavior. Check matching source/help before
+relying on the startup publication behavior below.
+
+The CLI publishes a sanitized JSON `run` Configuration Object containing executable
+inputs after YAML composition, CLI overrides, queue device binding and supported remote
+overrides. It includes only the selected backend's active settings: YOLO uses
+`ultralytics`/`ultralytics_predict`; alternative detectors use `model.train` and
+`model.predict` without inactive YOLO defaults. Later result provenance does not replace
+configured values, and observed native normalization is recorded separately. Embedded
+application callers must explicitly supply or record complete inputs within their
+invocation; direct use-case calls do not construct the full snapshot.
+
+The separate JSON `run_overrides` Configuration Object shows only differences from the
+built-in defaults for the same command and selected model preset. It includes YAML and
+CLI changes and omits generated output routing, result provenance and inactive backend
+groups. A resolved device binding remains when it differs from the selected defaults.
+Both Configuration Objects are published during startup.
+Nested unchanged values and empty parent mappings are pruned; meaningful `false`, zero,
+null, explicit empty collections and ordered-list differences remain. It is a sanitized,
+informational view: use full `run` for execution, cloning and replay. The recognized-task
+cache projection excludes `run_overrides`; editing this derived view is not a way to
+change execution or scientific cache identity.
+
+Training `General` is published after supported remote overrides and parameter validation,
+before dataset preparation and training. Native `General` omits `device`, `project`,
+`name`, `save_dir`, `exist_ok` and CSV-generated `data`. Native lifecycle callbacks can
+refresh observed normalization while retaining the configured `run` values. This applies
+to direct and queued training and supported detector backends; the invocation owner alone
+publishes in DDP. Commands and pipelines that skip training do not create training
+parameters. Startup visibility does not establish that training has succeeded.
+Remote YOLO training replay restores the actual device and full settings, applies scientific
+`General` overrides and retains current output routing. New snapshots use JSON;
+historical HOCON remains readable for replay. Do not delete replay settings to influence
+cache lookup or change the native device requested by the user.
+Legacy remote YOLO tasks with absent `run` or an omitted `ultralytics` group recover
+their execution settings from General into the new full snapshot. Present groups,
+including empty mappings, retain authority; current output routing stays protected.
+Filtering new connection inputs does not delete General keys inherited by clones of
+historical templates. Canonical replay and the cache helper still handle them;
+parameter-history cleanup is outside this publication behavior.
+
+For an existing external task-based ClearML controller, register before creating cached
+jobs and after any framework callback registration:
+
+```python
+from clearml.automation.job import ClearmlJob
+from clearml_yolo.adapters.clearml.cache import normalize_task_hash
+
+ClearmlJob.register_hashing_callback(normalize_task_hash)
+```
+
+Use its existing `cache_executed_step=True` option. If the controller already registers
+a callback, explicitly compose that callback's result with `normalize_task_hash` instead
+of replacing it. Registration belongs in the controller process: a worker starts after
+cache lookup. Importing/calling the helper alone installs no callback or pipeline runner;
+the helper returns a detached hash representation without filesystem/network effects.
+
+Pass `run` overrides as JSON text, for example
+`configuration_overrides={"run": json.dumps(full_run_config, ensure_ascii=False)}`
+after importing `json`. Keep the complete input mapping. The installed SDK converts
+dictionary overrides to JSON with default ASCII escaping; explicit text preserves
+Unicode through its replay parser. Dictionary overrides are otherwise normalizable.
+
+For supported native YOLO training, `[0,1]` and `[2,3]` normalize as two CUDA devices.
+Device count/type, unresolved selectors and forms rejected by the consuming backend
+remain distinct. Do not apply YOLO's permissive aliases to strict detector/export
+settings; inference with an unknown checkpoint backend uses a conservative common
+subset. Known run/output names and output/cache roots are
+ignored; datasets, checkpoints, model/backend, class names, seeds, batch, precision,
+optimizer settings, augmentation, thresholds and enabled stages remain significant.
+SDK-supplied code/container identity and unknown fields are preserved. Generated dataset paths normalize only
+with recorded `run.prepared_dataset.cache_identity` and `root`; class mappings and split
+definitions still contribute. Never discard arbitrary `name`/`path` fields or normalize
+unproven input paths by basename. Unknown, malformed and historical HOCON Configuration
+Objects remain unchanged and can prevent reuse conservatively.
+
+Retain the ClearML project when it supplies a comparison model's fallback input
+lookup, and pipeline run roots when skipped stages consume existing files there.
+Pin concrete source task IDs before caching mutable latest-task/tag lookups; the
+helper does not resolve them. JSON with active escapes whose meaning differs in
+the SDK replay parser also remains unnormalized; literal Unicode and escaped
+backslashes remain supported.
+
+A hit reuses the previous task and its remote artifacts/models; it does not create files
+at a new local destination. Historical tasks are not rewritten. Existing source-image
+immutability and cache-invalidation requirements remain; normalization does not verify
+file contents. Request real miss/hit/scientific-change evidence before claiming caching
+works. Source inspection or synthetic GPU selectors do not prove physical GPU equivalence.
+
+### Complete artifact publication
+
+Only completed files are uploaded under their existing canonical artifact names. There
+are no intermediate replacement uploads. Inspect the task while it is running when
+verifying timing; a final artifact list alone cannot prove early visibility.
+
+| Publication | First complete publication point |
+| --- | --- |
+| `gt_csv` | Effective ground truth has been validated and its canonical CSV written |
+| Validation threshold CSV | Calibration and the complete CSV write finish |
+| Evaluation/comparison dashboards | Each model/split evaluation and workbook annotation finish, before the next evaluation or comparison statistics |
+| `predicts_csv` | All enabled prediction/evaluation contributors finish adding or enriching rows |
+| Comparison/report workbooks | Each final annotated workbook is complete |
+| Export artifacts | Each graph, engine, metadata document or corpus manifest is finalized; verification reports wait for all cases and corpus checks |
+| Best Output Model | Training selects and finalizes the best checkpoint; existing upload verification still applies |
+
+The workflow declares its enabled `predict`, `metrics` and `compare` result contributors.
+Each signals completion after its last row mutation; the last completion assembles and
+uploads the combined `predicts_csv` once, before later statistics, reports or optional
+publication. Standalone commands declare their own contributors; standalone validation
+includes prediction and metrics. A skipped comparison explicitly completes without
+inventing rows. An empty contributor set requires no prediction artifact. Effective
+ground truth is published once: identical repeat registration is harmless, while
+conflicting ground truth fails.
+
+Finalization verifies contributor completion and required uploads. A failure or
+cancellation before the last contributor finishes leaves the incomplete aggregate local;
+already completed uploads remain available after a later failure. Their presence alone
+does not establish a successful invocation. Required upload rejection or final flush
+failure still fails the task. A complete export verification report that fails its quality
+gate is published before failure; an unfinished report remains local. Preserve diagnostics
+and use task status plus downloaded artifact contents for final verification.
+
+### Verify execution outcomes
+
 `--help`/`--cfg job` avoid configured workload/task execution but may create scratch/logs;
 check them with an isolated existing workspace selected by `CY_HOME`. Composition proves
 schema compatibility, not input availability, model loading, GPU memory or publication.
@@ -455,7 +649,9 @@ remain usable without fetching these links.
 
 - [Command/configuration contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/project-contracts.md)
 - [Current contract index and implementation links](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/current-contracts.md)
-- [Native YOLO configuration](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/005-explicit-detection-config/contracts/native-configuration.md)
+- [Native YOLO configuration](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/000-baseline/spec.md#native-configuration)
 - [Backend settings and prerequisites](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/multi-model-backends.md)
 - [Shared queue contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/queue.md)
+- [Stable parameters and controller cache contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/000-baseline/spec.md#stable-experiment-parameters-and-controller-caching)
+- [Required publication and task lifecycle](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/000-baseline/spec.md#required-publication-and-task-lifecycle)
 - [Python use-case imports and explicit dependencies](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/python-import-migration.md)

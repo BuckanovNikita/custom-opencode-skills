@@ -92,10 +92,15 @@ plan/record. Historical reports and unrelated working changes are preserved.
 ## Release integration
 
 Fetching upstream revealed three already-published ClearML documentation commits
-through collection 0.2.12, ahead of the inspected local base 0.2.9. Integration is
-performed in a clean temporary checkout so the original unrelated working edits
-remain intact. Keep all upstream release notes beneath the new 0.3.0 section and
-rerun collection checks on the combined committed content before tag publication.
+through collection 0.2.12, ahead of the inspected local base 0.2.9. Integration was performed in a clean temporary checkout, resolving only the
+VERSION/CHANGELOG conflicts: version 0.3.0 retains every upstream release note.
+The six agent templates and both OpenCode packages are unchanged from the
+independently reviewed task commit. Upstream ClearML files retain their published
+content. Final collection lint checked 53 files with zero issues; discovery found
+all four skills; package/schema/link checks and architecture acceptance passed.
+A preservation hash check in the original workspace observed concurrent changes
+to two unrelated CVeta files, so it cannot establish byte-for-byte stability.
+Those files were not edited or staged by this task and remain outside its commit.
 Git branch/tag verification belongs to the delivery handoff; no GitHub Release
 objects or package publication are part of this workflow.
 

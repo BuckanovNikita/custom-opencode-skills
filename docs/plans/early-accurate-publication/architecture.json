@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "task": "Document accurate ClearML configuration and complete artifact publication",
+  "scope": [
+    "VERSION",
+    "CHANGELOG.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "docs/plans/early-accurate-publication"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the portable skill entrypoint, usage/evaluation references, collection maintenance/release policy and clearml-yolo feature 037 implementation in Hydra composition, ClearML session/results/cache and its publication contracts. Only guidance, evaluation prompts and dated evidence change. There are no executable modules, dependency changes, composition targets, helper scripts, checker changes or installed-skill effects. Runtime interfaces and executable dependency contracts remain owned by application feature 037. The separately preserved feature 036 references/evidence are prerequisites, not rewritten history."
+}
