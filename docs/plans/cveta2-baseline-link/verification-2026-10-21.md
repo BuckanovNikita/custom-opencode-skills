@@ -54,3 +54,19 @@ correction; existing examples, routing and evaluation cases are unchanged.
 Structural checks and discovery do not establish live OpenCode/model performance.
 No commit, tag, push, installation or publication was performed by this validator.
 The parent owns release after the cveta2 baseline is published.
+
+## Publication prerequisite
+
+cveta2 main commit `b9d93f30e5feccf06b8117005d465b7ff457b8de` is now published.
+Its push passed the full mutation, version-drift and live integration gates
+(37 integration tests passed). Release evaluation kept cveta2 at 0.11.0.
+The GitHub contents API returned `specs/baseline.md` at that exact commit,
+blob `6f5cdf04e3971f2a5c42eb838a80fbf32ee70dd7`; decoding its contents confirmed
+the `Dataset format and fetch` heading. The collection's new source link now
+resolves to published content.
+
+The parent rechecked the complete release diff, architecture acceptance and pinned
+collection Markdown lint after this evidence update. The release is the compatible
+documentation patch 0.4.2; its main commit and annotated tag are published together
+using the repository's atomic-push workflow. Final remote-ref confirmation is
+recorded in the cveta2 delivery evidence.
