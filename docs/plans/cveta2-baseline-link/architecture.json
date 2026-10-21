@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "task": "cveta2-baseline-link",
+  "scope": [
+    "skills/cveta2/references/usage.md",
+    "VERSION",
+    "CHANGELOG.md",
+    "docs/plans/cveta2-baseline-link"
+  ],
+  "impact": "none",
+  "rationale": "Inspected link-only documentation correction and release metadata. The cveta2 dataset contract moved to the current baseline; commands, routing, permission boundaries and executable helpers remain unchanged. No runtime modules, imports, composition or architecture checking tools are affected."
+}

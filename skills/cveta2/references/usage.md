@@ -6,7 +6,7 @@ placeholders. Optional deeper references are the upstream
 [CLI guide](https://github.com/BuckanovNikita/cveta2/blob/main/docs/cli.md),
 [configuration guide](https://github.com/BuckanovNikita/cveta2/blob/main/docs/configuration.md),
 [Python API](https://github.com/BuckanovNikita/cveta2/blob/main/docs/python-api.md),
-and [dataset contract](https://github.com/BuckanovNikita/cveta2/blob/main/specs/001-project-documentation/contracts/dataset-format.md).
+and [dataset contract](https://github.com/BuckanovNikita/cveta2/blob/main/specs/baseline.md#dataset-format-and-fetch).
 These follow the default branch; installed-version help takes precedence for flags.
 
 ## Installation and configuration

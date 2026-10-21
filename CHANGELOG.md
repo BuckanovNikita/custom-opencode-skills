@@ -5,6 +5,10 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-10-21
+
+- Point the cveta2 dataset contract to its consolidated current specification.
+
 ## [0.4.1] - 2026-10-20
 
 - Explain the clearml-yolo experiment-command Git workspace warning, including
