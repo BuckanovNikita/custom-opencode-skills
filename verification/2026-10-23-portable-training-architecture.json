@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "CY003 portable training usage guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "VERSION",
+    "CHANGELOG.md",
+    "verification/2026-10-23-portable-training.md",
+    "verification/2026-10-23-portable-training-architecture.json"
+  ],
+  "impact": "none",
+  "rationale": "Documentation-only companion scope was identified in CY003 plan before implementation. Inspection confirms these edits only describe source-first queue installation, early Agent replay, managed assets/offline recovery and evaluation prompts; no runtime modules, executable helpers, dependency configuration or import contracts change. Pre-existing cache guidance edits are excluded from task ownership. Release metadata and dated evidence are documentation-only. Candidate integrates the backup-relative CY003 delta and reviewed corrections to directly affected installation guidance onto published collection v0.4.2; unrelated local cache edits and planning files remain in the original checkout."
+}

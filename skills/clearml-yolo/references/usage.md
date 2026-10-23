@@ -7,17 +7,21 @@ Do not install packages or change dependency revisions as a usage side effect.
 ## Installation contract
 
 Check the matching installed package or source before relying on these interfaces.
-The default runtime includes detector backends, ONNX/ONNX Runtime and the Textual
-queue UI. Project extras `detectors`, `export` and `queue-ui` have been removed;
-do not recommend package extras or `uv sync --extra` for those capabilities.
+CY's default runtime includes detector backends and ONNX/ONNX Runtime. The separate
+`cy-queue` distribution owns the queue command, Textual UI and NVML dependency;
+install it after CY in the same environment when queue functionality is needed.
+Project extras `detectors`, `export` and `queue-ui` have been removed; do not recommend
+package extras or `uv sync --extra` for those capabilities.
 From a prepared source checkout, `uv sync --frozen --no-dev` installs runtime packages;
 `uv sync --frozen` includes the default development group. Lower bounds, exact pins
 and upper bounds are authoritative in the application's `pyproject.toml`; the
 normal lock records selected versions, not proof of minimum-version compatibility.
 Required upstream extras such as `rfdetr[train]` and `pandera[pandas]` remain.
-Approved `digital-metrics` and `report-generator` source copies, the DEIMv2 source
-checkout and TensorRT/CUDA deployment prerequisites still need their documented
-setup. Do not substitute revisions or claim these external prerequisites were installed.
+Approved `digital-metrics` and `report-generator` source copies, detector dependencies
+and TensorRT/CUDA deployment prerequisites still need their documented setup.
+With `model.source_dir=null`, execution resolves the approved DEIMv2 source
+automatically; an explicitly supplied validated checkout remains supported.
+Do not substitute revisions or claim external dependencies were installed.
 
 ## Select a stage
 
@@ -284,8 +288,9 @@ cy --config-dir detector-config --config-name cy \
 
 Select presets through `model=...`; native detector controls are `model.train.*`
 and `model.predict.*`, and data is derived as COCO from the same CSV. Check installed
-presets/help before selection. DEIMv2 requires its approved source checkout and
-explicit initialization weights; these adapters support CPU/single GPU, not YOLO DDP.
+presets/help before selection. Non-YOLO adapters support CPU/single GPU, not YOLO DDP.
+Execution can resolve DEIMv2 source and requested pretrained assets automatically;
+explicit source/weight paths remain authoritative and missing files fail.
 
 `cy-export` supports Faster R-CNN only. Its distinct operations are CPU/FP32 ONNX,
 GPU engine build and GPU verification. Generate `cy-init-config export-config
@@ -294,7 +299,64 @@ ONNX needs weights; build needs `export.onnx`; verification additionally needs w
 `export.engine` and labeled ground truth. Don't infer backend availability from config
 generation or compose success.
 
+## Model assets and offline recovery
+
+Check that the installed version supports automatic assets. Configuration inspection,
+help and queue submission do not fetch them. Dependencies remain externally managed;
+asset preparation does not install packages or change approved source revisions.
+Ultralytics keeps its native download behavior.
+
+For DEIMv2, RF-DETR and Faster R-CNN, requested pretrained initialization uses matching
+native backbone/registry assets only when explicit weights do not supersede it.
+Keep original model selectors (including null defaults) in canonical replay. Resolved
+paths, original URLs and hashes belong to the separate `model_assets` Configuration
+Object, outside canonical `run` inputs.
+
+Managed weights live under
+`CY_HOME/.cache/clearml-yolo/models/<backend>/<preset>/<asset-id>/<filename>`.
+DEIMv2 source uses
+`CY_HOME/.cache/clearml-yolo/sources/DEIMv2/<revision>.tar.gz` and adjacent `<revision>/`.
+The approved archive is checked against packaged code/configuration hashes. Explicit
+checkouts retain their validation. Never recommend editing the pinned source to pass.
+
+Resolution tries valid local/cache data, a configured proxy, then the original URL.
+Empty or absent proxy variables select upstream directly. `GHR` is a GitHub release
+repository root; append the full `owner/repository/releases/download/tag/filename`.
+`GH` is an Artifactory VCS repository root used to derive `downloadCommit` for pinned
+DEIM source; it is not a Git clone endpoint. Other hosts keep their original URLs.
+Do not put proxy credentials in examples or infer access from URL construction tests.
+
+On download failure, preserve the complete missing-asset report. It names each full
+original URL, exact absolute destination and applicable override/access requirement.
+The user can copy the file or DEIM source archive to that destination and rerun
+offline without an earlier download receipt. Gated backbones require the upstream
+access grant; do not substitute detector weights or random initialization.
+
+## ClearML Agent execution
+
+For an externally managed Agent, the recorded bare `cy`/`cy-train` module entrypoint
+restores one detached canonical configuration before required-input validation and
+backend selection, initializes that runtime, then joins the same task. No queue package,
+queue TOML or GPU reservation is needed. Keep Agent CUDA visibility and native logical
+devices unchanged. This adds no submission command or dependency installer.
+
+An absent canonical `run` object permits complete explicit launch inputs. A present
+empty or malformed object fails; do not delete it to hide the error. Canonical settings
+and supported scientific General overrides retain precedence, while original source
+script metadata and task publication ownership remain intact.
+
 ## Direct execution and shared queue
+
+Install CY from an available source checkout first, followed by the separate queue
+checkout into that same Python environment; neither distribution is assumed published
+on PyPI. Preserve the approved external dependency sources. For a coordinated offline
+upgrade, stop all workers and drain/recover owned jobs before replacing either package.
+Preserve queue records/history and shared lock/configuration locations. Pending jobs
+must be resubmitted after installation identity changes; do not rewrite saved identities.
+
+`cy-queue submit --command pipeline` is the default. Use `--command train` before `--`
+for standalone training, followed by its existing CY Hydra arguments. Both require
+explicit queue GPU requests and preserve owner/cancellation/recovery/handoff rules.
 
 Direct execution honors selected devices without admission, reservation or waiting.
 Direct `cy -m` is sequential. Inspect installed `cy-queue --help` before using the

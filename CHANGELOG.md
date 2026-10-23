@@ -5,6 +5,14 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-10-23
+
+- Align clearml-yolo guidance with source-first installation of the extracted queue
+  package and standalone queued training, including coordinated offline upgrades.
+- Document early ClearML Agent replay, matching native model assets, proxy fallback
+  and exact offline recovery without changing requested initialization.
+- Add explanation-only queue, gated-backbone and bare-Agent evaluation cases.
+
 ## [0.4.2] - 2026-10-21
 
 - Point the cveta2 dataset contract to its consolidated current specification.

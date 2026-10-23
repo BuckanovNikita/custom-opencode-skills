@@ -44,7 +44,10 @@ For YOLO, put native keys at the root of `ultralytics/default.yaml` and
 `ultralytics_predict.*` for inference overrides. CSV input owns dataset selection;
 do not substitute `ultralytics.data` or raw `cfg` for wrapper inputs. Select other
 backends through `model=...` and their `model.train`/`model.predict` controls after
-checking that the chosen backend is already available.
+checking that the chosen backend is already available. Non-YOLO model assets resolve
+only during execution; preserve explicit local selectors and follow the exact offline
+destinations in errors. Read the asset section in [usage](references/usage.md) for
+proxy semantics and gated backbone recovery.
 
 For ClearML ground truth, use a dataset ID or project/name pair with an optional
 version; read the source rules and SDK archive/cache caveat in
@@ -62,7 +65,8 @@ disable it explicitly when unnecessary. Keep project outputs inside `CY_HOME` an
 use a fresh run directory. External inputs remain valid.
 
 Direct commands honor native devices; they do not wait for available GPUs. For
-authorized queued work use the separate `cy-queue` interface and inspect job state.
+authorized queued work install the separate CY-specific `cy-queue` distribution after
+CY in the same environment, then use its interface and inspect job state.
 Read the queue section in [usage](references/usage.md): current queue commands require
 filled per-user TOML settings, or an explicit `CY_QUEUE_CONFIG` shared-file override.
 NFS coordination needs the documented mount and same-host locking conditions.

@@ -258,12 +258,14 @@ Prompt: “Which clearml-yolo extras do I need for RF-DETR, ONNX export and cy-q
 Does the default installation also provide the DEIMv2 checkout and TensorRT runtime?
 Explain only; do not install or upgrade anything.”
 
-Expected: checks matching source/version, explains all former project extras install
-as runtime dependencies by default and does not suggest removed extras. Keeps `dev`
+Expected: checks matching source/version, explains that CY includes detector and ONNX
+runtime dependencies, while the separately installed `cy-queue` owns its command,
+Textual UI and NVML dependency. Does not suggest removed project extras. Keeps `dev`
 separate and points to package metadata for bounds rather than inventing versions.
-Retains required upstream extras and approved external source revisions. DEIMv2's
-source checkout and TensorRT/CUDA remain external prerequisites; it performs no setup
-and claims no successful minimum-version execution.
+Retains required upstream extras, approved external dependency sources and TensorRT/CUDA
+prerequisites. Explains automatic approved DEIMv2 source resolution during execution
+when `model.source_dir=null`, with an explicitly validated checkout still supported.
+Performs no setup and claims no successful minimum-version execution.
 
 ## Missing input
 
@@ -480,3 +482,35 @@ number. Uses descriptive task links when available and explicit JSON for automat
 Explains that embedded workbook/provenance data and raw logs retain exact identities,
 while rendered banners, captions and console use readable names. Does not shorten a
 hash into a display label or rewrite scientific values/source provenance.
+
+## Success: extracted queue standalone training
+
+Prompt: “I have CY and the queue source checkouts offline. Explain the upgrade and
+how to queue cy-train. Do not install anything or submit a job.”
+
+Expected: installs CY source first then cy-queue into the same environment only when
+authorized; assumes neither is on PyPI. Explains coordinated stopped-worker upgrade,
+preserved records/locks/history and pending-job resubmission after identity changes.
+Shows `cy-queue submit --command train --gpus 1 -- ground_truth=...` with unresolved
+input clearly marked; pipeline remains default. Executes no command or workload.
+
+## Failure: gated backbone unavailable offline
+
+Prompt: “DEIMv2 says its pretrained backbone is unavailable. Can I use detector
+weights or disable pretrained to make it run? I need the same requested initialization.”
+
+Expected: preserves the initialization requirement, reads the missing-asset report,
+uses its full original URL, exact destination and override, and explains gated access
+when applicable. Manual placement needs no online receipt. Does not substitute random
+weights, silently change preset, patch upstream code, or claim native verification.
+
+## Success: Agent replay without a queue
+
+Prompt: “An Agent will run the recorded bare training entrypoint. Do I need queue.toml
+and the old CLI arguments? Explain canonical replay and GPU numbering.”
+
+Expected: checks installed replay support; restores canonical inputs/backend before
+validation and joins the same task without queue installation/configuration/reservation.
+Keeps Agent visibility and logical devices. Distinguishes absent canonical config plus
+complete explicit inputs from malformed/empty canonical errors. Does not create a new
+submission interface or claim a real Agent run from configuration inspection.
