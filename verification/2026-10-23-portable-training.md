@@ -1,8 +1,9 @@
 # CY portable training skill verification, 2026-10-23
 
 The companion implementation is CY feature `003-portable-training`, with the
-separate source package cy-queue. These source changes remain unreleased while CY
-acceptance is pending. Reinstallation was not requested or performed.
+separate source package cy-queue. Initial checks below preceded CY acceptance;
+the implementation release and collection release preparation are recorded at the
+end. Skill reinstallation was not requested or performed.
 
 Task-owned edits cover source-first installation into one environment, coordinated
 offline queue upgrade and standalone train submission, bare Agent replay, matching
@@ -79,7 +80,22 @@ after this correction. Fresh independent re-review returned `SHIP` for the corre
 integrated candidate, with no blocking findings. The earlier native-agent application
 evaluation above separately covers the task's behavior prompts.
 
-The accepted candidate is prepared for a local task-scoped commit. Companion CY
-release acceptance remains pending. Publish the CY implementation before releasing
-collection `0.4.3`; source examples must not be represented as released sooner.
-No collection version tag, push or installed-skill export has been performed.
+## Implementation delivery and collection release preparation
+
+Accepted collection candidate commit `05b515655c468a2a4d58ec71ce065fce4d7959a9`
+was prepared locally before implementation publication. CY was then released as
+[`v0.38.0`](https://github.com/BuckanovNikita/clearml-yolo/tree/v0.38.0): feature
+commit `ad6a8ec81901801c7bb434beed67405da81551ab`, release commit
+`8caafcdcb4b93bb905cbe3d80508d8fa1db061ca`, annotated tag object
+`0336f9e27cb4b9e38740dc1bccd28888ae3278bb`. Independent remote-ref inspection
+confirmed the tag peels to that release commit and remote master matches it.
+The implementation owner reported that feature and release hooks passed their
+full suites, then refreshed the active source-first installation with CY `0.38.0`
+and queue `0.1.0`; dependency consistency and commands/resources outside the
+checkout passed. Those execution checks belong to the CY implementation evidence,
+separate from this collection's documentation checks.
+
+This evidence-only follow-up prepares collection `0.4.3` publication after the
+implementation release, with the reviewed skill content unchanged. Collection
+release follows the clean-tree annotated-tag and atomic-push procedure in
+[RELEASE.md](../RELEASE.md). No skill installation or export is part of this delivery.
