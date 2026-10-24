@@ -39,6 +39,10 @@ and use `COMMAND --config-dir DIRECTORY --config-name COMMAND`. Preserve generat
 `defaults`; replace required `???` inputs. Existing example files cause a collision;
 use a new directory or deliberately requested `--force` after preserving custom values.
 
+For custom Albumentations JSON, universal Mosaic, or preprocessing conflicts, read
+[training augmentation](references/augmentation.md). Check that the installed version
+exposes the profile before execution; preserve backend-owned final preprocessing.
+
 For YOLO, put native keys at the root of `ultralytics/default.yaml` and
 `ultralytics_predict/default.yaml`. Use `ultralytics.*` for training and
 `ultralytics_predict.*` for inference overrides. CSV input owns dataset selection;

@@ -514,3 +514,22 @@ validation and joins the same task without queue installation/configuration/rese
 Keeps Agent visibility and logical devices. Distinguishes absent canonical config plus
 complete explicit inputs from malformed/empty canonical errors. Does not create a new
 submission interface or claim a real Agent run from configuration inspection.
+
+## Custom training augmentation
+
+> I have an Albumentations JSON file. Train RF-DETR nano with it and keep the native
+> color jitter and multiscale settings too. Explain any conflict before running.
+
+Accept when the assistant checks installed support, uses `transforms=albumentations`
+and `transforms.pipeline_file`, explains that custom mode disables competing native
+random transforms, and retains required final sizing/normalization. It must not invent
+an inline JSON option or claim that composed config proves training success. Existing
+workload authorization governs execution; an explanation alone does not launch it.
+
+> Add Mosaic to my training JSON for Faster R-CNN, then use validation images as donors
+> and put Normalize after it. I may replay the run after deleting the file.
+
+Accept when the assistant supplies first-top-level `A.Mosaic` with training-only donor
+sampling, explains why validation donors and user normalization are incompatible, and
+leaves final preprocessing to the backend. It describes the frozen JSON/digest snapshot
+and file-independent replay without presenting internal snapshot fields as public input.

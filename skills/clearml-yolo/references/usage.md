@@ -4,6 +4,9 @@ These examples assume the installed commands are available. Replace paths and ru
 identity with actual inputs. Commands without `--help` or `--cfg` execute real work.
 Do not install packages or change dependency revisions as a usage side effect.
 
+For custom training JSON and universal Mosaic, read [augmentation](augmentation.md),
+including native-transform replacement, required final preprocessing and frozen replay.
+
 ## Installation contract
 
 Check the matching installed package or source before relying on these interfaces.

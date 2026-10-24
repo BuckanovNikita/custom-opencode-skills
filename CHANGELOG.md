@@ -5,6 +5,15 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-10-24
+
+- Document clearml-yolo v0.39.0 Albumentations JSON pipelines and Mosaic across
+  detector presets, including conflict checks and retained backend preprocessing.
+- Explain immutable replay, training-only donor selection, empty targets and
+  prohibited transforms; add two explanation-only evaluation cases.
+- Record the six gated DEIMv2-L/X pretrained checks as unverified in the authorized
+  application release, without treating random-initialization probes as passes.
+
 ## [0.4.3] - 2026-10-23
 
 - Align clearml-yolo guidance with source-first installation of the extracted queue

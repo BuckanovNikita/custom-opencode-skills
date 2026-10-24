@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "task": "CY004 custom training augmentation usage guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "skills/clearml-yolo/references/augmentation.md",
+    "verification/2026-10-23-custom-augmentation.md",
+    "verification/2026-10-23-custom-augmentation-architecture.json",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Documentation-only companion scope was recorded in CY004 plan before implementation. Inspected additions describe JSON selection, Mosaic donor policy, native transform replacement, preprocessing and replay, with evaluation prompts. No runtime code, executable helpers, dependencies or import contracts change here. Prior portable-training/cache guidance is retained from the inspected upstream v0.4.3 base and excluded from this patch. The stale original checkout remains untouched; delivery is prepared in an isolated worktree. No executable contract changes. Release preparation also changes collection version/changelog prose only; it does not change the executable application or claim its incomplete native acceptance passed. Final delivery uses a fresh isolated clone on main."
+}
