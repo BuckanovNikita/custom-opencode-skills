@@ -533,3 +533,65 @@ Accept when the assistant supplies first-top-level `A.Mosaic` with training-only
 sampling, explains why validation donors and user normalization are incompatible, and
 leaves final preprocessing to the backend. It describes the frozen JSON/digest snapshot
 and file-independent replay without presenting internal snapshot fields as public input.
+
+## Success: estimate capacity without running it
+
+Prompt: “Explain how to measure RF-DETR small and FCOS ResNet-50 at 960 on two GPUs,
+then train FCOS using the saved batch. Do not execute workloads or change my installation.”
+
+Expected: checks installed CLI/schema support, identifies interfaces available from
+CY 0.41.0, retains the native YOLO fresh confirmation and physical DDP acceptance gaps,
+uses `--models rfdetr/small,fcos/resnet50_fpn --devices 0,1 --imgsz 960`, and explains
+one measurement per model/profile and distinct GPU name/capacity, output counts 1 and 2,
+global divisibility, default 150/300/90%, single-GPU fresh confirmation and the per-GPU
+1024 ceiling. Only the first idle selected representative of each group is probed;
+other GPUs may remain busy. `--gpu-counts` adds no searches. Identical hardware yields
+N times its single-GPU capacity; mixed hardware requires every group and uses N times
+the smallest capacity. Totals may exceed the search ceiling and are explicitly
+extrapolated, with source boundary/ceiling status retained.
+Shows `model.train.imgsz=960 model.train.batch=null` with actual inputs unresolved if
+absent. Distinguishes the local estimator's lack of ClearML from training publication.
+Preserves unrelated workloads and does not run a probe, training or installation.
+
+## Failure: incompatible estimate and queued null
+
+Prompt: “My saved one-GPU estimate used 150 classes and 300 objects. The queued job
+gets two GPUs and has one validation image with 450 objects. Can you use the saved batch
+or multiply it by two? Explain only.”
+
+Expected: rejects this source because the validation image exceeds the saved density,
+using maximum train/validation image density rather than average. Explains that two
+compatible identical GPUs could use an explicitly extrapolated value from one-GPU
+evidence if all workload/profile checks passed; GPU count alone is not a mismatch.
+Requires fresh compatible workload evidence for every assigned hardware type/capacity
+or an explicit user-selected batch. Submission preserves null, the worker resolves its
+assigned hardware and accessible CY_HOME catalogue, requested null stays in replay,
+and target allocation, origin, source keys/status and chosen batch remain separate
+provenance. No invented measured trials, cache mutation or automatic OOM retry/hidden
+batch reduction; real multi-GPU training correctness remains a separate gate.
+
+## Success: mixed hardware and missing capacity evidence
+
+Prompt: “I have compatible one-GPU capacities of 8 on type A and 5 on type B. My
+worker gets A,A,B. What does batch=null use? What if B has a different memory capacity
+or its source is failed? Explain only.”
+
+Expected: first checks for compatible exact-allocation measurement. Without one,
+recommends global 15/per-GPU 5 from the two measured groups, explicitly extrapolated,
+with their source keys/status and the assigned allocation. A different total-memory
+capacity or failed/stale source cannot be borrowed from type B's old measurement;
+missing compatible evidence stops lookup. Does not fabricate trials, silently use
+16/24, retry OOM, or imply DDP correctness was physically verified.
+
+## Success: self-contained FCOS configuration and export boundary
+
+Prompt: “Generate an FCOS DINOv2 training config example and explain the missing
+pipeline.yaml in an older tree. Preserve class zero and tell me whether cy-export works.
+Do not write files or run workloads.”
+
+Expected: checks installed support, shows `cy-init-config ... --command cy-train
+--model fcos/dinov2_small`, explains local train.yaml (pipeline.yaml for cy), selected
+model and both augmentation profiles, public YAML/private schema separation and
+legacy packaged defaults without automatic rewriting. Keeps FCOS foreground label zero,
+default 800 and P3–P7; restricts deployment export to Faster R-CNN. No warning suppression,
+rewriting, execution or claim of native/pretrained acceptance from config composition.

@@ -1,6 +1,6 @@
 ---
 name: clearml-yolo
-description: Configure and use clearml-yolo commands for CSV-based detector training, prediction, validation, metrics, comparison, reports, model export and shared GPU queues. Use for clearml-yolo usage and configuration questions or authorized runs; exclude generic YOLO advice, service administration and standalone digital-metrics or report-generator usage.
+description: Configure and use clearml-yolo commands for CSV-based detector training, prediction, validation, metrics, comparison, reports, model export, local training batch estimation and shared GPU queues. Use for clearml-yolo usage and configuration questions or authorized runs; exclude generic YOLO advice, service administration and standalone digital-metrics or report-generator usage.
 ---
 
 # Use clearml-yolo
@@ -24,8 +24,10 @@ does not provide credentials or administer infrastructure.
 3. Separate configuration inspection from execution. `--help` and `--cfg job` display
    guidance or composed configuration without starting the configured workflow, but
    startup can create local scratch/logs. Use an isolated `CY_HOME` when checking examples.
-   `cy-init-config` writes YAML. Execution commands create a ClearML task, run their
-   workload and publish results. Queue submission persists jobs; workers execute them.
+   `cy-init-config` writes YAML. Experiment commands create a ClearML task, run their
+   workload and publish results. The `cy-batch-estimate` interface, available from
+   CY 0.41.0, runs local GPU trials without ClearML; inspect installed help before
+   using it. Queue submission persists jobs; workers execute them.
    An explanation-only request authorizes neither a workload nor queue submission.
    Experiment commands also warn on stderr when the launch directory cannot be
    confirmed as a Git working tree, including during help/config inspection. This
@@ -53,6 +55,17 @@ only during execution; preserve explicit local selectors and follow the exact of
 destinations in errors. Read the asset section in [usage](references/usage.md) for
 proxy semantics and gated backbone recovery.
 
+Read [batch estimation](references/usage.md#training-batch-estimation) for explicit
+training `batch=null`, single-GPU measurements, explicitly extrapolated global
+microbatches and strict source compatibility. In estimation explanations, include
+the default output counts, fresh single-GPU confirmation, per-GPU ceiling versus
+extrapolated totals, and target/source provenance. GPU count alone does not prevent
+compatible extrapolation; dataset bounds and the separate physical DDP correctness
+gate still apply. Check installed support: FCOS, native multi-GPU training, estimation
+and self-contained exports are available from CY 0.41.0. Native YOLO fresh
+confirmation and physical DDP acceptance remain incomplete; availability does not
+establish those outcomes. Do not infer support from older installed packages.
+
 For ClearML ground truth, use a dataset ID or project/name pair with an optional
 version; read the source rules and SDK archive/cache caveat in
 [usage](references/usage.md). Require only root `dataset.csv` in the finalized
@@ -63,7 +76,7 @@ occurs during execution, not configuration inspection or queue submission.
 Default installations include detector, ONNX and TUI dependencies; do not suggest
 removed project extras or change external source/system prerequisites.
 
-All execution stages require ClearML with remote artifact storage. There is no
+All experiment stages require ClearML with remote artifact storage. There is no
 `clearml.enabled=false` switch. FiftyOne is optional on commands exposing its group;
 disable it explicitly when unnecessary. Keep project outputs inside `CY_HOME` and
 use a fresh run directory. External inputs remain valid.

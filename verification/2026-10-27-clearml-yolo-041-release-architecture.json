@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Release portable clearml-yolo 0.41.0 usage in collection 0.5.0",
+  "scope": [
+    "VERSION",
+    "CHANGELOG.md",
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "skills/clearml-yolo/references/augmentation.md",
+    "verification/2026-10-27-clearml-yolo-041-release.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected source/dirty diff and reconciled package guidance onto published origin/main af6c7e4 (0.4.4) in an isolated checkout. Scope contains portable usage prose, evaluation prompts and collection release metadata only; no runtime modules, scripts, dependency configuration, imports or checking contracts change. Preserve newer upstream guidance and historical records, and original dirty checkout. Interface availability does not establish pending native YOLO confirmation or physical DDP acceptance."
+}

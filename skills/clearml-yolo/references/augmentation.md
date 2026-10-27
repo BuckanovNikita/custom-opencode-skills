@@ -34,8 +34,11 @@ cy-train model=rfdetr/nano ground_truth=ground_truth.csv \
 
 For YOLO select `model=ultralytics` and use `ultralytics.epochs` and
 `ultralytics.device`. The transform selector also works for DEIMv2 and Faster R-CNN.
+CY 0.41.0 adds the same interface to all six FCOS presets; full native FCOS
+GPU acceptance remains pending.
 Generate editable profiles with `cy-init-config configs --command cy-train
---model rfdetr/nano`; preserve generated defaults and specialization groups.
+--model rfdetr/nano`; preserve generated defaults and specialization groups. Fresh
+exports from CY 0.41.0 include local command bases and all referenced application YAML.
 
 ## Ownership and conflicts
 
@@ -51,7 +54,7 @@ empty targets, including crops that remove all objects.
 
 Each backend then performs its required final sizing and tensor conversion once:
 YOLO letterboxing and division by 255; DEIMv2 resize/normalization and box conversion;
-RF-DETR deterministic sizing/normalization; Faster R-CNN native normalization and
+RF-DETR deterministic sizing/normalization; Faster R-CNN/FCOS native normalization and
 resizing. A user `Resize` does not replace these model input contracts. Omit it unless
 it is part of the intended augmentation geometry.
 
@@ -59,6 +62,10 @@ Do not add `Normalize`, tensor conversion, `Lambda`, custom executable classes, 
 unsupported extra targets. Those inputs fail validation. Standard nested composition
 is supported subject to these constraints. Backend-owned normalization avoids
 applying it twice.
+
+Saved batch estimates describe native augmentation profiles. Custom JSON requires an
+explicit numeric training batch; do not reuse a native estimate through `batch=null`.
+See [batch estimation](usage.md#training-batch-estimation) for strict lookup behavior.
 
 ## Mosaic across models
 
@@ -88,6 +95,7 @@ Selecting a different file replaces it; malformed or modified content fails vali
 
 Inspect effective native settings and frozen JSON separately. Composition proves
 neither optimization nor checkpoint/publication success. Native verification observes
-actual parameter updates, finite losses, and downloaded checkpoint reload. Opt-in
-Severstal smoke tests cover every advertised preset in default, JSON and JSON-with-Mosaic
-modes. Full dataset training is a separate workload requiring its own authorization.
+actual parameter updates, finite losses, and downloaded checkpoint reload.
+The existing Severstal matrix covers YOLO26n, DEIMv2, RF-DETR and Faster R-CNN in
+default, JSON and JSON-with-Mosaic modes; it does not establish FCOS acceptance.
+Full dataset training is a separate workload requiring its own authorization.

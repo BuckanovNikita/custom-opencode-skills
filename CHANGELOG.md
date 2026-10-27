@@ -5,6 +5,15 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-27
+
+- Document clearml-yolo 0.41.0 FCOS presets, native multi-GPU configuration and
+  self-contained command configuration exports.
+- Add local batch estimation and strict saved-batch lookup guidance, including
+  per-GPU measurement, mixed-hardware extrapolation, provenance and failure handling.
+- Extend augmentation guidance for FCOS and batch compatibility, with evaluation
+  scenarios and explicit native YOLO confirmation and physical DDP acceptance gaps.
+
 ## [0.4.4] - 2026-10-24
 
 - Document clearml-yolo v0.39.0 Albumentations JSON pipelines and Mosaic across

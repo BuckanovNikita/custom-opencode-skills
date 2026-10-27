@@ -26,6 +26,9 @@ With `model.source_dir=null`, execution resolves the approved DEIMv2 source
 automatically; an explicitly supplied validated checkout remains supported.
 Do not substitute revisions or claim external dependencies were installed.
 
+For custom training JSON and universal Mosaic, read [augmentation](augmentation.md),
+including native-transform replacement, required final preprocessing and frozen replay.
+
 ## Select a stage
 
 | Command | Required input and result |
@@ -40,11 +43,13 @@ Do not substitute revisions or claim external dependencies were installed.
 | `cy-ground-truth` | YOLO `data_yaml`; annotation CSV conversion |
 | `cy-export` | Faster R-CNN checkpoint or export intermediate, depending on operation |
 | `cy-init-config` | Destination and selected command; editable YAML, no tracking task |
+| `cy-batch-estimate` | CY 0.41.0 local CUDA training-capacity trials; saved recommendations, no tracking task |
 | `cy-dedup` | Optional cache directory; reflink maintenance, `--dry-run` previews |
 | `cy-queue` | Submission/worker/state operations; separate durable scheduling |
 
-Execution stages require ClearML. Configure credentials through the installation's
-normal SDK configuration; never put secrets in examples or logs. `clearml.output_uri`
+Experiment stages require ClearML. The local batch estimator does not. Configure
+credentials through the installation's normal SDK configuration; never put secrets
+in examples or logs. `clearml.output_uri`
 defaults to true; null, false and empty destinations are rejected. FiftyOne defaults
 enabled on commands exposing that configuration group; `cy-val` has no such group.
 
@@ -81,6 +86,14 @@ assuming that older installations have the warning.
 ```bash
 cy-init-config cy-config
 ```
+
+Fresh exports from CY 0.41.0 include the local command base (`pipeline.yaml`
+for `cy`, `train.yaml` for `cy-train`), the selected model groups, both training
+augmentation profiles and every application YAML referenced by their defaults.
+Public YAML and private schema names are distinct, avoiding automatic schema matching
+warnings. Existing trees remain usable without automatic rewriting. Keep local-file
+precedence, interpolation, CLI overrides and validation intact; check installed behavior
+before relying on the new layout.
 
 Edit `cy-config/cy.yaml`, preserving the generated defaults and other settings:
 
@@ -291,9 +304,24 @@ cy --config-dir detector-config --config-name cy \
 
 Select presets through `model=...`; native detector controls are `model.train.*`
 and `model.predict.*`, and data is derived as COCO from the same CSV. Check installed
-presets/help before selection. Non-YOLO adapters support CPU/single GPU, not YOLO DDP.
+presets/help before selection. CY 0.41.0 adds native CUDA multi-GPU
+training for DEIMv2, RF-DETR, Faster R-CNN and FCOS through a device list such as
+`'model.train.device=[0,1]'`. Public batch is global across GPUs and must divide
+evenly across ranks; accumulation separately determines the effective optimizer
+batch. One supervised worker runs per GPU, the invocation owner exclusively publishes
+to ClearML, and rank zero owns checkpoints/aggregate metrics. Prediction remains
+single-device; queued inference keeps the first allocated GPU. Real multi-GPU
+acceptance remains pending, so verify installed support before proposing execution.
 Execution can resolve DEIMv2 source and requested pretrained assets automatically;
 explicit source/weight paths remain authoritative and missing files fail.
+
+The six FCOS selections available from CY 0.41.0 are `fcos/resnet50_fpn`, `fcos/resnet101_fpn`,
+`fcos/convnext_tiny`, `fcos/swin_tiny`, `fcos/dinov2_small` and `fcos/dinov3_small`.
+Each defaults to resolution 800, a pretrained backbone and newly initialized detector
+head, with P3–P7 features and zero-based foreground labels. Preserve class zero;
+Faster R-CNN keeps its separate internal background offset. FCOS shares CSV input,
+training/prediction/validation/comparison, custom augmentation, checkpoint publication
+and configuration export. Native GPU acceptance remains pending.
 
 `cy-export` supports Faster R-CNN only. Its distinct operations are CPU/FP32 ONNX,
 GPU engine build and GPU verification. Generate `cy-init-config export-config
@@ -302,6 +330,80 @@ ONNX needs weights; build needs `export.onnx`; verification additionally needs w
 `export.engine` and labeled ground truth. Don't infer backend availability from config
 generation or compose success.
 
+## Training batch estimation
+
+This interface is available from CY 0.41.0. Check `cy-batch-estimate --help`
+and the installed training schema first. Native YOLO fresh confirmation and physical
+DDP acceptance remain incomplete; composing examples does not validate capacity or
+training. Single-GPU FCOS smoke evidence does not establish full backend coverage.
+
+```bash
+cy-batch-estimate --imgsz 960
+cy-batch-estimate --imgsz 960 --classes 150 --objects-per-image 300
+cy-batch-estimate --imgsz 960 --models rfdetr/small,fcos/resnet50_fpn --devices 0,1
+```
+
+These commands execute local CUDA workloads without a ClearML task. Search once per
+model, resolution, training profile and distinct GPU name/total-memory capacity.
+Identical GPUs share one measurement. When a group needs measurement, use its first
+idle GPU in the selected order; only that GPU must be idle. Preserve unrelated
+workloads and reject interference on the probed GPU. Defaults cover 44 standard
+pretrained YOLO variants and all native presets, 150 classes, 300 objects per image,
+90% memory budget and a 1024-image **per-GPU** search ceiling.
+
+`--devices` selects ordered hardware. `--gpu-counts` filters output counts, each over
+the first N selected GPUs; the default is 1 through the selected count. It launches
+no extra searches. `--memory-budget`, `--search-limit`, `--trial-timeout` and `--refresh`
+control measurement; extrapolated global batches may exceed `--search-limit`.
+The default trial timeout is 300 seconds. Preserve native precision/compilation and
+maximum effective resolution, including multiscale. YOLO auto optimizer probes both
+supported resolved paths and retains the smaller validated capacity.
+
+Search grows exponentially then refines by binary search. Every trial uses one GPU
+and performs five warm-up and ten measured optimizer updates plus bounded validation;
+the winner is repeated in a fresh process on one GPU. There are no distributed probes
+or multi-GPU confirmation runs. Confirmed CUDA OOM or memory-budget excess bounds
+capacity; timeout, failure, nonfinite computation, missing assets and contamination
+are separate failures. `ceiling_limited` remains usable without claiming an
+unconstrained maximum; failed measurements cannot supply training batches.
+
+The versioned atomic catalogue is `CY_HOME/.config/clearml-yolo/batch-estimates.json`.
+It retains actual global/per-GPU measurements, diagnostics and provenance. Compatible
+completed cases are reused; refresh invalidates matching success before reprobes.
+Match architecture, nominal/effective size, GPU types/capacities, relevant versions,
+precision, compilation, optimizers, accumulation, EMA and augmentation. First prefer a
+compatible existing measurement for the exact ordered allocation/count, including
+legacy records. Otherwise derive an explicitly `extrapolated` global recommendation:
+N times the single-GPU capacity for identical hardware, or N times the smallest
+compatible per-GPU capacity for mixed hardware. Require a compatible single-GPU source
+for every type/capacity; never extrapolate across unmeasured hardware. The result is
+divisible by N and remains workload-specific. It is not a measured multi-GPU maximum.
+Retain source boundary/ceiling status. Derive recommendations during lookup/reporting;
+never create synthetic trials or rewrite measured evidence.
+
+Only explicit training null selects saved evidence; numeric defaults stay unchanged:
+
+```bash
+cy-train model=fcos/resnet50_fpn ground_truth=./ground_truth.csv \
+  model.train.imgsz=960 model.train.device=0 model.train.batch=null \
+  clearml.project_name=detection clearml.task_name=fcos-estimated 'clearml.tags=[training]'
+```
+
+For YOLO use `ultralytics.batch=null` with matching `ultralytics.model`, `imgsz` and
+`device`. Lookup happens after dataset preparation and actual device selection. The
+foreground vocabulary and maximum objects on any train/validation image must fit
+inside the synthetic bounds; average density is insufficient. Missing, stale, failed
+or incompatible sources stop training with an estimator command or explicit-batch
+alternative. Recommendation provenance identifies measured/extrapolated origin,
+target allocation, source keys, global/per-GPU values and source boundary/ceiling
+status. Training retains normal failure behavior without automatic OOM retry or
+hidden batch reduction. Preserve requested null in
+canonical replay; resolved batch and estimate provenance are recorded separately.
+Queue submission keeps null and the worker resolves it against assigned GPUs and its
+accessible `CY_HOME` catalogue. Submission itself never probes. Custom augmentation,
+CPU/MPS and unsupported/custom profiles require explicit batches when matching evidence
+is unavailable. Prediction settings and existing YOLO AutoBatch behavior are unchanged.
+
 ## Model assets and offline recovery
 
 Check that the installed version supports automatic assets. Configuration inspection,
@@ -309,7 +411,7 @@ help and queue submission do not fetch them. Dependencies remain externally mana
 asset preparation does not install packages or change approved source revisions.
 Ultralytics keeps its native download behavior.
 
-For DEIMv2, RF-DETR and Faster R-CNN, requested pretrained initialization uses matching
+For DEIMv2, RF-DETR, Faster R-CNN and FCOS, requested pretrained initialization uses matching
 native backbone/registry assets only when explicit weights do not supersede it.
 Keep original model selectors (including null defaults) in canonical replay. Resolved
 paths, original URLs and hashes belong to the separate `model_assets` Configuration
