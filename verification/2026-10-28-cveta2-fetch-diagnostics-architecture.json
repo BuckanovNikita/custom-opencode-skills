@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "cveta2 fetch-performance and request-diagnostics usage guidance",
+  "scope": [
+    "skills/cveta2/SKILL.md",
+    "skills/cveta2/references/usage.md",
+    "skills/cveta2/references/evaluation.md",
+    "verification/2026-10-28-cveta2-fetch-diagnostics.md",
+    "CHANGELOG.md",
+    "VERSION"
+  ],
+  "impact": "none",
+  "rationale": "Inspected portable instruction package, current cveta2 domain error facade and fetch/configuration contracts. Changes only explain existing implemented operations and extend evaluation prompts; no executable module, dependency, effect owner, composition, metadata schema or installed skill changes. Validation covers package metadata and links, discovery, Markdown, documented exception examples and scoped diffs. Native implementation planning and runtime architecture evidence remain in cveta2 feature 001-fetch-speed-diagnostics. The isolated release snapshot preserves current upstream package behavior and changes only these portable prose/evaluation/evidence files and collection version/changelog metadata; executable imports and effects remain unchanged."
+}

@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-29
+
+- Explain cveta2 0.12.0 fetch request diagnostics, retry/timing accounting and
+  incomplete optional issue data, preserving the public error constructor and task policies.
+- Document direct S3 downloads, opt-in task debug files, complete-inventory cache
+  pruning and fixture-benchmark limits; add failure and overclaim evaluation cases.
+
 ## [0.5.0] - 2026-10-27
 
 - Document clearml-yolo 0.41.0 FCOS presets, native multi-GPU configuration and

@@ -38,10 +38,17 @@ this package's discovery or task behavior.
 ## Execute and verify
 
 Run the scoped operation and inspect exit status, skipped-task/image warnings,
-and resulting artifacts or remote IDs. Use `CVETA2_RAISE_ON_FAILURE=true` when
+incomplete-issue summaries, and resulting artifacts or remote IDs. Use
+`CVETA2_RAISE_ON_FAILURE=true` when
 the request requires fetching every selected task: otherwise some task-level
 5xx errors can leave partial output. A successful exit alone does not prove
 complete coverage. Explicit publication requires its own finalized dataset ID.
+
+For CVAT failures, use the sanitized failed-request operation, endpoint, UTC and
+available request ID to guide investigation. Gateway status suggests checking
+proxy/ingress and backend availability; it does not identify the faulty component.
+Retry attempt counts describe cveta2's outer budget, and summed worker time is
+not elapsed time. Read the failure-reporting section in the usage reference.
 
 Fetch preserves blank `split` values; assign and validate `train`, `val`, or
 `test` before CSV export to YOLO/COCO. Inspect shape types, dimensions, image

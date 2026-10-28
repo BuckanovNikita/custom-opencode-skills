@@ -90,7 +90,26 @@ version in use rather than passing removed controls.
 
 Task annotation cache: normal fetch reads/updates, `--force` refreshes,
 `--no-cache` disables reads/writes. `CVETA2_DISABLE_CACHE=true` also disables it.
-Image cache is separate; `--save-tasks` retains intermediate per-task CSVs.
+Image cache is separate. Since cveta2 0.12.0, only `--save-tasks`
+creates/writes `.tasks` debug CSVs; ordinary fetch neither creates nor changes an
+existing `.tasks` directory. It is not an upload resume point. Full fetch prunes
+annotation cache using its complete task inventory captured before filters and
+after any promotion; deletions after that snapshot reconcile on the next run.
+Ignored or unfinished tasks are not deleted from cache merely because selection
+excluded them.
+
+Small batches of at most 2,000 uncached images download their expected S3 keys
+directly; only missing keys enter listing/basename fallback. Larger batches list
+first. Images cached at the destination derived from the current frame/key need
+no S3 requests. An unknown or stale canonical frame may still need a missing-key
+GET and listing to rediscover a cached alternate path; its image bytes are not
+downloaded again. Authorization, configuration and exhausted request connection
+failures abort; interrupted bodies and local write failures remain counted
+transfer failures. Inspect image totals
+before describing an export as complete. Controlled fixture benchmarks isolate
+removed requests, repeated path resolution and debug-file IO; they do not establish
+a universal speedup or production throughput. Compare versions with identical
+workers, cache state, workload and output checks before making a measured claim.
 
 ## CSV and conversion contracts
 
@@ -190,12 +209,60 @@ Full fetch returns `PartitionResult` (`dataset`, `obsolete`, `in_progress`
 DataFrames and `deleted_images` list), selected fetch returns a DataFrame.
 Upload returns task ID/name/URL and image/deleted/annotation/issue counts.
 
-By default exhausted task-level 5xx reads can skip a task and leave partial
-fetch output; `CVETA2_RAISE_ON_FAILURE=true` aborts instead. Exhausted 429
-aborts; reduce concurrency and inspect the error. Non-idempotent writes retry
-429 but not ambiguous 5xx, to prevent duplicate annotations/tasks. Report skipped
-tasks/images and failed publication separately from local CSV creation. Do not
-assert complete coverage from exit status alone.
+By default exhausted mandatory task-level 5xx reads can skip a task and leave
+partial fetch output; `CVETA2_RAISE_ON_FAILURE=true` aborts instead. Exhausted 429
+on required reads aborts; reduce concurrency and inspect the error. Optional
+issue/comment retrieval remains optional, including in strict mode: a failure
+leaves issue columns empty, warns and contributes to the incomplete-issue summary.
+That task result is not cached as complete. Non-idempotent writes retry 429 but
+not ambiguous 5xx, to prevent duplicate annotations/tasks. Report skipped
+tasks/images, incomplete issues and failed publication separately from local CSV
+creation. Do not assert complete coverage from exit status alone.
+
+### Request diagnostics and timing
+
+Request diagnostics, fetch timing summaries and the cache/download behavior above
+are available since cveta2 0.12.0. Check installed-version help and the exception
+interface when supporting older releases. Existing fetch signatures and dataset
+formats remain unchanged.
+
+`CvatApiError` retains `message`, `status_code` and `retry_after` positional
+arguments and exception identity. Optional keyword-only `diagnostics` is a
+`CvatRequestDiagnostics` value exported by `cveta2.exceptions`. A caller may inspect
+it without parsing an SDK exception:
+
+```python
+from cveta2.exceptions import CvatApiError
+
+def report_cvat_failure(error: CvatApiError) -> None:
+    context = error.diagnostics
+    if context is not None:
+        print(context.operation, context.method, context.endpoint)
+        print(context.timestamp_utc, context.status_code, dict(context.request_ids))
+```
+
+Captured facts describe the actual failed HTTP request, including a later listing
+page or nested issue-comments request: operation, method, sanitized endpoint,
+resource IDs, UTC timestamp, status, available request/correlation IDs and bounded
+response summary. Headers and numeric query identifiers are allowlisted;
+credentials, cookies and raw HTML are omitted. Do not dump the underlying SDK
+exception or raw response to obtain more logging detail: the retained cause can
+contain unsanitized response data. No diagnostic report is saved automatically.
+
+Use CVAT's `X-Request-Id`, when present, and UTC to find the request in backend
+logs. For 502/503/504 inspect proxy/ingress logs and backend availability; these
+are investigation hypotheses unless response evidence names the component.
+Inspect only systems within the requested scope; diagnostics do not authorize
+automatic server investigation.
+
+Final SDK 502/503/504 responses now preserve status and available request IDs
+after retry exhaustion and reach the established task-level 5xx policy. SDK
+retry budgets and method restrictions stay unchanged; version checks remain
+advisory. Retry logs identify the failed request, cveta2 attempt/budget and wait
+duration. SDK retries occur inside those attempts, so the log is not a total
+HTTP-attempt count. Stage wall times show elapsed time; summed worker durations
+may exceed elapsed time. Review cached/fetched/skipped/degraded totals and the
+explicit task/issue summaries together.
 
 ## Verification and reviewed publication
 
