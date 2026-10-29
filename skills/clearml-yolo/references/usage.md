@@ -423,6 +423,39 @@ install packages, create ClearML tasks or change approved dependency revisions.
 cy-download-weights
 ```
 
+### Pinned project weight archives
+
+CY 0.44.0 adds pinned project archives to bulk preparation. Check matching
+installed-version/source help and published-snapshot evidence before relying on this
+feature; older installations do not gain it from a weights upload alone. Preparation first
+reuses valid native assets, then tries the packaged `weights-*` GitHub Release pin
+in `BuckanovNikita/clearml-yolo`, then ordinary upstream resolution. It never selects
+a moving latest release. Standalone selected-model execution keeps its normal asset
+resolution, and explicit local inputs remain authoritative.
+
+Each independent tar archive and its selected members require byte-size/SHA-256
+verification before atomic native publication. Unsafe paths, links, duplicate members
+and special files are rejected. Failed or unavailable mirrors warn and retain upstream
+fallback; asset identities absent from the pin also keep that route. Downloaded
+archives are reused under `CY_HOME/.cache/clearml-yolo/weight-bundles/` with coordinated
+locks. Interrupted transfers are retryable. Hub restoration retains the real commit,
+requested revision reference, blob metadata and matching `config.json` without
+upstream metadata requests, preserving native offline discovery and original-source
+provenance. The mirror URL does not replace the upstream asset identity.
+
+Weight snapshots have a separate release cadence from application versions; code
+releases reuse the existing pin without republishing weights. New snapshots require
+deliberate manifest updates and verification of actual hosted bytes. Packaging,
+uploading or a source manifest alone does not prove offline native loading. Published
+snapshot corrections use a new identity rather than replacing existing bytes.
+Per-file licences remain attached: YOLO is AGPL-3.0 and DEIMv2 permits non-commercial
+use and redistribution only. Preserve bundled licences, attribution and applicable
+source directions; do not call the whole catalogue permissively licensed. The CY
+model-assets exception does not authorize CY wheels, source distributions or registry
+publication; this skill collection still follows its own Git-tag-only release policy.
+
+### Catalogue, execution and native locations
+
 The catalogue covers maintained detection YOLO names, RF-DETR, eligible Faster
 R-CNN/FCOS backbones and DEIMv2 small/medium with pinned source. Bulk preparation
 excludes DEIMv2 large/xlarge and `dinov3_small`; explicit selection retains existing
@@ -431,6 +464,8 @@ execution and access behavior. Shared backbones use a shared native cache entry.
 Actual `cy` pipeline execution attempts this catalogue before model construction,
 including with explicit local model weights. A completed attempt is remembered per
 catalogue/asset-identity/native-destination fingerprint, including partial failures.
+The pinned-mirror implementation also fingerprints the bundle manifest;
+changing the pin triggers a new attempt.
 Automatic failures warn and continue; the selected model keeps normal error handling.
 Use the explicit command to retry failures. Changed identities/destinations trigger
 another automatic pass. Concurrent starts coordinate; interruption leaves the pass
@@ -473,15 +508,79 @@ resume and Hydra overrides intact. Do not infer weights from a custom YAML basen
 or substitute the architecture. Relative paths follow the consuming process's cwd.
 Non-null `ultralytics.cfg` remains unsupported.
 
-Resolution uses validated cache data before configured proxy and upstream requests.
+Bulk preparation with the mirror uses valid native assets, then the pinned
+project archive, then ordinary upstream resolution. That upstream route uses validated
+cache data before configured proxy and upstream requests.
 `GHR` is a GitHub release repository root: preserve the entire
-`owner/repository/releases/download/tag/filename` suffix. `GH` is an Artifactory VCS
+`owner/repository/releases/download/tag/filename` suffix, including for the project's
+weight-release archives. `GH` is an Artifactory VCS
 repository root for pinned DEIM `downloadCommit`, not a Git clone endpoint.
 `HF_ENDPOINT` selects an HF endpoint, including an Artifactory Hugging Face API
 endpoint; `HF_TOKEN` or standard SDK token configuration provides endpoint-scoped
 authentication. Do not send credentials to unrelated origins or expose them in
 examples/reports. Missing/empty proxies select upstream; other sources retain URLs.
 URL construction or an HTTP transfer alone does not establish native offline loading.
+
+### Proxy setup after a failed download
+
+Set network, credentials and endpoint variables before starting a new CY process;
+HF libraries can capture endpoint settings during import. For complete project
+archives, use a Generic Artifactory remote repository whose upstream is
+`https://github.com`:
+
+```bash
+export GHR="https://artifactory.example/artifactory/github-releases"
+```
+
+Replace the example host and key with administrator-provided values. A request for
+`https://github.com/owner/repo/releases/download/tag/file.tar` retains its full path
+under `GHR`, yielding
+`https://artifactory.example/artifactory/github-releases/owner/repo/releases/download/tag/file.tar`.
+Do not use a filename-specific URL or GitHub API root. See the
+[remote repository protocol](https://docs.jfrog.com/artifactory/docs/remote-repositories).
+
+For `GH`/`GHR` authentication, configure the actual Artifactory host in a private
+per-host `.netrc` entry using approved credential storage; keep owner-only file
+permissions (`chmod 600 ~/.netrc`). Requests uses that entry. `HF_TOKEN` is only for
+the selected Hugging Face endpoint, not these Generic/VCS downloads. Keep secrets
+out of URLs, configuration examples, command history and reports.
+
+Optional original-source fallback routes are:
+
+```bash
+export GH="https://artifactory.example/artifactory/github-vcs"
+export HF_ENDPOINT="https://artifactory.example/artifactory/api/huggingfaceml/hf-remote"
+```
+
+`GH` derives
+`https://artifactory.example/artifactory/api/vcs/downloadCommit/github-vcs/owner/repo/commit?ext=tar.gz`;
+it is the [VCS commit API](https://docs.jfrog.com/artifactory/reference/downloadvcscommit),
+not Git clone access. Complete project bundles already include DEIM source through
+`GHR`, so `GH` is optional unless original-source fallback is needed. Use `GH`;
+`CH` is not an alias. The optional HF route requires the exact
+[Hugging Face API endpoint](https://docs.jfrog.com/artifactory/docs/use-hugging-face-with-jfrog-cli),
+not a Generic root. Load `HF_TOKEN` securely from a secret manager or protected SDK
+token file. If using an interactive Bash prompt, the value need not appear in history:
+
+```bash
+read -r -s -p 'Hugging Face endpoint token: ' HF_TOKEN
+export HF_TOKEN
+```
+
+Do not send the endpoint credential to unrelated public-origin fallback requests.
+For an organization CA, set `SSL_CERT_FILE` and/or `REQUESTS_CA_BUNDLE` to its real
+bundle path before launching; keep TLS verification enabled. Then rerun
+`cy-download-weights`, retaining valid native caches. A completed automatic partial
+receipt does not prevent this explicit retry.
+
+Treat 401 as missing/invalid authentication and 403 as read-permission/access policy
+failure. For 404, inspect the root, repository key and preserved upstream path, then
+upstream availability or blocking; do not assume the weights are absent. Size,
+checksum or format failures require a corrected proxy/cache response and retry,
+not disabled verification, incompatible replacement weights or removal of valid
+caches. Protocol-fixture results prove client routing/auth boundaries and fallback,
+not live Artifactory connectivity, permissions or cache state. An explanation-only
+or fixture-only request authorizes no live stand check.
 
 On failure, preserve reported selections and destinations. Selected-model missing
 asset errors name original URLs, exact local destinations and applicable override

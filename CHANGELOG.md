@@ -5,6 +5,15 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.3] - 2026-10-29
+
+- Document the CY 0.44.0 pinned project weight archives, native-cache reuse,
+  integrity checks, upstream fallback and independent `weights-*` release cadence.
+- Preserve per-file redistribution notices and add explanation-only mirror and
+  corruption/retry evaluation cases with installed-version and publication guards.
+- Explain clean Artifactory environment/authentication setup and retry diagnostics,
+  with fixture-only verification boundaries and no live-stand readiness claims.
+
 ## [0.6.2] - 2026-10-29
 
 - Document the CY 0.43.0 local Russian reference, offline tutorials, searchable

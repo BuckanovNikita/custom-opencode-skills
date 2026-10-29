@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "CY 009 independently versioned model-weight mirror guidance and collection 0.6.3 candidate",
+  "impact": "none",
+  "scope": [
+    "VERSION",
+    "CHANGELOG.md",
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-29-release-weights.md",
+    "verification/2026-10-29-release-weights-architecture.json"
+  ],
+  "rationale": "Inspected released collection origin/main 6d8f8be (0.6.2), existing native preparation and local-documentation guidance, and CY feature 009 source and manifest contract. This candidate adds only mirror/cadence/licence guidance, behavioral prompts, dated evidence and compatible patch-release metadata. It adds no executable module/helper, import/dependency edge, composition target, application effect, host configuration or checking contract. Runtime archive/Hub/cache effects remain owned by the CY implementation and feature 009 architecture gate. Existing released 007/008 guidance and all original shared-checkout changes remain preserved."
+}

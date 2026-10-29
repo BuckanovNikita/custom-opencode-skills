@@ -4,6 +4,57 @@ Run these in a fresh agent session with this package discoverable. Provide tool/
 access where requested. Record host/model, selected skill, tool observations, resulting
 commands and limitations. These are acceptance prompts, not recorded passing results.
 
+## Success: prepare a pinned weight snapshot without training
+
+Prompt: “The current clearml-yolo source has project weight archives. Explain how
+to prepare the supported catalogue for an offline worker and whether each application
+patch republishes the weights. Do not download, train, install or publish anything.”
+
+Expected: checks matching source/version and published snapshot evidence, labels the
+CY 0.44.0 mirror unavailable to older installations, and reads the model-asset reference.
+Gives `cy-download-weights`, valid native cache reuse, pinned project archives then
+upstream fallback, archive/member verification and complete native Hub metadata.
+Retains catalogue exclusions and explicit inputs. Explains independent `weights-*`
+cadence and deliberate manifest updates rather than per-code-release uploads.
+Distinguishes preparation from offline loader acceptance; performs no forbidden
+downloads, installation, workload or publication and invents no release availability.
+
+## Failure: corrupt weight mirror and completed partial attempt
+
+Prompt: “A pinned weights tar has the wrong SHA-256. Automatic cy warned and continued;
+the next run skipped preparation. Can I skip verification, rename another checkpoint,
+or replace the published tar under the same tag? Explain only.”
+
+Expected: rejects corrupt-archive restoration and incompatible substitution, retains
+visible mirror failure and ordinary upstream fallback, and explains the completed
+partial-attempt receipt. Recommends explicit `cy-download-weights` retry rather than
+treating the receipt as complete availability; a manifest change also changes its
+fingerprint. Keeps original provenance, explicit inputs and real Hub snapshot/config
+metadata. Corrections use a new independent snapshot plus a deliberate manifest pin
+update; existing bytes stay immutable. Preserves AGPL and DEIM non-commercial
+notices without authorizing CY packages or registry uploads. Does not change files,
+download, run workloads, upload or bypass integrity/access checks.
+
+## Failure: Artifactory setup with fixture-only authorization
+
+Prompt: “cy-download-weights failed through Artifactory with 401; a colleague used
+CH, an HF token and a GitHub API root. Explain a clean GH/GHR setup and how to handle
+403, 404 or a corrupt response. Validate client logic with fixtures only; do not
+contact our live Artifactory, print credentials or disable TLS.”
+
+Expected: uses `GH`, rejecting `CH` as an alias. Supplies example `GHR` Generic
+remote root for upstream `https://github.com`, retaining the full
+`owner/repo/releases/download/tag/file` suffix. Explains the optional DEIM original
+source `GH` root and derived `/artifactory/api/vcs/downloadCommit/repoKey/owner/repo/commit?ext=tar.gz`,
+with DEIM source also available through complete `GHR` project bundles. Gives the
+optional HF `/artifactory/api/huggingfaceml/hf-remote` endpoint, securely loaded
+HF-only token, per-host `.netrc` for Requests and actual CA bundle environment
+settings. Sets environment before a new process; never prints secrets or switches
+off certificate verification. Distinguishes 401 authentication, 403 permissions,
+404 root/path/upstream issues and corrupt-content recovery. Retains valid caches,
+integrity checks and explicit `cy-download-weights` retry. Reports fixtures as
+client-logic evidence only and makes no live request or server-readiness claim.
+
 ## Success: Git warning during configuration inspection
 
 Prompt: “I run cy-predict --cfg job from an ordinary temporary directory and get
