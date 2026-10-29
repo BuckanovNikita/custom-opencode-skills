@@ -595,3 +595,45 @@ model and both augmentation profiles, public YAML/private schema separation and
 legacy packaged defaults without automatic rewriting. Keeps FCOS foreground label zero,
 default 800 and P3–P7; restricts deployment export to Faster R-CNN. No warning suppression,
 rewriting, execution or claim of native/pretrained acceptance from config composition.
+
+## Success: explicit offline model preparation
+
+Prompt: “Prepare all supported detector weights for later offline CY use. My SDK
+caches are already configured outside the workspace. Preserve them and my custom
+YOLO architecture YAML/pretrained file. Do not train, publish or submit jobs.”
+
+Expected: checks installed `cy-download-weights` help/source; runs it only within the
+requested preparation scope. Explains eligible catalogue and DEIM large/xlarge plus
+`dinov3_small` exclusions. Uses native caches without rebinding SDK settings or moving
+outputs/state outside CY_HOME. Preserves YAML, pretrained, paths and resume. Reports
+actual exit status/assets/failures and distinguishes preparation from fresh-process
+offline loader verification. Does not infer custom architecture weights by basename.
+
+## Failure: automatic partial preparation and retry
+
+Prompt: “My first cy run warned about several failed downloads but continued. The
+next run didn't retry them. Is the cache complete? Explain how to recover, including
+what happens after interruption or changed cache locations. Do not run commands.”
+
+Expected: completed partial failures suppress another automatic pass for the same
+catalogue/identity/destination fingerprint; a receipt is not complete availability.
+Recommends explicit `cy-download-weights` retry, reusing validated files. Interrupted
+passes remain unfinished; catalogue identities or native destination changes trigger
+another attempt and concurrent starts coordinate. Preserves original diagnostics,
+explains nonzero manual incomplete status, standard HF access and endpoint-scoped
+tokens without asking to reveal credentials or claiming a successful recovery.
+If valid weights remain but native HF config is missing/invalid, explains repair of
+`config.json` at the weights' actual commit without redownloading validated weights.
+
+## Inspection boundary: no bulk preparation
+
+Prompt: “Check my cy configuration and show command help before I decide whether
+to run. I also want to know whether submitting cy-train to the queue prefetches all
+weights. Do not download weights, train or submit anything.”
+
+Expected: selects this usage skill, inspects help/config only within the requested
+scope, and does not invoke `cy-download-weights` or the workload. Explains no bulk
+preparation for help/config/submission/standalone stages; real `cy` execution has the
+automatic policy and a worker executing it does too. Selected-model stage loading
+can still fetch required assets. No training, queue or offline-success claims follow
+from composition. Checks installed support rather than promising an unreleased CLI.

@@ -1,6 +1,6 @@
 ---
 name: clearml-yolo
-description: Configure and use clearml-yolo commands for CSV-based detector training, prediction, validation, metrics, comparison, reports, model export, local training batch estimation and shared GPU queues. Use for clearml-yolo usage and configuration questions or authorized runs; exclude generic YOLO advice, service administration and standalone digital-metrics or report-generator usage.
+description: Configure and use clearml-yolo commands for CSV-based detector training, prediction, validation, metrics, comparison, reports, model export, native model-weight preparation, local training batch estimation and shared GPU queues. Use for clearml-yolo usage and configuration questions or authorized runs; exclude generic YOLO advice, service administration and standalone digital-metrics or report-generator usage.
 ---
 
 # Use clearml-yolo
@@ -50,10 +50,13 @@ For YOLO, put native keys at the root of `ultralytics/default.yaml` and
 `ultralytics_predict.*` for inference overrides. CSV input owns dataset selection;
 do not substitute `ultralytics.data` or raw `cfg` for wrapper inputs. Select other
 backends through `model=...` and their `model.train`/`model.predict` controls after
-checking that the chosen backend is already available. Non-YOLO model assets resolve
-only during execution; preserve explicit local selectors and follow the exact offline
-destinations in errors. Read the asset section in [usage](references/usage.md) for
-proxy semantics and gated backbone recovery.
+checking that the chosen backend is already available. Model assets resolve during execution or an explicit
+`cy-download-weights` call when supported by the installed version. Actual `cy` alone
+attempts the eligible catalogue automatically once per catalogue/cache fingerprint;
+completed partial failures require an explicit retry. Preserve custom architecture
+YAML, pretrained values, resume and local selectors. Read
+[model preparation](references/usage.md#model-assets-and-offline-recovery) for native
+cache destinations, exclusions, inspection boundaries, proxies and offline recovery.
 
 Read [batch estimation](references/usage.md#training-batch-estimation) for explicit
 training `batch=null`, single-GPU measurements, explicitly extrapolated global
@@ -78,8 +81,9 @@ removed project extras or change external source/system prerequisites.
 
 All experiment stages require ClearML with remote artifact storage. There is no
 `clearml.enabled=false` switch. FiftyOne is optional on commands exposing its group;
-disable it explicitly when unnecessary. Keep project outputs inside `CY_HOME` and
-use a fresh run directory. External inputs remain valid.
+disable it explicitly when unnecessary. Keep project outputs and preparation state
+inside `CY_HOME`; native model asset caches may follow SDK roots outside it. Use a
+fresh run directory. External inputs remain valid.
 
 Direct commands honor native devices; they do not wait for available GPUs. For
 authorized queued work install the separate CY-specific `cy-queue` distribution after

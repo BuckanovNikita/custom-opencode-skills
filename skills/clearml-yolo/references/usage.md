@@ -248,9 +248,10 @@ Hits do not hash image contents, inspect mtimes, copy images or repeat conversio
 Changing image bytes at unchanged paths still requires explicit idle cache invalidation;
 old entries remain intact. Check source/installed version before relying on these fixes.
 
-`CY_HOME` defaults to launch cwd. Explicit outputs, caches, logs and scratch must
+`CY_HOME` defaults to launch cwd. Explicit project outputs, dataset caches, logs and scratch must
 remain inside it, including symlink destinations. SDK configuration and external
-inputs retain their normal paths. Default durable results are under
+inputs retain their normal paths. Native model assets alone may be published to
+configured SDK caches outside `CY_HOME`; preparation state stays inside it. Default durable results are under
 `runs/<safe-project>/<safe-task>-<task-id>/`. Pipeline `run_dir` groups outputs;
 dataset cache must be outside that run directory. Scratch under `.tmp/cy-runtime-*`
 survives success/failure/cancellation; remove only task-owned inactive resources.
@@ -406,36 +407,82 @@ is unavailable. Prediction settings and existing YOLO AutoBatch behavior are unc
 
 ## Model assets and offline recovery
 
-Check that the installed version supports automatic assets. Configuration inspection,
-help and queue submission do not fetch them. Dependencies remain externally managed;
-asset preparation does not install packages or change approved source revisions.
-Ultralytics keeps its native download behavior.
+Check installed command help/source before using this source feature with an older
+release. `cy-download-weights` explicitly prepares the eligible catalogue, reports
+native destinations and failures, and exits nonzero if incomplete. Rerun it to retry
+unresolved assets; validated files are reused, and compatible legacy CY files may
+be copied into native caches without consuming the originals. Preparation does not
+install packages, create ClearML tasks or change approved dependency revisions.
 
-For DEIMv2, RF-DETR, Faster R-CNN and FCOS, requested pretrained initialization uses matching
-native backbone/registry assets only when explicit weights do not supersede it.
-Keep original model selectors (including null defaults) in canonical replay. Resolved
-paths, original URLs and hashes belong to the separate `model_assets` Configuration
-Object, outside canonical `run` inputs.
+```bash
+cy-download-weights
+```
 
-Managed weights live under
-`CY_HOME/.cache/clearml-yolo/models/<backend>/<preset>/<asset-id>/<filename>`.
-DEIMv2 source uses
-`CY_HOME/.cache/clearml-yolo/sources/DEIMv2/<revision>.tar.gz` and adjacent `<revision>/`.
-The approved archive is checked against packaged code/configuration hashes. Explicit
-checkouts retain their validation. Never recommend editing the pinned source to pass.
+The catalogue covers maintained detection YOLO names, RF-DETR, eligible Faster
+R-CNN/FCOS backbones and DEIMv2 small/medium with pinned source. Bulk preparation
+excludes DEIMv2 large/xlarge and `dinov3_small`; explicit selection retains existing
+execution and access behavior. Shared backbones use a shared native cache entry.
 
-Resolution tries valid local/cache data, a configured proxy, then the original URL.
-Empty or absent proxy variables select upstream directly. `GHR` is a GitHub release
-repository root; append the full `owner/repository/releases/download/tag/filename`.
-`GH` is an Artifactory VCS repository root used to derive `downloadCommit` for pinned
-DEIM source; it is not a Git clone endpoint. Other hosts keep their original URLs.
-Do not put proxy credentials in examples or infer access from URL construction tests.
+Actual `cy` pipeline execution attempts this catalogue before model construction,
+including with explicit local model weights. A completed attempt is remembered per
+catalogue/asset-identity/native-destination fingerprint, including partial failures.
+Automatic failures warn and continue; the selected model keeps normal error handling.
+Use the explicit command to retry failures. Changed identities/destinations trigger
+another automatic pass. Concurrent starts coordinate; interruption leaves the pass
+unfinished. Receipts and locks live under
+`CY_HOME/.cache/clearml-yolo/preparation/`. A receipt proves an attempted pass, not
+complete offline availability.
 
-On download failure, preserve the complete missing-asset report. It names each full
-original URL, exact absolute destination and applicable override/access requirement.
-The user can copy the file or DEIM source archive to that destination and rerun
-offline without an earlier download receipt. Gated backbones require the upstream
-access grant; do not substitute detector weights or random initialization.
+Help, configuration inspection/export, queue submission and standalone stages such
+as `cy-train` never run bulk preparation. A queue worker executing `cy` follows its
+pipeline policy. Stage execution may still fetch selected-model assets; inspection
+is not permission to download an entire catalogue. Package imports remain inert.
+
+Ultralytics uses effective `weights_dir`, including normal aliases and auxiliary AMP
+lookup. Torchvision URL backbones use `torch.hub.get_dir()/checkpoints`. timm follows
+its installed pretrained configuration: HF assets require native repository/revision
+metadata and snapshot discovery in the effective Hub cache, not a loose weight file.
+HF readiness includes valid native `config.json` for the weights' actual snapshot
+commit. Retry repairs missing/invalid config while retaining valid weights; the
+weight file alone is insufficient. RF-DETR uses its configured model cache.
+SDK roots/settings/selectors stay unchanged;
+only native model assets, publication locks/temporary files and HF metadata may be
+written outside `CY_HOME`. Application outputs, datasets, logs, scratch and preparation
+state remain contained. DEIM weights/source retain managed paths:
+
+```text
+CY_HOME/.cache/clearml-yolo/models/<backend>/<preset>/<asset-id>/<filename>
+CY_HOME/.cache/clearml-yolo/sources/DEIMv2/<revision>.tar.gz
+CY_HOME/.cache/clearml-yolo/sources/DEIMv2/<revision>/
+```
+
+The approved source archive is checked against packaged code/configuration hashes;
+explicit checkouts retain validation. Do not edit pinned source to pass validation.
+Resolved DEIM paths enter execution copies only. Preserve original selectors,
+including nulls, in canonical replay; `model_assets` records resolved paths, original
+URLs and hashes separately. Explicit non-YOLO weights/backbones remain authoritative.
+Requested pretrained initialization is not replaced by random or detector weights.
+
+Keep custom YOLO architecture YAML, boolean/filename `pretrained`, local paths,
+resume and Hydra overrides intact. Do not infer weights from a custom YAML basename
+or substitute the architecture. Relative paths follow the consuming process's cwd.
+Non-null `ultralytics.cfg` remains unsupported.
+
+Resolution uses validated cache data before configured proxy and upstream requests.
+`GHR` is a GitHub release repository root: preserve the entire
+`owner/repository/releases/download/tag/filename` suffix. `GH` is an Artifactory VCS
+repository root for pinned DEIM `downloadCommit`, not a Git clone endpoint.
+`HF_ENDPOINT` selects an HF endpoint, including an Artifactory Hugging Face API
+endpoint; `HF_TOKEN` or standard SDK token configuration provides endpoint-scoped
+authentication. Do not send credentials to unrelated origins or expose them in
+examples/reports. Missing/empty proxies select upstream; other sources retain URLs.
+URL construction or an HTTP transfer alone does not establish native offline loading.
+
+On failure, preserve reported selections and destinations. Selected-model missing
+asset errors name original URLs, exact local destinations and applicable override
+or access requirements. Copy the exact file or DEIM archive there and retry; a prior
+online receipt is unnecessary. Keep native HF metadata/snapshots intact. Gated
+backbones require upstream access; do not substitute an incompatible checkpoint.
 
 ## ClearML Agent execution
 

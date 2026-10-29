@@ -5,6 +5,15 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-29
+
+- Document clearml-yolo native model preparation, catalogue exclusions, native
+  cache discovery and explicit retry/exit behavior.
+- Explain pipeline-only automatic preparation, completed partial failures,
+  interrupted attempts and inspection/queue boundaries.
+- Preserve custom model/pretrained/resume selectors and SDK settings; describe
+  endpoint-scoped Hugging Face access and add focused evaluation prompts.
+
 ## [0.6.0] - 2026-10-29
 
 - Explain cveta2 0.12.0 fetch request diagnostics, retry/timing accounting and

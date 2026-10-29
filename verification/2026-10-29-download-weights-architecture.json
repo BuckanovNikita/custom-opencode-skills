@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Document native model preparation and offline recovery",
+  "scope": [
+    "VERSION",
+    "CHANGELOG.md",
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-29-download-weights.md",
+    "verification/2026-10-29-download-weights-architecture.json"
+  ],
+  "impact": "none",
+  "rationale": "Inspected published collection origin/main 13766a1 and current CY feature 007 implementation. Task changes portable usage prose, evaluation prompts, dated evidence and collection patch-release metadata only; no executable modules, scripts, dependency configuration, imports, composition targets or checking contracts change. Runtime/cache effects belong to the CY implementation and its separate architecture gate. Preserve original dirty source and installed copies."
+}
