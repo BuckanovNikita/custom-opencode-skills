@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "CY 008 portable local documentation guidance",
+  "impact": "none",
+  "scope": [
+    "CHANGELOG.md",
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/local-docs.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-29-local-docs.md"
+  ],
+  "rationale": "Inspected additions are portable skill prose, links and behavioral evaluation prompts/evidence. They introduce no executable helpers, runtime modules, imports, dependency edges, application effects or host configuration. Existing unrelated source edits are preserved. CY's executable documentation modules have a separate module-impact architecture record in feature 008."
+}

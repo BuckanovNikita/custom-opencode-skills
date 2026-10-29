@@ -5,6 +5,9 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+- Document the unreleased clearml-yolo local Russian reference and safe configuration
+  previews; add offline, failure-boundary and routing evaluation cases.
+
 ## [0.3.0] - 2026-10-20
 
 - Route OpenCode work across DeepSeek-V4.1-Flash, optional GLM-5.3 engineering/review

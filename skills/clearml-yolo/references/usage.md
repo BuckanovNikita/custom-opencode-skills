@@ -18,6 +18,7 @@ Do not install optional backends or change dependency revisions as a usage side 
 | `cy-ground-truth` | YOLO `data_yaml`; annotation CSV conversion |
 | `cy-export` | Faster R-CNN checkpoint or export intermediate, depending on operation |
 | `cy-init-config` | Destination and selected command; editable YAML, no tracking task |
+| `cy-docs` | Unreleased local Russian reference, tutorials and bounded configuration previews; no tracking task |
 | `cy-dedup` | Optional cache directory; reflink maintenance, `--dry-run` previews |
 | `cy-queue` | Submission/worker/state operations; separate durable scheduling |
 
@@ -25,6 +26,10 @@ Execution stages require ClearML. Configure credentials through the installation
 normal SDK configuration; never put secrets in examples or logs. `clearml.output_uri`
 defaults to true; null, false and empty destinations are rejected. FiftyOne defaults
 enabled on commands exposing that configuration group; `cy-val` has no such group.
+
+For offline field search, effective defaults, YAML editing and composition previews,
+read [local documentation](local-docs.md). The `cy-docs` interface is an unreleased source feature;
+check installed help before relying on it. It neither trains nor submits queue jobs.
 
 ## Full YOLO pipeline
 
