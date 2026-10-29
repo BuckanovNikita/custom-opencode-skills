@@ -1,6 +1,6 @@
 ---
 name: clearml-yolo
-description: Configure and use clearml-yolo commands for CSV-based detector training, prediction, validation, metrics, comparison, reports, model export, native model-weight preparation, local training batch estimation and shared GPU queues. Use for clearml-yolo usage and configuration questions or authorized runs; exclude generic YOLO advice, service administration and standalone digital-metrics or report-generator usage.
+description: Configure and use clearml-yolo commands for CSV-based detector training, prediction, validation, metrics, comparison, reports, model export, native model-weight preparation, local training batch estimation, shared GPU queues and the local Russian configuration reference. Use for clearml-yolo usage and configuration questions or authorized runs; exclude generic YOLO advice, service administration and standalone digital-metrics or report-generator usage.
 ---
 
 # Use clearml-yolo
@@ -35,6 +35,12 @@ does not provide credentials or administer infrastructure.
    guidance in [usage](references/usage.md#launch-directory-and-git).
 
 ## Configure and execute
+
+For local Russian field explanations, tutorials or configuration previews, read
+[local documentation](references/local-docs.md). This interface requires CY 0.43.0
+or later; check that `cy-docs` exists in the installed version. Its offline reference
+and bounded composition previews do not run models, access datasets or prove that
+an experiment will execute successfully.
 
 Generate a new command-specific tree with `cy-init-config DIRECTORY --command COMMAND`
 and use `COMMAND --config-dir DIRECTORY --config-name COMMAND`. Preserve generated

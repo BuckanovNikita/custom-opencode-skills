@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-10-29
+
+- Document the CY 0.43.0 local Russian reference, offline tutorials, searchable
+  configuration catalog and bounded composition previews.
+- Add installed-version guards and five offline, failure-boundary and routing
+  evaluation cases while preserving native weight preparation and training guidance.
+
 ## [0.6.1] - 2026-10-29
 
 - Document clearml-yolo native model preparation, catalogue exclusions, native

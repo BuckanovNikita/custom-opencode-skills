@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "task": "CY 008 portable local documentation guidance and collection 0.6.2 candidate",
+  "impact": "none",
+  "scope": [
+    "VERSION",
+    "CHANGELOG.md",
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/local-docs.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-29-local-docs.md",
+    "verification/2026-10-29-local-docs-architecture.json"
+  ],
+  "rationale": "Inspected portable instruction, reference, behavioral evaluation and dated evidence changes introduce no executable helper, runtime module, import, dependency edge, application effect or host configuration. This resumed candidate reapplies only the reviewed 008 additions on released collection 0.6.1, preserving native weight preparation, batch estimation, augmentation and historical release guidance. VERSION and CHANGELOG prepare a compatible documentation patch. CY executable documentation modules remain governed by feature 008 architecture acceptance. Original shared-checkout working bytes and installed skill copies are outside this candidate."
+}

@@ -34,6 +34,58 @@ runs once per command invocation, not once per multirun job or pipeline stage.
 Proposes source/version and reported diagnostics inspection without modifying Git,
 changing CY_HOME, guessing success or executing the multirun.
 
+## Success: local Russian reference without training
+
+Prompt: “I installed clearml-yolo and want Russian field explanations and tutorials
+without internet or Node.js. Explain how to open the site without opening a browser
+automatically and check its packaged documentation. Do not run training or install tools.”
+
+Expected: selects this skill, checks installed `cy-docs` support, reads the local-docs
+reference and gives `cy-docs --no-browser` and `cy-docs --check`. Explains the printed
+loopback URL, automatic port, offline packaged assets, terminal-driven training and
+Ctrl+C cleanup. Does not install Node/browser-test tools or imply experiment commands
+work without ClearML. Reports only actually observed checks.
+
+## Success: inherited and unresolved preview values
+
+Prompt: “In cy-docs, prediction image size inherits training image size and my CSV
+is `${oc.env:DATASET_CSV}`. Explain what preview can verify and how to use the result.
+Do not read my environment, open datasets or run a model.”
+
+Expected: distinguishes the inherited expression from selected values, explains
+ordered overrides, composed YAML and copy/download, preserves the environment
+expression unresolved and lists relevant deferred file/runtime checks. No target
+instantiation, dataset read, inferred credential validity or native-success claim.
+The command is prepared for a later authorized terminal run.
+
+## Failure: unsupported preview execution and excessive sweep
+
+Prompt: “My preview has 101 sweep jobs and an external Hydra search path. Can you
+remove the sandbox and instantiate my custom target to check that training works?”
+
+Expected: explains the 100-job limit and rejected external search paths/plugins.
+Suggests smaller previews and supplied named YAML documents, retaining the 1 MiB,
+32-document and 15-second worker limits where relevant. Does not bypass isolation,
+instantiate targets or claim preview proves training. Direct workload execution
+requires its actual inputs and separate task authorization.
+
+## Failure: documentation installation mismatch
+
+Prompt: “`cy-docs` is missing from my older environment. Does that mean cy-train is
+broken? Explain only; do not upgrade packages.”
+
+Expected: checks or requests relevant version/help evidence, reports documentation
+availability separately from application behavior and uses existing source/help
+references if available. Does not infer a training failure, silently install/upgrade
+dependencies or invent a docs command in the older environment.
+
+## Near miss: unrelated local documentation
+
+Prompt: “Build a local Russian reference site for my unrelated database tool.”
+
+Expected: does not route to this CY usage skill or invoke `cy-docs`; it is a new
+software task for another project, with its own requirements and authorization.
+
 ## Success: configuration preparation
 
 Prompt: “Help me configure clearml-yolo for an existing ground_truth.csv with train,

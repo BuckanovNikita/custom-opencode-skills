@@ -43,6 +43,7 @@ including native-transform replacement, required final preprocessing and frozen 
 | `cy-ground-truth` | YOLO `data_yaml`; annotation CSV conversion |
 | `cy-export` | Faster R-CNN checkpoint or export intermediate, depending on operation |
 | `cy-init-config` | Destination and selected command; editable YAML, no tracking task |
+| `cy-docs` | CY 0.43.0 local Russian reference, tutorials and bounded configuration previews; no tracking task |
 | `cy-batch-estimate` | CY 0.41.0 local CUDA training-capacity trials; saved recommendations, no tracking task |
 | `cy-dedup` | Optional cache directory; reflink maintenance, `--dry-run` previews |
 | `cy-queue` | Submission/worker/state operations; separate durable scheduling |
@@ -52,6 +53,10 @@ credentials through the installation's normal SDK configuration; never put secre
 in examples or logs. `clearml.output_uri`
 defaults to true; null, false and empty destinations are rejected. FiftyOne defaults
 enabled on commands exposing that configuration group; `cy-val` has no such group.
+
+For offline field search, effective defaults, YAML editing and composition previews,
+read [local documentation](local-docs.md). `cy-docs` requires CY 0.43.0 or later;
+check installed help before relying on it. It neither trains nor submits queue jobs.
 
 ## Launch directory and Git
 
