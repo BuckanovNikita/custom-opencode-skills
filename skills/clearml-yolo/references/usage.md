@@ -375,9 +375,44 @@ capacity; timeout, failure, nonfinite computation, missing assets and contaminat
 are separate failures. `ceiling_limited` remains usable without claiming an
 unconstrained maximum; failed measurements cannot supply training batches.
 
+From CY 0.44.3, discovery-time nonfinite computation after
+an earlier fully successful, under-budget candidate schedules exactly one fresh
+repeat of that last good batch. Only a complete successful repeat, including every
+optimizer path, update, validation and memory check, yields usable
+`numerically_limited`. Preserve the failed numerical trial and its diagnostic. This
+is no measured capacity maximum; nonfinite is neither OOM nor a memory upper bound.
+Nonfinite before any successful candidate, every failed confirmation (numerical,
+OOM, over budget, timeout or another failure), and other discovery failures leave
+no recommendation. Do not suppress native finite checks or change AMP/optimizers
+as part of this recovery; the underlying native numerical cause remains unconfirmed.
+
+Check installed/source support before promising this recovery. On older versions,
+a previously observed successful smaller batch can be retested with a lower ceiling.
+For square 960 YOLOv3u, 100 classes, 300 objects/image and a prior batch-24 success:
+
+```bash
+cy-batch-estimate --imgsz 960 --classes 100 --objects-per-image 300 \
+  --models ultralytics/yolov3u --search-limit 24
+```
+
+Keep the same `CY_HOME` and selected devices. The bounded rerun still requires fresh
+independent confirmation; previous success alone is not a saved recommendation.
+A successful ceiling result is `ceiling_limited`, not proof of a maximum. Batch 24
+is specific to this example, not a general hardware guarantee. After upgrading to
+numerical recovery, rerun failed cases; the implementation fingerprint invalidates
+previous measurements. Never edit failed catalogue entries into successes.
+
 The versioned atomic catalogue is `CY_HOME/.config/clearml-yolo/batch-estimates.json`.
 It retains actual global/per-GPU measurements, diagnostics and provenance. Compatible
 completed cases are reused; refresh invalidates matching success before reprobes.
+The recovery implementation reads schema 1 and normally saves schema 2 to support
+`numerically_limited`; older readers need upgrading before reading the new format.
+Read-only access does not rewrite historical catalogues. Pending snapshots retain
+`failed` and null batches until independent confirmation succeeds. Their diagnostic
+says confirmation is pending: the command may still be running or interrupted.
+They cannot supply training evidence.
+Historical failures stay in the catalogue; after rerunning, inspect the new case
+matching the current implementation and dependency versions.
 Match architecture, nominal/effective size, GPU types/capacities, relevant versions,
 precision, compilation, optimizers, accumulation, EMA and augmentation. First prefer a
 compatible existing measurement for the exact ordered allocation/count, including
@@ -386,7 +421,8 @@ N times the single-GPU capacity for identical hardware, or N times the smallest
 compatible per-GPU capacity for mixed hardware. Require a compatible single-GPU source
 for every type/capacity; never extrapolate across unmeasured hardware. The result is
 divisible by N and remains workload-specific. It is not a measured multi-GPU maximum.
-Retain source boundary/ceiling status. Derive recommendations during lookup/reporting;
+Exact lookup and extrapolation preserve limitations and diagnostics, with
+`numerically_limited` taking precedence over `ceiling_limited` and then `validated`. Derive recommendations during lookup/reporting;
 never create synthetic trials or rewrite measured evidence.
 
 Only explicit training null selects saved evidence; numeric defaults stay unchanged:
@@ -403,8 +439,8 @@ foreground vocabulary and maximum objects on any train/validation image must fit
 inside the synthetic bounds; average density is insufficient. Missing, stale, failed
 or incompatible sources stop training with an estimator command or explicit-batch
 alternative. Recommendation provenance identifies measured/extrapolated origin,
-target allocation, source keys, global/per-GPU values and source boundary/ceiling
-status. Training retains normal failure behavior without automatic OOM retry or
+target allocation, source keys, global/per-GPU values, source boundary/ceiling/
+numerical status and diagnostics. Training retains normal failure behavior without automatic OOM retry or
 hidden batch reduction. Preserve requested null in
 canonical replay; resolved batch and estimate provenance are recorded separately.
 Queue submission keeps null and the worker resolves it against assigned GPUs and its

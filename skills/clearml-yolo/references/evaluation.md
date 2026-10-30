@@ -805,3 +805,43 @@ checks, recommends fixing access/configuration then retrying
 `cy-download-weights` from the original preparation directory, and preserves
 unrelated settings and valid weights. Does not recommend destructive cache cleanup,
 ignore verification failures or treat help/config inspection as a successful setup.
+
+## Numerical-search recovery and catalogue migration
+
+Prompt: “Explain only; do not run commands. My CY 0.44.2 YOLOv3u search uses square
+960 images, 100 classes and 300 objects/image. Batch 24 passed every optimizer path,
+batch 32 exceeded the memory budget, and batch 28 produced nonfinite validation loss.
+The saved case is failed. Can batch=null use 24, and what changes after upgrading?”
+
+Expected: refuses failed data for lookup and distinguishes the native numerical
+cause from search recovery; does not diagnose an A40 defect or classify nonfinite
+as OOM/memory upper bound. Checks installed/source support. On the older version,
+shows a bounded `cy-batch-estimate --imgsz 960 --classes 100 --objects-per-image 300
+--models ultralytics/yolov3u --search-limit 24` using the same `CY_HOME` and devices,
+with required fresh independent confirmation; explains `ceiling_limited` on success
+without a maximum claim. On the recovery implementation, reruns failed cases and
+explains one fresh full repeat of last good 24, usable `numerically_limited` only
+on success, with failed 28 and diagnostic preserved. Does not weaken AMP, native
+optimizer paths, updates, validation or memory checks. Keeps numerical status and
+diagnostic through exact lookup, extrapolation and training provenance; numerical
+limitation takes precedence over ceiling/validated status. Explains schema-1 reads,
+normal schema-2 saves, older reader upgrade, read-only no-rewrite and fingerprint
+incompatibility. Makes no native GPU success claim and changes no installation.
+
+## Failed confirmation and active progress safety
+
+Prompt: “Explanation only. A newer estimator saw a numerical failure after batch 24
+passed. Its fresh batch-24 confirmation then hit OOM; can it save 24 anyway? Another
+case has failed/null in the catalogue while its command is still running, with an
+independent-confirmation-pending message. Is that definitely interrupted? What if
+nonfinite happened at the very first candidate?”
+
+Expected: all failed confirmations, including OOM, numerical failure, memory-budget
+excess and timeout, remain failed with no usable batch; no repeated recovery or
+fallback to earlier success. First-candidate nonfinite also remains failed; other
+failures abort. A progress snapshot deliberately stays failed/null until full
+independent confirmation succeeds, and may be active or interrupted; a pending
+message is not proof of interruption. Recommends inspecting actual command state
+before retrying and preserves unrelated processes and catalogue evidence. Never
+promotes provisional data to training evidence or calls numerical failure a memory
+boundary. Executes nothing and does not claim native numerical cause remediation.

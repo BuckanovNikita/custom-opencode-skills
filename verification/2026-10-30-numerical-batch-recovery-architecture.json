@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "Numerically limited batch recovery guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-30-numerical-batch-recovery.md",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected portable usage/evaluation and discovery entrypoint, MAINTENANCE.md, RELEASE.md and companion CY numerical-search assessment and current batch policy. These changes describe source recovery, schema migration, status provenance and failure limitations; no runtime modules, dependencies, executable helpers, import contracts or installed skills change. CY parent owns runtime architecture and native verification. Collection changes are isolated from original worktrees."
+}

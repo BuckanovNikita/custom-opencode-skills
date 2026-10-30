@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.6] - 2026-10-30
+
+- Explain guarded CY numerical batch-search recovery: one fresh full confirmation,
+  retained numerical limitations and diagnostics, and strict failed-confirmation safety.
+- Document the bounded old-version retry, schema-2 reader migration, pending snapshots
+  and source-fingerprint refresh; add explanation-only recovery and failure cases.
+
 ## [0.6.5] - 2026-10-30
 
 - Document guarded CY 0.44.2 persistent YOLO cache setup before preparation and

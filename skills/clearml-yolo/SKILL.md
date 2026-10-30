@@ -74,7 +74,9 @@ Read [batch estimation](references/usage.md#training-batch-estimation) for expli
 training `batch=null`, single-GPU measurements, explicitly extrapolated global
 microbatches and strict source compatibility. In estimation explanations, include
 the default output counts, fresh single-GPU confirmation, per-GPU ceiling versus
-extrapolated totals, and target/source provenance. GPU count alone does not prevent
+extrapolated totals, and target/source provenance. For numerical failures, read the
+recovery and catalogue-migration guidance there; require fresh confirmation and
+retain numerical limitations and diagnostics. GPU count alone does not prevent
 compatible extrapolation; dataset bounds and the separate physical DDP correctness
 gate still apply. Check installed support: FCOS, native multi-GPU training, estimation
 and self-contained exports are available from CY 0.41.0. Native YOLO fresh
