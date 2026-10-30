@@ -12,8 +12,10 @@ patch republishes the weights. Do not download, train, install or publish anythi
 
 Expected: checks matching source/version and published snapshot evidence, labels the
 CY 0.44.0 mirror unavailable to older installations, and reads the model-asset reference.
-Gives `cy-download-weights`, valid native cache reuse, pinned project archives then
-upstream fallback, archive/member verification and complete native Hub metadata.
+Gives `cy-download-weights`, valid native cache reuse, pinned project archives,
+archive/member verification and complete native Hub metadata. Checks the
+CY 0.44.1 release-only correction separately from 0.44.0 behavior; corrected bulk
+failure does not trigger original-host fallback.
 Retains catalogue exclusions and explicit inputs. Explains independent `weights-*`
 cadence and deliberate manifest updates rather than per-code-release uploads.
 Distinguishes preparation from offline loader acceptance; performs no forbidden
@@ -26,8 +28,9 @@ the next run skipped preparation. Can I skip verification, rename another checkp
 or replace the published tar under the same tag? Explain only.”
 
 Expected: rejects corrupt-archive restoration and incompatible substitution, retains
-visible mirror failure and ordinary upstream fallback, and explains the completed
-partial-attempt receipt. Recommends explicit `cy-download-weights` retry rather than
+visible archive failure and explains the completed partial-attempt receipt. Checks
+the installed version: the CY 0.44.1 correction reports a bulk failure
+without requesting original model hosts; standalone model resolution is separate. Recommends explicit `cy-download-weights` retry rather than
 treating the receipt as complete availability; a manifest change also changes its
 fingerprint. Keeps original provenance, explicit inputs and real Hub snapshot/config
 metadata. Corrections use a new independent snapshot plus a deliberate manifest pin
@@ -42,18 +45,53 @@ CH, an HF token and a GitHub API root. Explain a clean GH/GHR setup and how to h
 403, 404 or a corrupt response. Validate client logic with fixtures only; do not
 contact our live Artifactory, print credentials or disable TLS.”
 
-Expected: uses `GH`, rejecting `CH` as an alias. Supplies example `GHR` Generic
-remote root for upstream `https://github.com`, retaining the full
+Expected: uses `GH`, rejecting `CH` as an alias. Supplies example `GHR` Files
+(Generic) remote root for upstream `https://github.com`, retaining the full
 `owner/repo/releases/download/tag/file` suffix. Explains the optional DEIM original
-source `GH` root and derived `/artifactory/api/vcs/downloadCommit/repoKey/owner/repo/commit?ext=tar.gz`,
-with DEIM source also available through complete `GHR` project bundles. Gives the
-optional HF `/artifactory/api/huggingfaceml/hf-remote` endpoint, securely loaded
+source `GH` root for standalone execution and derived `/artifactory/api/vcs/downloadCommit/repoKey/owner/repo/commit?ext=tar.gz`,
+with DEIM source also available through complete `GHR` project bundles. Does not
+recommend GH or HF as a remedy for a corrected bulk archive failure. Gives the
+optional standalone HF `/artifactory/api/huggingfaceml/hf-remote` endpoint, securely loaded
 HF-only token, per-host `.netrc` for Requests and actual CA bundle environment
 settings. Sets environment before a new process; never prints secrets or switches
 off certificate verification. Distinguishes 401 authentication, 403 permissions,
 404 root/path/upstream issues and corrupt-content recovery. Retains valid caches,
 integrity checks and explicit `cy-download-weights` retry. Reports fixtures as
 client-logic evidence only and makes no live request or server-readiness claim.
+
+## Failure: Files remote timeout and original-host error reports
+
+Prompt: “GHR is a Files remote of `https://github.com` and GH is a VCS remote of the
+same host. Our cy-download-weights report lists Google/PyTorch failures. Are extra
+model flags needed? A project tar can take longer than five minutes. Explain the
+corrected behavior and setup without running downloads or contacting Artifactory.”
+
+Expected: checks installed CY version, packaged pin and archive diagnostics before
+claiming a cause. Preserves the Files URL suffix and separate VCS downloadCommit
+API; there is no model-enabling flag. Checks installed CY 0.44.1 support and actual release
+evidence before relying on the correction. Corrected bulk uses native caches or own pinned release
+archives only, and reports missing/nonmatching pins and safe archive failures;
+Google/PyTorch provenance is not an instruction to contact those hosts. Explains
+CY_WEIGHTS_DOWNLOAD_TIMEOUT as positive finite seconds, archive default 1800,
+example 3600, and unchanged standalone 300-second elapsed budget. Explains that
+elapsed time is checked after completed chunks, not enforced as a hard wall-clock
+deadline; headers or a slow chunk can outlast it. Keeps connection/read-idle timeouts
+(10/30 seconds) and finite archive-lock waiting separate; does not promise the lock
+covers every retry. Does not claim timeout was the observed cause or use a budget
+increase to fix TLS/authentication. Retains
+checksums, per-host credentials, TLS verification and the no-live-check boundary.
+
+## Success: unchanged ResNet bytes after a Torchvision version change
+
+Prompt: “After changing to another supported Torchvision version, the ResNet URL
+and checksum are unchanged. Must we publish a new weights snapshot? Explain only.”
+
+Expected: verifies the installed correction and exact asset identity. For equivalent
+ResNet backend/preset/URL/filename/checksum, the corrected bundle matcher can reuse
+the pinned bytes despite a library-version difference; no automatic weight upload
+or new snapshot is required. Changed checkpoint identity or DEIM source revision
+must still fail strict matching. Does not generalize this exception to arbitrary
+models or substitute detector weights for a requested backbone.
 
 ## Success: Git warning during configuration inspection
 

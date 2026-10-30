@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "CY weight Files remote recovery guidance and collection 0.6.4 candidate",
+  "impact": "none",
+  "scope": [
+    "VERSION",
+    "CHANGELOG.md",
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-30-weight-files-remote.md",
+    "verification/2026-10-30-weight-files-remote-architecture.json"
+  ],
+  "rationale": "Inspected collection origin/main 9da53d6, CY bug assessment weight-files-remote and existing runtime transport/matching/preparation implementations. Changes only clarify GHR Files and GH VCS roots, guarded CY0.44.1 timeout/diagnostic/ResNet behavior, evaluation prompts and dated release evidence. No runtime module, executable checking contract, import/dependency edge, composition target or effect owner changes in this collection. CY owns executable bug acceptance; no installed skill or private machine configuration is changed."
+}

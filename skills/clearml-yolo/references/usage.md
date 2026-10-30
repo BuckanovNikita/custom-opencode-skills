@@ -425,23 +425,27 @@ cy-download-weights
 
 ### Pinned project weight archives
 
-CY 0.44.0 adds pinned project archives to bulk preparation. Check matching
-installed-version/source help and published-snapshot evidence before relying on this
-feature; older installations do not gain it from a weights upload alone. Preparation first
-reuses valid native assets, then tries the packaged `weights-*` GitHub Release pin
-in `BuckanovNikita/clearml-yolo`, then ordinary upstream resolution. It never selects
-a moving latest release. Standalone selected-model execution keeps its normal asset
-resolution, and explicit local inputs remain authoritative.
+CY 0.44.0 introduced pinned project archives. The CY 0.44.1 correction
+makes bulk preparation use valid native assets first, then the packaged `weights-*`
+GitHub Release pin in `BuckanovNikita/clearml-yolo` only. Check matching installed
+version/source and actual release evidence before relying on the corrected behavior;
+older installations do not gain it from a weights upload alone. The pin never selects
+a moving latest release. Standalone selected-model execution keeps its ordinary
+upstream resolution, and explicit local inputs remain authoritative.
 
 Each independent tar archive and its selected members require byte-size/SHA-256
 verification before atomic native publication. Unsafe paths, links, duplicate members
-and special files are rejected. Failed or unavailable mirrors warn and retain upstream
-fallback; asset identities absent from the pin also keep that route. Downloaded
-archives are reused under `CY_HOME/.cache/clearml-yolo/weight-bundles/` with coordinated
-locks. Interrupted transfers are retryable. Hub restoration retains the real commit,
-requested revision reference, blob metadata and matching `config.json` without
-upstream metadata requests, preserving native offline discovery and original-source
-provenance. The mirror URL does not replace the upstream asset identity.
+and special files are rejected. When a native asset is missing, the corrected bulk
+path reports a missing/nonmatching pin or unavailable/invalid archive; it does not
+trigger Google Drive, Google Storage, PyTorch or Hugging Face downloads. Successful
+restoration requires no upstream metadata call. Downloaded archives are reused under
+`CY_HOME/.cache/clearml-yolo/weight-bundles/` with coordinated locks. Interrupted
+transfers are retryable. Hub restoration retains the real commit, requested revision
+reference, blob metadata and matching `config.json`, preserving native offline
+discovery and original-source provenance. A provenance URL is not a required network
+route. Equivalent ResNet URL/checksum identities can reuse the same archive across
+supported Torchvision versions; changed checkpoints and DEIM source revisions remain
+subject to strict identity checks.
 
 Weight snapshots have a separate release cadence from application versions; code
 releases reuse the existing pin without republishing weights. New snapshots require
@@ -508,44 +512,47 @@ resume and Hydra overrides intact. Do not infer weights from a custom YAML basen
 or substitute the architecture. Relative paths follow the consuming process's cwd.
 Non-null `ultralytics.cfg` remains unsupported.
 
-Bulk preparation with the mirror uses valid native assets, then the pinned
-project archive, then ordinary upstream resolution. That upstream route uses validated
-cache data before configured proxy and upstream requests.
-`GHR` is a GitHub release repository root: preserve the entire
-`owner/repository/releases/download/tag/filename` suffix, including for the project's
-weight-release archives. `GH` is an Artifactory VCS
-repository root for pinned DEIM `downloadCommit`, not a Git clone endpoint.
-`HF_ENDPOINT` selects an HF endpoint, including an Artifactory Hugging Face API
-endpoint; `HF_TOKEN` or standard SDK token configuration provides endpoint-scoped
-authentication. Do not send credentials to unrelated origins or expose them in
-examples/reports. Missing/empty proxies select upstream; other sources retain URLs.
-URL construction or an HTTP transfer alone does not establish native offline loading.
+Corrected bulk preparation uses valid native assets, then the pinned project archive.
+`GHR` is the Files remote repository root for upstream `https://github.com`: preserve
+the entire `owner/repository/releases/download/tag/filename` suffix, including the
+project's own weight-release archives. It does not use the VCS API. `GH` is a separate
+Artifactory VCS remote root for that same upstream, used by standalone DEIM source
+resolution through `downloadCommit`. Setting `GH` or `HF_ENDPOINT` is not a remedy
+for a failed bulk release archive.
+
+Standalone selected-model resolution retains its existing cache/proxy/upstream
+routes. Its `HF_ENDPOINT` selects an HF endpoint, including an Artifactory Hugging
+Face API endpoint; `HF_TOKEN` or standard SDK token configuration provides
+endpoint-scoped authentication. Do not send credentials to unrelated origins or
+expose them in examples/reports. URL construction or HTTP transfer alone does not
+establish native offline loading.
 
 ### Proxy setup after a failed download
 
 Set network, credentials and endpoint variables before starting a new CY process;
 HF libraries can capture endpoint settings during import. For complete project
-archives, use a Generic Artifactory remote repository whose upstream is
+archives, use the Files (Generic) Artifactory remote repository whose upstream is
 `https://github.com`:
 
 ```bash
-export GHR="https://artifactory.example/artifactory/github-releases"
+export GHR="https://artifactory.example/artifactory/github-files"
 ```
 
 Replace the example host and key with administrator-provided values. A request for
 `https://github.com/owner/repo/releases/download/tag/file.tar` retains its full path
 under `GHR`, yielding
-`https://artifactory.example/artifactory/github-releases/owner/repo/releases/download/tag/file.tar`.
+`https://artifactory.example/artifactory/github-files/owner/repo/releases/download/tag/file.tar`.
 Do not use a filename-specific URL or GitHub API root. See the
 [remote repository protocol](https://docs.jfrog.com/artifactory/docs/remote-repositories).
 
 For `GH`/`GHR` authentication, configure the actual Artifactory host in a private
 per-host `.netrc` entry using approved credential storage; keep owner-only file
 permissions (`chmod 600 ~/.netrc`). Requests uses that entry. `HF_TOKEN` is only for
-the selected Hugging Face endpoint, not these Generic/VCS downloads. Keep secrets
+the selected Hugging Face endpoint, not these Files/VCS downloads. Keep secrets
 out of URLs, configuration examples, command history and reports.
 
-Optional original-source fallback routes are:
+The following settings apply to standalone selected-model source/Hub resolution,
+not to corrected bulk preparation:
 
 ```bash
 export GH="https://artifactory.example/artifactory/github-vcs"
@@ -556,7 +563,7 @@ export HF_ENDPOINT="https://artifactory.example/artifactory/api/huggingfaceml/hf
 `https://artifactory.example/artifactory/api/vcs/downloadCommit/github-vcs/owner/repo/commit?ext=tar.gz`;
 it is the [VCS commit API](https://docs.jfrog.com/artifactory/reference/downloadvcscommit),
 not Git clone access. Complete project bundles already include DEIM source through
-`GHR`, so `GH` is optional unless original-source fallback is needed. Use `GH`;
+`GHR`; corrected bulk preparation does not use `GH` as a fallback. Use `GH`;
 `CH` is not an alias. The optional HF route requires the exact
 [Hugging Face API endpoint](https://docs.jfrog.com/artifactory/docs/use-hugging-face-with-jfrog-cli),
 not a Generic root. Load `HF_TOKEN` securely from a secret manager or protected SDK
@@ -573,12 +580,39 @@ bundle path before launching; keep TLS verification enabled. Then rerun
 `cy-download-weights`, retaining valid native caches. A completed automatic partial
 receipt does not prevent this explicit retry.
 
+The CY 0.44.1 archive elapsed-download budget defaults to 1800 seconds.
+For a slower Files remote, set positive finite seconds before starting CY:
+
+```bash
+export CY_WEIGHTS_DOWNLOAD_TIMEOUT=3600
+cy-download-weights
+```
+
+This setting applies only to project weight archives. Ordinary standalone upstream
+downloads retain their 300-second elapsed-download budget. CY checks elapsed time
+after each completed streamed chunk; this is not a hard wall-clock deadline. Waiting
+for headers or a slowly arriving chunk can exceed the budget before CY checks it.
+Requests separately uses a 10-second connection timeout and 30-second read-idle
+timeout. The archive lock wait is independently finite at four times the configured
+budget plus 60 seconds; it does not guarantee waiting through every transfer/retry.
+
+The setting does not change authentication, TLS verification, checksum checks or
+endpoint selection, and there is no model-enabling CLI flag. Invalid values are
+reported without echoing their contents. A budget increase cannot repair a missing
+file, rejected credentials or a certificate failure.
+
+The corrected bulk report preserves the project archive route and a safe failure
+reason. Inspect that reason first; do not infer the Files remote's root cause from
+older logs that show only Google/PyTorch fallback errors. A missing packaged manifest
+or unmatched asset requires a compatible installation and pin, not a new upstream
+credential. Original URLs remain provenance and offline-file identification.
+
 Treat 401 as missing/invalid authentication and 403 as read-permission/access policy
 failure. For 404, inspect the root, repository key and preserved upstream path, then
 upstream availability or blocking; do not assume the weights are absent. Size,
 checksum or format failures require a corrected proxy/cache response and retry,
 not disabled verification, incompatible replacement weights or removal of valid
-caches. Protocol-fixture results prove client routing/auth boundaries and fallback,
+caches. Protocol-fixture results prove client routing/auth boundaries and recovery,
 not live Artifactory connectivity, permissions or cache state. An explanation-only
 or fixture-only request authorizes no live stand check.
 

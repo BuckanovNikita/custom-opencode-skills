@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.4] - 2026-10-30
+
+- Clarify the GitHub Files remote (`GHR`) and separate VCS remote (`GH`) layout.
+- Document guarded CY 0.44.1 release-only bulk preparation, preserved archive
+  diagnostics, configurable archive timeout and equivalent ResNet cache reuse.
+- Add failure and version-change evaluation cases without live Artifactory claims.
+
 ## [0.6.3] - 2026-10-29
 
 - Document the CY 0.44.0 pinned project weight archives, native-cache reuse,

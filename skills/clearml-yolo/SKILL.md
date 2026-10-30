@@ -63,10 +63,12 @@ completed partial failures require an explicit retry. Preserve custom architectu
 YAML, pretrained values, resume and local selectors. Read
 [model preparation](references/usage.md#model-assets-and-offline-recovery) for native
 cache destinations, exclusions, inspection boundaries, proxies and offline recovery.
-That reference also covers the CY 0.44.0 project mirror: pinned, verified
-`weights-*` archives, independent snapshot cadence and retained upstream fallback.
-Check matching installed-version and published-snapshot evidence before using this
-interface; code releases do not republish model assets.
+That reference covers pinned `weights-*` project archives and their independent
+snapshot cadence. The CY 0.44.1 correction makes bulk preparation use valid
+native caches or those project releases only, with Files/VCS setup and archive
+budget recovery. Check installed-version/source and published-snapshot evidence;
+code releases do not republish model assets, and older installations retain their
+own behavior.
 
 Read [batch estimation](references/usage.md#training-batch-estimation) for explicit
 training `batch=null`, single-GPU measurements, explicitly extrapolated global
