@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "task": "Persistent YOLO weights directory usage guidance",
+  "scope": [
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "VERSION",
+    "CHANGELOG.md",
+    "verification/2026-10-30-yolo-weights-directory.md"
+  ],
+  "impact": "none",
+  "rationale": "Documentation-only companion release of CY yolo-weights-directory bug. Inspected current usage/evaluation references, VERSION, CHANGELOG.md, RELEASE.md and CY assessment. Changes describe explicit SDK cache setup, recovery and release identity without modifying executable modules, dependencies, helpers or import contracts. Only task-owned deltas were transferred onto latest main; unrelated source-reference edits remain preserved in their original checkout and excluded from this isolated candidate."
+}

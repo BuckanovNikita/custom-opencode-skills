@@ -255,8 +255,10 @@ old entries remain intact. Check source/installed version before relying on thes
 
 `CY_HOME` defaults to launch cwd. Explicit project outputs, dataset caches, logs and scratch must
 remain inside it, including symlink destinations. SDK configuration and external
-inputs retain their normal paths. Native model assets alone may be published to
-configured SDK caches outside `CY_HOME`; preparation state stays inside it. Default durable results are under
+inputs retain their normal paths. Native model assets may be published to configured
+SDK caches outside `CY_HOME`; persistent Ultralytics `weights_dir` setup below also
+updates its selected settings file. Preparation state stays inside `CY_HOME`.
+Default durable results are under
 `runs/<safe-project>/<safe-task>-<task-id>/`. Pipeline `run_dir` groups outputs;
 dataset cache must be outside that run directory. Scratch under `.tmp/cy-runtime-*`
 survives success/failure/cancellation; remove only task-owned inactive resources.
@@ -482,6 +484,22 @@ as `cy-train` never run bulk preparation. A queue worker executing `cy` follows 
 pipeline policy. Stage execution may still fetch selected-model assets; inspection
 is not permission to download an entire catalogue. Package imports remain inert.
 
+In CY 0.44.2 and later, explicit preparation and YOLO batch-estimator setup
+persist an absolute Ultralytics `weights_dir` before catalogue reuse or trial
+worker launch. Check matching installed/source support before relying on this fix.
+A relative value resolves against invocation cwd; an existing absolute destination is retained. CY callers
+coordinate through an adjacent settings-file lock, verify readback and synchronize
+live SDK `weights_dir` and `WEIGHTS_DIR`. Unrelated disk settings, process-only
+callback switches and cache files remain intact; already-correct repeated calls do
+not rewrite settings. Imports, help and configuration inspection do not run setup.
+Native ClearML callback switches remain in memory.
+
+To migrate older relative caches, rerun `cy-download-weights` once from the original
+preparation directory; valid files are reused. For setup errors, check the reported
+settings-file JSON and directory permissions, then retry from the original
+preparation directory. Do
+not delete settings or caches to hide the error.
+
 Ultralytics uses effective `weights_dir`, including normal aliases and auxiliary AMP
 lookup. Torchvision URL backbones use `torch.hub.get_dir()/checkpoints`. timm follows
 its installed pretrained configuration: HF assets require native repository/revision
@@ -489,9 +507,10 @@ metadata and snapshot discovery in the effective Hub cache, not a loose weight f
 HF readiness includes valid native `config.json` for the weights' actual snapshot
 commit. Retry repairs missing/invalid config while retaining valid weights; the
 weight file alone is insufficient. RF-DETR uses its configured model cache.
-SDK roots/settings/selectors stay unchanged;
-only native model assets, publication locks/temporary files and HF metadata may be
-written outside `CY_HOME`. Application outputs, datasets, logs, scratch and preparation
+Apart from the persistent Ultralytics `weights_dir` update above, SDK roots,
+settings and selectors stay unchanged. Native model assets, publication
+locks/temporary files, HF metadata and that settings update may be written outside
+`CY_HOME`. Application outputs, datasets, logs, scratch and preparation
 state remain contained. DEIM weights/source retain managed paths:
 
 ```text

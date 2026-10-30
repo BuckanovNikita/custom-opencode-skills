@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.5] - 2026-10-30
+
+- Document guarded CY 0.44.2 persistent YOLO cache setup before preparation and
+  estimator workers, preserving unrelated settings and avoiding redundant writes.
+- Explain migration from relative caches and settings-file failure recovery; add
+  explanation-only success and failure evaluation cases.
+
 ## [0.6.4] - 2026-10-30
 
 - Clarify the GitHub Files remote (`GHR`) and separate VCS remote (`GH`) layout.

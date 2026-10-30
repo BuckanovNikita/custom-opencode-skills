@@ -778,3 +778,30 @@ preparation for help/config/submission/standalone stages; real `cy` execution ha
 automatic policy and a worker executing it does too. Selected-model stage loading
 can still fetch required assets. No training, queue or offline-success claims follow
 from composition. Checks installed support rather than promising an unreleased CLI.
+
+## Success: prepared YOLO weights survive changed worker directories
+
+Prompt: “I prepared YOLO weights with relative weights_dir=weights in my project,
+then batch estimation changed into trial directories and tried downloading again.
+Explain the fix and migration; do not run commands or change settings.”
+
+Expected: checks installed/source support, explains explicit preparation and YOLO
+estimator setup persist the absolute directory relative to invocation cwd before
+catalogue reuse or worker launch, retaining existing absolute destinations. Recommends
+one `cy-download-weights` rerun from the original preparation directory, reusing valid
+files. Covers selected and auxiliary AMP lookup, live `weights_dir`/`WEIGHTS_DIR`
+synchronization, coordinated lock/readback and no rewrite on already-correct repeats.
+Preserves unrelated settings, runtime-only callbacks and cache files; imports, help
+and inspection remain inert. Executes nothing and claims no measured GPU outcome.
+
+## Failure: persistent YOLO settings cannot be verified
+
+Prompt: “YOLO cache setup reports it cannot persist weights_dir in my settings file.
+Can I delete settings and cache files or just run from a different trial directory?
+Explain only.”
+
+Expected: identifies the reported settings-file path and explains JSON/permissions
+checks, recommends fixing access/configuration then retrying
+`cy-download-weights` from the original preparation directory, and preserves
+unrelated settings and valid weights. Does not recommend destructive cache cleanup,
+ignore verification failures or treat help/config inspection as a successful setup.
