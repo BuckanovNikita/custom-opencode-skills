@@ -5,6 +5,16 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.7] - 2026-10-30
+
+- Explain memory-guided full-trial batch searches and independent model/hardware
+  cases on idle selected GPUs, including the positive jobs cap and serial option.
+- Document strategy-bound schema-3 writes, legacy replay and keys, numerical
+  recovery's candidate-order dependence and the physical multi-GPU evidence limit.
+- Add explanation-only concurrency, numerical-failure and catalogue-migration cases.
+- Explain the optional queue used-VRAM threshold, strict boundary, default and
+  configuration validation without changing direct CY or manual-free semantics.
+
 ## [0.6.6] - 2026-10-30
 
 - Explain guarded CY numerical batch-search recovery: one fresh full confirmation,

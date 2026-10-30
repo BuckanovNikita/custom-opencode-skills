@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "Memory-guided batch search, independent GPU searches and configurable queue admission guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-30-batch-search-speedup.md",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected portable usage/evaluation guidance, collection maintenance/release procedures and CY's approved search/concurrency amendment plus current core policy, worker contracts, CLI options and scheduling implementation. These changes describe memory-guided candidate selection, full trial guarantees, independent GPU cases and schema migration; no runtime modules, dependencies, executable helpers, import contracts or installed copies change. CY owns runtime architecture and acceptance. Original sibling working trees are preserved. The follow-up also inspects cy-queue 0.1.6 settings, admission, guardian startup and CLI diagnostics; portable prose/evaluation changes add no runtime effects. The queue repository owns the threshold implementation and its architecture acceptance."
+}

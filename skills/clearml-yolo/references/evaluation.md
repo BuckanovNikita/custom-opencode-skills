@@ -460,17 +460,20 @@ force flag, confirmation or extra memory/process check. Accepts the user's decla
 does not request fresh status proof. Explains only GPU 2's reservations and existing
 holds are cleared across roots, GPUs 1 and 3 remain reserved, existing processes continue
 and no job outcome changes. Original queue access is unnecessary. The next job still
-checks used VRAM below 2048 MiB immediately before launch. Performs no mutation.
+checks used VRAM strictly below the effective configured threshold (2048 MiB by
+default) immediately before launch. Performs no mutation.
 
 ## Success: threshold and public GPU labels
 
-Prompt: “Explain queue GPU availability when one GPU uses 2047 MiB, another 2048 MiB
-and a third 2049 MiB. None has active reservations or holds. Use GPU numbers and do
-not run anything.”
+Prompt: “Explain queue GPU availability with the default threshold when one GPU uses
+2047 MiB, another 2048 MiB and a third 2049 MiB. None has active reservations or holds.
+Use GPU numbers and do not run anything.”
 
-Expected: only the first GPU meets the fixed strict-below-2048-MiB rule. No utilization
-or process-list condition, configurable limit, full GPU UUID or claim token. Notes the
-fresh startup check and distinguishes meeting admission from model memory fit.
+Expected: only the first GPU meets the default strict-below-2048-MiB rule. No
+utilization or process-list condition, full GPU UUID or claim token. Notes the fresh
+startup check and distinguishes meeting admission from model memory fit. On queue
+versions supporting the optional TOML threshold, explains that changing it requires
+explicit configuration and does not alter this default example.
 
 ## Failure: older GPU control interface
 
@@ -824,8 +827,10 @@ explains one fresh full repeat of last good 24, usable `numerically_limited` onl
 on success, with failed 28 and diagnostic preserved. Does not weaken AMP, native
 optimizer paths, updates, validation or memory checks. Keeps numerical status and
 diagnostic through exact lookup, extrapolation and training provenance; numerical
-limitation takes precedence over ceiling/validated status. Explains schema-1 reads,
-normal schema-2 saves, older reader upgrade, read-only no-rewrite and fingerprint
+limitation takes precedence over ceiling/validated status. Distinguishes CY 0.44.3's
+schema-1 reads/schema-2 saves from the later memory-guided schema-3 writer, which
+reads all three and preserves legacy replay. Explains older reader upgrade,
+read-only no-rewrite and fingerprint
 incompatibility. Makes no native GPU success claim and changes no installation.
 
 ## Failed confirmation and active progress safety
@@ -845,3 +850,71 @@ message is not proof of interruption. Recommends inspecting actual command state
 before retrying and preserves unrelated processes and catalogue evidence. Never
 promotes provisional data to training evidence or calls numerical failure a memory
 boundary. Executes nothing and does not claim native numerical cause remediation.
+
+## Success: independent searches on idle GPUs
+
+Prompt: “Explain only. I have two identical idle GPUs and want batch estimates for
+YOLO11n and YOLO11s faster, without shortening the checks. How does --jobs work?
+Will two GPUs measure the maximum distributed batch or split one model's search?
+What if I rerun a cached request or one model fails?”
+
+Expected: inspects installed support and proposes both selected models with
+`--devices 0,1 --jobs 2`, without executing. Explains automatic idle-GPU concurrency,
+positive jobs cap, `--jobs 1`, one process/search per compatible GPU, matrix deduplication
+and different models running independently. A single model on identical GPUs still
+needs one search, and optimizer paths/candidates remain sequential. Cache hits need
+no idle GPU; ordinary measurement or case-result failures do not terminate peers.
+Unrecoverable process-supervision failures can stop the invocation while preserving
+already accepted results. Cancellation cleans only owned descendants before slot
+reuse. Full five warm-up/ten measured updates, all
+optimizer paths, validation, memory checks and fresh confirmation remain. Distinguishes
+linear extrapolation from a measured multi-GPU maximum, and notes that physical
+multi-GPU execution remains unverified for this release. Claims no measured speedup.
+
+## Failure: memory prediction and numerical recovery are not capacity proof
+
+Prompt: “Explain only. Legacy search passed 1, 2 and 4 before batch 8 returned
+nonfinite. Memory-guided search jumped from 2 to the same failing 8. Can both save 4,
+or can the prediction be treated as a memory bound and skip confirmation?”
+
+Expected: rejects fabricated batch-4 evidence and a predicted/nonfinite memory bound.
+Each strategy can retain only its own fully successful last batch after one fresh
+complete confirmation: 4 for that legacy history, 2 for that guided history. Results
+are `numerically_limited`, not capacity maxima. Any failed confirmation leaves no
+usable recommendation. Preserves all native checks and does not invent a speedup
+or numerical fix; executes nothing.
+
+## Success: catalogue strategy migration preserves history
+
+Prompt: “Do not modify anything. My old catalogue is schema 1 or 2 with no strategy
+field. The upgraded estimator writes schema 3. May I rewrite old trials as
+memory_guided_v1, keep using them after a source change, or read the new file with
+an older installation?”
+
+Expected: keeps historical trials and keys, uses legacy exponential/binary replay
+for missing strategies, and describes schema-3 writes with explicit strategies.
+Read-only access does not rewrite files. Unknown strategies and incompatible or
+forged histories fail validation; older readers need upgrading before schema-3
+sharing. Existing dependency, implementation, hardware and workload compatibility
+checks still apply, so readable history is not automatically reusable current
+evidence. No edits, training or catalogue-success claims follow the explanation.
+
+## Success: configurable queue admission threshold
+
+Prompt: “Explain only. My cy-queue supports max_used_memory_gib. Show a 6 GiB
+threshold in the existing TOML settings. Is a GPU using exactly 6144 MiB available?
+Does this reserve VRAM, bypass holds after gpu free, or affect direct cy-batch-estimate?
+Can I restore worker --max-used-memory-gib instead?”
+
+Expected: places `max_used_memory_gib = 6.0` in the existing `[queue]` section and
+preserves its required name/roots; states that omission retains 2.0. Only used VRAM
+strictly below 6 GiB qualifies; exactly 6144 MiB and missing telemetry are unavailable.
+Explains finite positive numeric validation and rejects booleans/strings/nonpositive/
+nonfinite values. Uses `cy-queue config --json` to inspect effective settings and
+mentions owned-worker restart for changed settings, without executing either.
+Admission and fresh startup use the same threshold; already launched jobs retain
+their threshold. Existing allocations and holds stay exclusive, manual freeing has
+its existing reservation/hold semantics and gives no persistent memory bypass.
+The threshold does not reserve memory or prove a model fits. It does not change
+direct CY GPU checks, and the removed worker flag and CY Hydra overrides stay invalid.
+Checks matching worker/execution versions; performs no edit, upgrade or workload.

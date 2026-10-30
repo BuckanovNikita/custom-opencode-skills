@@ -354,7 +354,7 @@ cy-batch-estimate --imgsz 960 --models rfdetr/small,fcos/resnet50_fpn --devices 
 These commands execute local CUDA workloads without a ClearML task. Search once per
 model, resolution, training profile and distinct GPU name/total-memory capacity.
 Identical GPUs share one measurement. When a group needs measurement, use its first
-idle GPU in the selected order; only that GPU must be idle. Preserve unrelated
+available idle GPU in the selected order; only that GPU must be idle. Preserve unrelated
 workloads and reject interference on the probed GPU. Defaults cover 44 standard
 pretrained YOLO variants and all native presets, 150 classes, 300 objects per image,
 90% memory budget and a 1024-image **per-GPU** search ceiling.
@@ -367,8 +367,32 @@ The default trial timeout is 300 seconds. Preserve native precision/compilation 
 maximum effective resolution, including multiscale. YOLO auto optimizer probes both
 supported resolved paths and retains the smaller validated capacity.
 
-Search grows exponentially then refines by binary search. Every trial uses one GPU
-and performs five warm-up and ten measured optimizer updates plus bounded validation;
+On versions whose help exposes `--jobs`, independent model/hardware cases can run
+concurrently. Automatic concurrency uses idle selected GPUs; positive `--jobs N`
+caps the number of active searches and `--jobs 1` runs them serially. For example:
+
+```bash
+cy-batch-estimate --imgsz 960 --models yolo11n,yolo11s --devices 0,1 --jobs 2
+```
+
+Each complete search stays on one compatible GPU in its own process. Extra identical
+GPUs can measure different models, but do not duplicate a model/hardware case or split
+its candidates or optimizer paths. Cached cases require no idle GPU. Cases wait for
+compatible GPUs occupied by this invocation; the estimator does not stop or wait
+indefinitely for unrelated workloads. Ordinary measurement or case-result failures
+do not terminate peers. Unrecoverable process-supervision failures can stop the
+invocation while preserving already accepted results. Cancellation cleans only
+owned processes, and a GPU slot is reused only after
+its owned descendants have exited. Physical multi-GPU execution of this feature
+remains unverified in its release evidence; CPU process overlap does not prove a GPU
+speedup or a measured multi-GPU capacity.
+
+The newer `memory_guided_v1` search uses full successful memory observations to choose
+later candidates, falling back to exponential growth without usable memory growth.
+An actual OOM or memory-budget failure triggers exact binary refinement; predictions
+never establish a capacity boundary. Older `exponential_binary_v1` histories keep
+their original replay policy. Every trial still uses one GPU and performs five
+warm-up and ten measured optimizer updates plus bounded validation;
 the winner is repeated in a fresh process on one GPU. There are no distributed probes
 or multi-GPU confirmation runs. Confirmed CUDA OOM or memory-budget excess bounds
 capacity; timeout, failure, nonfinite computation, missing assets and contamination
@@ -385,6 +409,10 @@ Nonfinite before any successful candidate, every failed confirmation (numerical,
 OOM, over budget, timeout or another failure), and other discovery failures leave
 no recommendation. Do not suppress native finite checks or change AMP/optimizers
 as part of this recovery; the underlying native numerical cause remains unconfirmed.
+Memory-guided candidate ordering can change the last successful batch: a jump from
+2 to a numerically failing 8 can confirm 2, while a legacy search that also passed 4
+can confirm 4. Full checks remain required; identical numerical-limited recommendations
+across strategies are not promised.
 
 Check installed/source support before promising this recovery. On older versions,
 a previously observed successful smaller batch can be retested with a lower ceiling.
@@ -405,8 +433,13 @@ previous measurements. Never edit failed catalogue entries into successes.
 The versioned atomic catalogue is `CY_HOME/.config/clearml-yolo/batch-estimates.json`.
 It retains actual global/per-GPU measurements, diagnostics and provenance. Compatible
 completed cases are reused; refresh invalidates matching success before reprobes.
-The recovery implementation reads schema 1 and normally saves schema 2 to support
-`numerically_limited`; older readers need upgrading before reading the new format.
+CY 0.44.3 reads schema 1 and normally saves schema 2 to support
+`numerically_limited`. The memory-guided implementation reads schemas 1/2/3 and
+normally writes schema 3 with an explicit search strategy for every case. Historical
+cases without a strategy retain legacy replay and their original estimate keys;
+unknown strategies or forged strategy/history combinations are rejected. Upgrade
+older readers before sharing a schema-3 catalogue. Strategy versioning does not
+waive source/recipe compatibility or make old measurements current after an upgrade.
 Read-only access does not rewrite historical catalogues. Pending snapshots retain
 `failed` and null batches until independent confirmation succeeds. Their diagnostic
 says confirmation is pending: the command may still be running or interrupted.
@@ -722,6 +755,18 @@ root = "/srv/clearml-yolo/queue"
 coordination_root = "/var/lib/clearml-yolo/coordination"
 ```
 
+In cy-queue 0.1.6 and later, optional `max_used_memory_gib` in the same `[queue]`
+section sets the used-VRAM admission threshold. Omission retains `2.0`. A custom
+example is `max_used_memory_gib = 6.0`; use a positive finite number, never a string,
+boolean, zero, negative value or infinity/NaN. Check installed support before adding
+it to older settings. `cy-queue config --json` reports the effective numeric value;
+text config and worker startup diagnostics also report it. Restart the owned worker
+to load changed settings; an already launched job retains its startup threshold.
+Coordinate upgrades of workers and their executing environments before using the
+new private launch payload. Do not revive the removed `worker --max-used-memory-gib`
+flag or pass this field as a CY Hydra override. Direct CY commands, including batch
+estimation, retain their own GPU checks.
+
 These paths are portable examples, not discovered host settings. All paths must be
 absolute. Metadata may use NFS with consistent UIDs. Coordination accepts supported
 local Linux filesystems and Linux NFS/NFSv4 mounts whose effective superblock options
@@ -822,11 +867,14 @@ identifiers. Visible report banners/captions omit opaque identifiers and checkpo
 hashes, which remain in embedded metadata. Raw capture bytes remain available locally;
 terminal and published console streams use readable formatting.
 
-Automatic availability uses only used VRAM strictly below 2 GiB (2048 MiB); exactly
-2 GiB is busy. This fixed limit is rechecked immediately before each workload launch.
-Current queue allocations and explicit holds stay exclusive unless released; stale
-unlocked records alone do not veto capacity. Process lists and utilization are not
-availability criteria. The limit does not establish model/compiler memory fit.
+Automatic availability uses only used VRAM strictly below the configured threshold
+in GiB (`GiB * 1024**3` bytes). The default is 2 GiB (2048 MiB), and exactly the
+threshold is busy. The same effective limit is rechecked immediately before each
+workload launch; missing memory telemetry remains unavailable. Current queue
+allocations and explicit holds stay exclusive unless released; stale unlocked
+records alone do not veto capacity. Process lists and utilization are not availability
+criteria. Raising this threshold does not reserve VRAM or establish model/compiler
+memory fit.
 
 ### Training GPU handoff (clearml-yolo 0.30.2)
 
@@ -910,8 +958,9 @@ confirmation or extra memory/process check is required. Free/release sends no si
 requires no access to the original queue root and leaves job outcomes unchanged.
 Repeated freeing succeeds. Internal generation events fence earlier guardian writes,
 handoff, recovery and cleanup so they cannot recreate a freed reservation or affect
-a newer one. New jobs still need fresh memory admission below 2048 MiB: manual freeing
-does not create a persistent bypass. Upgrade cooperating workers to the matching
+a newer one. New jobs still need fresh memory admission strictly below the effective
+configured threshold (2048 MiB by default): manual freeing does not create a persistent
+bypass. Upgrade cooperating workers to the matching
 protocol; an explanation-only request still authorizes no mutation or cancellation.
 
 Remove `worker --max-used-memory-gib` from updated worker commands. Remove `--reason`,

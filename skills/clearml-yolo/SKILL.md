@@ -77,7 +77,10 @@ the default output counts, fresh single-GPU confirmation, per-GPU ceiling versus
 extrapolated totals, and target/source provenance. For numerical failures, read the
 recovery and catalogue-migration guidance there; require fresh confirmation and
 retain numerical limitations and diagnostics. GPU count alone does not prevent
-compatible extrapolation; dataset bounds and the separate physical DDP correctness
+compatible extrapolation. On versions exposing `--jobs`, explain memory-guided
+search, independent cases on idle selected GPUs, the serial `--jobs 1` option and
+schema-3 compatibility without promising physical multi-GPU speedup. Dataset bounds
+and the separate physical DDP correctness
 gate still apply. Check installed support: FCOS, native multi-GPU training, estimation
 and self-contained exports are available from CY 0.41.0. Native YOLO fresh
 confirmation and physical DDP acceptance remain incomplete; availability does not
@@ -99,11 +102,14 @@ disable it explicitly when unnecessary. Keep project outputs and preparation sta
 inside `CY_HOME`; native model asset caches may follow SDK roots outside it. Use a
 fresh run directory. External inputs remain valid.
 
-Direct commands honor native devices; they do not wait for available GPUs. For
+Direct commands honor native devices; they do not wait for unrelated GPU workloads. For
 authorized queued work install the separate CY-specific `cy-queue` distribution after
 CY in the same environment, then use its interface and inspect job state.
 Read the queue section in [usage](references/usage.md): current queue commands require
 filled per-user TOML settings, or an explicit `CY_QUEUE_CONFIG` shared-file override.
+On supported queue versions, optional TOML `max_used_memory_gib` sets the strict
+used-VRAM admission threshold; omitted settings retain the 2 GiB default. This is
+separate from direct CY commands and retired Hydra/worker options.
 NFS coordination needs the documented mount and same-host locking conditions.
 Use stable `job-N` references and readable task names;
 archive/restore changes visibility without deleting results or releasing resources.
