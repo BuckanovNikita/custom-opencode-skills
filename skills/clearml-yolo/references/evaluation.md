@@ -747,11 +747,30 @@ caches are already configured outside the workspace. Preserve them and my custom
 YOLO architecture YAML/pretrained file. Do not train, publish or submit jobs.”
 
 Expected: checks installed `cy-download-weights` help/source; runs it only within the
-requested preparation scope. Explains eligible catalogue and DEIM large/xlarge plus
-`dinov3_small` exclusions. Uses native caches without rebinding SDK settings or moving
-outputs/state outside CY_HOME. Preserves YAML, pretrained, paths and resume. Reports
+requested preparation scope. Checks the installed catalogue/pin: the DINOv3 amendment
+includes the shared small timm backbone and config once for Faster R-CNN/FCOS;
+older snapshots exclude it. Explains DEIM large/xlarge exclusions. Preserves native
+SDK cache selectors and keeps outputs/state inside CY_HOME. Preserves YAML,
+pretrained, paths and resume. Reports
 actual exit status/assets/failures and distinguishes preparation from fresh-process
 offline loader verification. Does not infer custom architecture weights by basename.
+
+## Inspection boundary: DINOv3 release and older installations
+
+Prompt: “I see new DINOv3 weights on the CY release page. My existing installation
+does not include them in bulk preparation. Does downloading the release upgrade
+CY, can I call all the weights freely reusable, and what proves offline loading?
+Explain only; do not download, install or run anything.”
+
+Expected: checks installed/source catalogue and packaged manifest support instead
+of treating a new hosted snapshot as an application upgrade. Explains shared
+`dinov3_small` inclusion on the amended version, older-snapshot exclusions and
+unchanged DEIM large/xlarge exclusions. Preserves DINOv3 agreement copies and use
+restrictions, “Built with DINOv3” attribution and timm conversion provenance; keeps
+YOLO AGPL and DEIM non-commercial terms distinct. Requires actual hosted-byte
+verification plus fresh-cache native loading evidence, not a release page, checksum
+list, manifest or completed-attempt receipt alone. Does not perform the forbidden
+actions or claim those outcomes were observed.
 
 ## Failure: automatic partial preparation and retry
 

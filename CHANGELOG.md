@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.8] - 2026-10-31
+
+- Document shared DINOv3 small weight preparation with native Hub metadata and
+  installed-catalogue checks, retaining older-snapshot and DEIM exclusions.
+- Preserve individual DINOv3 agreement, attribution and timm-conversion provenance
+  requirements; add an explanation-only release and older-installation case.
+
 ## [0.6.7] - 2026-10-30
 
 - Explain memory-guided full-trial batch searches and independent model/hardware

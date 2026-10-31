@@ -529,12 +529,27 @@ source directions; do not call the whole catalogue permissively licensed. The CY
 model-assets exception does not authorize CY wheels, source distributions or registry
 publication; this skill collection still follows its own Git-tag-only release policy.
 
+**Built with DINOv3.** Snapshots containing DINOv3 small retain the
+[DINOv3 agreement](https://huggingface.co/timm/vit_small_patch16_dinov3.lvd1689m/blob/3bf4720a82ec2066db88137180ff1f83a675cef0/LICENSE.md)
+and the separately linked
+[Meta agreement](https://ai.meta.com/resources/models-and-libraries/dinov3-license/),
+[model card](https://huggingface.co/timm/vit_small_patch16_dinov3.lvd1689m) and
+upstream provenance.
+Redistribution remains subject to those agreements and their use restrictions;
+preserve their complete texts and attribution. Describe the checkpoint as the
+unmodified timm conversion, not byte-identical original Meta weights. DINOv3's
+terms do not remove DEIMv2's separate non-commercial limitation.
+
 ### Catalogue, execution and native locations
 
 The catalogue covers maintained detection YOLO names, RF-DETR, eligible Faster
-R-CNN/FCOS backbones and DEIMv2 small/medium with pinned source. Bulk preparation
-excludes DEIMv2 large/xlarge and `dinov3_small`; explicit selection retains existing
-execution and access behavior. Shared backbones use a shared native cache entry.
+R-CNN/FCOS backbones and DEIMv2 small/medium with pinned source. With the DINOv3
+publication amendment, it includes the shared `dinov3_small` timm checkpoint and
+native Hub configuration once for Faster R-CNN and FCOS. Check the installed
+catalogue and pinned manifest: older snapshots exclude DINOv3, and uploading a new
+release does not upgrade an older installation. DEIMv2 large/xlarge remain excluded;
+their explicit selection retains existing execution and access behavior. Shared
+backbones use a shared native cache entry.
 
 Actual `cy` pipeline execution attempts this catalogue before model construction,
 including with explicit local model weights. A completed attempt is remembered per

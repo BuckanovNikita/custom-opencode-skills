@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "DINOv3 public weight-release usage guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-10-31-dinov3-weights.md",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected portable entrypoint and relevant usage/evaluation prose, collection maintenance/release rules and companion CY discovery/publication amendment. This change corrects the described native catalogue and per-file licence/provenance guidance, with explanation-only evaluation expectations. It changes no runtime modules, dependencies, executable helpers, import contracts, host invocation metadata or installed copies. CY owns the discovery boundary, effects, native/hosted-byte verification and runtime architecture acceptance. The collection checkout is isolated from existing work."
+}
