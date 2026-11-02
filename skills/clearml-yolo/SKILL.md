@@ -74,7 +74,10 @@ Read [batch estimation](references/usage.md#training-batch-estimation) for expli
 training `batch=null`, single-GPU measurements, explicitly extrapolated global
 microbatches and strict source compatibility. In estimation explanations, include
 the default output counts, fresh single-GPU confirmation, per-GPU ceiling versus
-extrapolated totals, and target/source provenance. For numerical failures, read the
+extrapolated totals, and target/source provenance. For versions exposing the aligned
+strategy, explain multiples of 8 per GPU, rounded-down ceilings, the minimum of 8,
+and remeasurement of unaligned saved recommendations; explicit numeric training
+batches retain their behavior. For numerical failures, read the
 recovery and catalogue-migration guidance there; require fresh confirmation and
 retain numerical limitations and diagnostics. GPU count alone does not prevent
 compatible extrapolation. On versions exposing `--jobs`, explain memory-guided

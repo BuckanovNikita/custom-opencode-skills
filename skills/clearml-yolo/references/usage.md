@@ -387,11 +387,21 @@ its owned descendants have exited. Physical multi-GPU execution of this feature
 remains unverified in its release evidence; CPU process overlap does not prove a GPU
 speedup or a measured multi-GPU capacity.
 
-The newer `memory_guided_v1` search uses full successful memory observations to choose
-later candidates, falling back to exponential growth without usable memory growth.
-An actual OOM or memory-budget failure triggers exact binary refinement; predictions
-never establish a capacity boundary. Older `exponential_binary_v1` histories keep
-their original replay policy. Every trial still uses one GPU and performs five
+On CY versions exposing `memory_guided_aligned_v1`, this is the default search
+strategy. Discovery starts at batch 8 per GPU, then 16 unless an earlier failure or
+ceiling stops it. All subsequent memory-guided candidates, binary refinement and
+fresh confirmation use multiples of 8 per GPU. The ceiling rounds down to the
+largest such multiple; `--search-limit 31` permits at most 24, while a ceiling below
+8 is invalid. OOM or memory-budget failure at 8 yields `no_capacity`; choose an
+explicit numeric training batch when fewer than 8 images fit.
+
+Memory-guided search uses full successful memory observations to choose later
+candidates, falling back to doubling without usable memory growth. An actual OOM or
+memory-budget failure triggers binary refinement on the aligned grid; predictions
+never establish a capacity boundary. Older `memory_guided_v1` and
+`exponential_binary_v1` histories keep their original single-image replay policies.
+Alignment is a selection policy, not evidence of a measured speedup. Every trial
+still uses one GPU and performs five
 warm-up and ten measured optimizer updates plus bounded validation;
 the winner is repeated in a fresh process on one GPU. There are no distributed probes
 or multi-GPU confirmation runs. Confirmed CUDA OOM or memory-budget excess bounds
@@ -412,7 +422,10 @@ as part of this recovery; the underlying native numerical cause remains unconfir
 Memory-guided candidate ordering can change the last successful batch: a jump from
 2 to a numerically failing 8 can confirm 2, while a legacy search that also passed 4
 can confirm 4. Full checks remain required; identical numerical-limited recommendations
-across strategies are not promised.
+across strategies are not promised. Those small-batch histories remain readable;
+under the aligned policy, an unaligned saved per-GPU result cannot supply an
+automatic recommendation. Remeasure rather than rounding saved results or inventing
+confirmation at a different batch.
 
 Check installed/source support before promising this recovery. On older versions,
 a previously observed successful smaller batch can be retested with a lower ceiling.
@@ -435,7 +448,8 @@ It retains actual global/per-GPU measurements, diagnostics and provenance. Compa
 completed cases are reused; refresh invalidates matching success before reprobes.
 CY 0.44.3 reads schema 1 and normally saves schema 2 to support
 `numerically_limited`. The memory-guided implementation reads schemas 1/2/3 and
-normally writes schema 3 with an explicit search strategy for every case. Historical
+normally writes schema 3 with an explicit search strategy for every case. Aligned
+search keeps schema 3 and gets a distinct key through its new strategy name. Historical
 cases without a strategy retain legacy replay and their original estimate keys;
 unknown strategies or forged strategy/history combinations are rejected. Upgrade
 older readers before sharing a schema-3 catalogue. Strategy versioning does not
@@ -449,7 +463,9 @@ matching the current implementation and dependency versions.
 Match architecture, nominal/effective size, GPU types/capacities, relevant versions,
 precision, compilation, optimizers, accumulation, EMA and augmentation. First prefer a
 compatible existing measurement for the exact ordered allocation/count, including
-legacy records. Otherwise derive an explicitly `extrapolated` global recommendation:
+legacy records whose confirmed per-GPU result is divisible by 8. Readable unaligned
+history is excluded from automatic lookup; it is never silently rounded. Otherwise
+derive an explicitly `extrapolated` global recommendation:
 N times the single-GPU capacity for identical hardware, or N times the smallest
 compatible per-GPU capacity for mixed hardware. Require a compatible single-GPU source
 for every type/capacity; never extrapolate across unmeasured hardware. The result is

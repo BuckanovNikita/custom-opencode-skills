@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.6.9] - 2026-11-02
+
+- Explain aligned automatic training-batch search in multiples of 8 per GPU,
+  ceiling rounding, minimum capacity and unchanged explicit numeric batches.
+- Preserve legacy strategy replay and keys while requiring remeasurement of
+  unaligned automatic recommendations; add an explanation-only migration case.
+
 ## [0.6.8] - 2026-10-31
 
 - Document shared DINOv3 small weight preparation with native Hub metadata and

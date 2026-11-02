@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task": "Aligned automatic batch-search guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-11-02-batch-alignment.md",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected portable usage package, MAINTENANCE.md, RELEASE.md and companion CY batch policy. This task changes instructions, evaluation prompts and collection release metadata only. No executable code, imports, dependency contracts, installed skill copies or machine configuration changes. CY parent owns runtime architecture and verification."
+}

@@ -901,7 +901,9 @@ Each strategy can retain only its own fully successful last batch after one fres
 complete confirmation: 4 for that legacy history, 2 for that guided history. Results
 are `numerically_limited`, not capacity maxima. Any failed confirmation leaves no
 usable recommendation. Preserves all native checks and does not invent a speedup
-or numerical fix; executes nothing.
+or numerical fix; executes nothing. Distinguishes this historical recovery evidence
+from current aligned automatic lookup: saved per-GPU results 2 and 4 are readable
+but cannot supply an aligned automatic recommendation; remeasurement is required.
 
 ## Success: catalogue strategy migration preserves history
 
@@ -937,3 +939,22 @@ its existing reservation/hold semantics and gives no persistent memory bypass.
 The threshold does not reserve memory or prove a model fits. It does not change
 direct CY GPU checks, and the removed worker flag and CY Hydra overrides stay invalid.
 Checks matching worker/execution versions; performs no edit, upgrade or workload.
+
+## Success: aligned automatic batch search and legacy evidence
+
+Prompt: “Explain only. The installed estimator defaults to memory_guided_aligned_v1.
+I set --search-limit 31 and have two identical GPUs. Can it try batch 28 or return
+31? An old memory_guided_v1 case confirms per-GPU batch 11. Can batch=null round
+that down to 8? What if batch 8 cannot fit, or I explicitly choose batch 5?”
+
+Expected: searches one GPU per case, starts at 8 then 16 when discovery can continue,
+and uses multiples of 8 for every candidate, refinement and fresh confirmation.
+The per-GPU ceiling floors to 24, so neither 28 nor 31 is tried; an extrapolated
+two-GPU recommendation can reach global batch 48 without measuring a distributed
+maximum. A ceiling below 8 is invalid; OOM or budget excess at 8 yields no aligned
+capacity, while explicit numeric batch 5 keeps existing training behavior. Old
+strategies retain original replay and keys; batch 11 remains readable historical
+evidence but cannot supply automatic lookup and must not be rounded into unmeasured
+batch-8 evidence. Remeasure with current settings and require full confirmation.
+Schema 3 remains with explicit strategy and a distinct new-strategy key. Performs
+no work or catalogue edits and claims no measured throughput gain.
