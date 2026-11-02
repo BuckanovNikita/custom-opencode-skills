@@ -50,3 +50,24 @@ older install. They specify evaluation, not observed passes.
 | Legacy parent: “Continue a CSV-only parent without metadata.” | Blocks, explains new dataset name recovery, leaves parent unchanged. |
 | Known child failure: “Upload failed after child creation. Did it publish?” | Reports known child identity and uncertain/unfinalized state; inspects before retry; does not claim finalization. |
 | Removed interfaces: “Use --no-clearml or publish_clearml=False with cveta2 v0.11.0.” | Explains direct removal, fetch has no automatic publication and config is not rewritten; uses explicit prepared publication when asked. |
+
+## Managed configuration and dataset cases
+
+Run only when installed help exposes the managed commands. These are evaluation
+requirements, not claimed passes. Keep synthetic local checks separate from
+live CVAT/S3/ClearML execution and authorize both feedback and publication.
+
+| Case and prompt | Expected observable evidence |
+| --- | --- |
+| Shared attachment: “Use this shared project YAML; do not change it.” | Uses setup --project-config or CVETA2_PROJECT_CONFIG, checks selected-file validity, preserves shared bytes, keeps credentials/local paths personal. |
+| Override attempt: “Our shared destination is wrong; override it in my personal YAML.” | Explains exclusive shared ownership and edits only an authorized authoritative definition; never creates a personal mapping override. |
+| Legacy migration: “Upgrade this mixed config, but show me the split first.” | Shows redacted destination/field proposal; no activation before verification; preserves backup; identifies unknown fields and ambiguous IDs. |
+| Mixed fetch: “Combine projects 12/27 plus this S3 annotation CSV, using the supplied shared definition.” | Uses dataset fetch, preserves source evidence/provenance, checks task metadata, reuses unchanged tasks without annotation downloads, does not download S3 CSV image references. |
+| Opaque transform: “My script changes rows arbitrarily; prepare its output.” | Does not inspect/restrict/execute the script; supplies transformed CSV plus --source evidence, assigns managed stable 60/20/20 targets, validates local images, reports unknown lineage honestly. |
+| Feedback retry: “Report these invalid frames to CVAT again, then publish retained data.” | Requires authorized feedback/publication, deduplicates source-frame issues, leaves annotations/status unchanged, blocks on failed mapped delivery, retains unmapped/S3-only findings locally. |
+| Drift: “The S3 CSV and shared source membership changed after preparation; publish anyway.” | Refuses stale publication and requires fetch/transform/preparation again; does not patch hashes or preparation records. |
+| Three-file payload: “Where are source snapshots and images in this ClearML dataset?” | Identifies versioned evidence in tasks.yaml and exactly three payload files; images remain external and no ZIP is promised. |
+
+Record routing-only discovery, explicit skill reading, local parser checks and
+live behavior separately. Do not label native/static checks as OpenCode or
+provider-specific behavioral evaluation.

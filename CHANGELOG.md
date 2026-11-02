@@ -5,6 +5,14 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-02
+
+- Document managed CVAT/S3 datasets, authoritative shared project configuration,
+  reviewed personal-config migration and attach-only setup.
+- Explain external transforms, stable 60/20/20 splits, CVAT review feedback,
+  cold-start publication, source snapshots and safe three-file ClearML versions.
+- Preserve current diagnostics guidance and add operating/routing evaluation cases.
+
 ## [0.6.9] - 2026-11-02
 
 - Explain aligned automatic training-batch search in multiples of 8 per GPU,

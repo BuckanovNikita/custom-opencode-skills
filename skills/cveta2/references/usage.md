@@ -23,11 +23,15 @@ Otherwise supply `CVAT_HOST`, `CVAT_USERNAME`, `CVAT_PASSWORD` through the calle
 secret mechanism; optional `CVAT_ORGANIZATION` sets the default organization.
 Do not log credential values. Default YAML location is
 `~/.config/cveta2/config.yaml`; `CVETA2_CONFIG` selects another file.
-Connection precedence is explicit API connection fields, environment, YAML,
-then built-in preset. `--config` is available on setup/setup-cache,
-rather than being a global flag on data commands.
+Without shared configuration, standalone connection precedence remains explicit
+API fields, environment, YAML, then preset. With shared configuration, CVAT server
+and organization come from that file and conflicting overrides fail. Credentials
+and runtime preferences stay personal. `--config` is command-specific, not global;
+managed dataset operations also support independent shared-file selection.
 
-Portable YAML skeleton (credentials supplied separately):
+Legacy standalone connection skeleton (credentials supplied separately). For
+managed datasets use the two-file format below rather than copying project policy
+into this personal file:
 
 ```yaml
 cvat:
@@ -85,8 +89,9 @@ rollback. It is disabled by default and requires authorization for that change.
 Fetch no longer automatically publishes to ClearML. Legacy automatic mappings,
 `CVETA2_CLEARML`, `setup-clearml`, `--no-clearml` and `publish_clearml` are removed
 without compatibility shims in cveta2 v0.11.0. Existing
-user configuration is not automatically rewritten. Check installed help for the
-version in use rather than passing removed controls.
+user configuration is not rewritten without migration review. These retired
+settings are not the managed dataset definitions below. Check installed help for
+the version in use rather than passing removed controls.
 
 Task annotation cache: normal fetch reads/updates, `--force` refreshes,
 `--no-cache` disables reads/writes. `CVETA2_DISABLE_CACHE=true` also disables it.
@@ -123,7 +128,7 @@ Rectangles retain rotation; standalone polygons become tight axis-aligned boxes
 with rotation zero and warnings. Invalid polygons, tracks, and unsupported
 shape types are skipped. This is detection data, not preserved polygon contours.
 
-Fetch leaves `split` empty. Before either export, assign each retained image to
+Standalone fetch leaves `split` empty. Before conversion, assign each retained image to
 `train`, `val`, or `test` using the requested split policy; do not invent a split
 ratio. Validate dimensions, finite positive-area boxes, and image availability.
 Missing images produce warnings, so compare expected images to produced files.
@@ -366,3 +371,130 @@ separates original validity and cleanup requirement, retains clean/broken rows,
 zero-based row positions and issues. `PreparedDataset.ready` controls eligibility;
 `Publication` returns dataset_id/version. Operational failures derive from
 `Cveta2Error`; missing preparation choices are structured `MissingDecisions`.
+
+## Managed datasets and shared project configuration
+
+These operations require an installation exposing `cveta2 dataset --help`; check
+the selected tag/help and do not assume older versions support them. The managed
+pipeline is fetch, an external user script, split/verify, CVAT error reporting,
+then explicit clean publication.
+
+Personal settings hold credentials, local image/cache paths and runtime settings.
+The separate shared YAML owns CVAT server/organization/project IDs, source
+memberships, ClearML mappings, class/task exclusions, S3 roots, split policy and
+image-overlap decisions. Personal settings cannot override shared policy.
+
+Select personal settings using command-specific `--config`, then `CVETA2_CONFIG`,
+then the default. Select one shared file using `--project-config` or API argument,
+then `CVETA2_PROJECT_CONFIG`, then the `project_config` reference saved personally.
+Saved relative references resolve from the personal file directory; explicit or
+environment relative paths resolve from the working directory. Missing/invalid
+selected shared files fail without fallback.
+
+```bash
+cveta2 setup --project-config /shared/project-config.yaml
+export CVETA2_PROJECT_CONFIG=/shared/project-config.yaml
+cveta2 setup --migrate-config
+cveta2 dataset list --json
+```
+
+Attachment validates and references the file without modifying it or asking for
+credentials. Migration shows a redacted personal/shared split and requires user
+verification; cancellation changes nothing, the original remains in a private
+backup, and interrupted approved activation can resume. Unknown settings or
+ambiguous project identities require correction. Noninteractive callers cannot
+auto-approve. Explicit shared-policy writers fail if the shared file is read-only.
+
+Example shared definition; authentication and local image paths are supplied
+personally:
+
+```yaml
+schema_version: 1
+cvat:
+  host: https://cvat.example.org
+  organization: team
+projects:
+  primary:
+    id: 12
+    name: Primary
+  secondary:
+    id: 27
+    name: Secondary
+datasets:
+  combined:
+    sources:
+      - name: primary
+        type: cvat
+        project: primary
+      - name: secondary
+        type: cvat
+        project: secondary
+      - name: imported
+        type: s3-csv
+        uri: s3://datasets/imported/annotations.csv
+    clearml:
+      project: CV/combined
+      dataset: annotations
+    api_url: https://classes.example.org/api/classes
+    splits:
+      train: 0.6
+      val: 0.2
+      test: 0.2
+      seed: 42
+```
+
+```bash
+cveta2 dataset show combined --json
+cveta2 dataset versions combined --json
+cveta2 dataset fetch combined --output-dir fetched
+# User executes any external transformation, producing transformed.csv.
+cveta2 dataset prepare combined transformed.csv \
+  --source fetched --output-dir inspection
+# After reviewing findings and authorizing cleanup:
+cveta2 dataset prepare combined transformed.csv \
+  --source fetched --output-dir prepared --clean
+cveta2 dataset diff fetched/dataset.csv prepared/dataset.csv
+# These next operations change remote services and require that scope:
+cveta2 dataset report-errors prepared
+cveta2 dataset publish prepared
+```
+
+Fetch reuses unchanged completed task annotations from the latest finalized
+parent after live metadata/label checks. Task edits, reopening, deletion, label
+changes and registry changes affect reuse; `--refresh` bypasses it. Source task
+supersession stays project-local. Any missing required source blocks assembly.
+
+S3 sources are exact annotation CSV objects, with image_name, image_path,
+instance_label and four pixel bbox fields; split may be absent. Changed CSVs
+replace their whole contribution. Fetch captures content hashes and available
+object identifiers but does not download referenced images or invent CVAT IDs.
+The user/script must provide readable local images for preparation.
+
+The script is unrestricted and runs outside cveta2. Raw source evidence survives
+row filtering or arbitrary output generation. Unknown lineage stays unmapped.
+Managed split targets default to 60/20/20 with seed 42. Existing content-based
+assignments persist; identical content cannot cross splits; exact counts are not
+guaranteed. Shared images need explicit source selection/exclusion. Different
+images sharing a filename block preparation. Train/val must remain nonempty and
+train must contain a valid training box. Structural errors cannot be cleaned away.
+
+Error reporting opens deduplicated CVAT frame issues for traceable findings,
+without editing annotations, job status or human issues. Unmapped/S3-only errors
+stay local. Failed delivery of traceable findings blocks publication; retries
+resume without duplicate issues. `publish` may resume feedback, so authorization
+must cover both CVAT issue creation and ClearML publication.
+
+Managed publication uploads exactly dataset.csv, dataset.yaml and tasks.yaml.
+tasks.yaml includes versioned source records/task/label/registry fingerprints;
+there is no source ZIP or image payload. A preparation binds relevant resolved
+shared policy, parent, sources, transformed CSV, images and hashes. Drift blocks
+publication; unrelated shared entries do not invalidate it. Legacy adoption needs
+one complete source refresh, not fabricated source snapshots. Inspect a known
+partially created child before retrying remote publication.
+
+Cold start needs only valid source/destination mappings, not an existing ClearML
+project or dataset. Fetch and preparation keep a null parent and create no remote
+dataset. Publication creates the first finalized version; later fetches use its
+source snapshot. If issue creation changes a CVAT task timestamp, the next fetch
+may conservatively refresh that task once because the published evidence retains
+the reviewed pre-feedback timestamp.

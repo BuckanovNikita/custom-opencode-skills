@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "task": "Managed cveta2 portable usage documentation",
+  "scope": [
+    "skills/cveta2",
+    "docs/plans/cveta2-managed-datasets",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected only portable prose, evaluation cases and collection release metadata. No runtime modules, dependencies, code scripts, host settings or SDK effects change; tool implementation remains in cveta2. Validate package frontmatter, discovery, local links, Markdown and actual documented interfaces."
+}
