@@ -1,0 +1,34 @@
+Command: npx --yes skills@1.7.1 add . --list
+Exit: 0
+
+│
+●   codex  Agent detected — installing non-interactively
+[?25l│
+◇  Source: /tmp/corp-agent-reconcile-20261102/repo
+[?25h[?25l│
+◇  Local path validated
+[?25h[?25l│
+◇  Found 4 skills
+[?25h
+│
+◇  Available Skills
+│
+│    clearml-yolo
+│
+│      Configure and use clearml-yolo commands for CSV-based detector training, prediction, validation, metrics, comparison, reports, model export, native model-weight preparation, local training batch estimation, shared GPU queues and the local Russian configuration reference. Use for clearml-yolo usage and configuration questions or authorized runs; exclude generic YOLO advice, service administration and standalone digital-metrics or report-generator usage.
+│
+│    cveta2
+│
+│      Use when operating cveta2 CLI or Python API to export CVAT annotations, fetch tasks, upload datasets, convert CSV/YOLO/COCO detection data, verify detection CSVs, prepare and explicitly publish reviewed dataset bundles, manage labels/tasks or mixed CVAT/S3 datasets with shared project mappings, or diagnose cveta2 configuration and cache failures. Excludes model training, accuracy evaluation, generic CVAT administration, and developing cveta2 itself.
+│
+│    opencode-orchestration
+│
+│      Use when coordinating Python/ML research, experiments, or engineering in OpenCode across agents, including task decomposition, model routing, independent verification, and recovery. Covers DeepSeek-V4.1-Flash, GLM-5.3, and optional Qwen3.8-27B.
+│
+│    opencode-skill-author
+│
+│      Use when creating, revising, or converting npx skills-compatible SKILL.md packages for OpenCode with DeepSeek-V4.1-Flash, GLM-5.3 or Qwen3.8-27B. Covers skill authoring, packaging and portability; excludes executing the task a skill describes or configuring model providers.
+
+│
+└  Use --skill <name> to install specific skills
+

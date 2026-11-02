@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "task": "Reconcile committed collection history and shared agent entrypoints",
+  "scope": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CHANGELOG.md",
+    "VERSION",
+    "skills/clearml-yolo",
+    "skills/cveta2",
+    "verification",
+    "docs/plans/claude-codex-organization-20261102",
+    "docs/plans/cveta2-managed-datasets",
+    "docs/plans/corp-conflict-reconciliation-20261102"
+  ],
+  "impact": "none",
+  "rationale": "Documentation, source ownership/routing, release metadata and dated verification only. Merge retains current published skill procedure bytes where old local commits were superseded; no executable module, dependency, composition, script or architecture-check behavior changes. Uncommitted original skill experiments remain outside the candidate."
+}

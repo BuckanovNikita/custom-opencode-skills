@@ -5,6 +5,12 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-11-02
+
+- Add shared repository instructions and a regular Claude import adapter.
+- Reconcile preserved local documentation history without reverting the current
+  published ClearML-YOLO and cveta2 guidance.
+
 ## [0.7.0] - 2026-11-02
 
 - Document managed CVAT/S3 datasets, authoritative shared project configuration,
