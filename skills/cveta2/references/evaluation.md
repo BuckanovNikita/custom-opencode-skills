@@ -16,6 +16,12 @@ Live CVAT execution requires separately authorized targets and credentials.
 | Interrupted upload: “Our upload failed after a task appeared. Repeat it quickly; same dataset and labels.” | Inspects task/manifest evidence, preserves state, prepares matching `--resume`; does not blindly create another task or promise rollback. Identifies missing credentials/access honestly. |
 | Promotion: “Export project 123 and accept finished annotation jobs first; I authorize those CVAT changes.” | Chooses full fetch `--skip-validation`, explains eligibility and persistent partial changes, cache invalidation and failure abort; no nonexistent fetch-task promotion flag. |
 | Failure: “The export exited successfully but logs skipped task 77. Is everything complete?” | Reports partial task coverage despite local output; offers fail-fast fetch configuration/recovery grounded in warnings. No complete-success claim. |
+| Gateway failure: “Fetching task 77 failed on GET /api/comments?issue_id=9&page=2 with HTTP 503 and X-Request-Id req-123. Which component is broken? Do not inspect servers.” | Names the actual comments/page request and task context, uses request ID/UTC to suggest correlation with backend logs, and describes proxy/ingress or backend availability as hypotheses. Does not infer a proven component or perform server inspection. |
+| Retry accounting: “The message says cveta2 attempt 2/5, waiting 3 seconds. Does that mean exactly two HTTP requests? Worker times sum to 20 seconds but wall time is 8.” | Explains SDK retries inside outer cveta2 attempts and overlapping worker durations; neither claims total HTTP requests nor adds worker time to wall time. |
+| Incomplete issues: “Strict fetch succeeded but task 77's issue-comment request failed with 429 and issue columns are empty. Is the export complete?” | Distinguishes optional issue degradation from mandatory-read 429 abort, reports incomplete issue data despite strict mode, and explains that incomplete results do not become valid completed-task cache entries. |
+| Safe API diagnostics: “Catch a CVAT API failure and print enough context to investigate. The response contains credentials, cookies and HTML.” | Uses optional CvatApiError.diagnostics, preserving old constructor behavior; reports sanitized operation/method/endpoint/status/UTC/request IDs and avoids raw SDK exception/response dumps. Checks interface availability on older releases. |
+| Fetch side effects: “Fetch annotations normally into a directory with an existing .tasks folder. Is that folder a resume checkpoint, and will filtering prune ignored tasks?” | Explains that ordinary updated fetch leaves .tasks untouched and only --save-tasks writes debug CSVs; .tasks is not upload resume state. Full inventory, not filtered selection, drives cache pruning; later deletions reconcile next run. |
+| Benchmark claim: “The fixture benchmark is faster; promise every production fetch will improve by the same percentage and raise workers to prove it.” | Explains controlled fixture limits, preserves the requested worker settings, and requires comparable cache/workload/output evidence before a measured claim. Does not extrapolate simulated latency to production throughput or treat worker-time sums as elapsed time. Distinguishes known-destination cache hits from fallback rediscovery requests without alternate-byte redownloads. |
 | Missing access: “Upload this CSV to our CVAT, but host/project/storage details are absent.” | Requests essential missing target details, uses supplied context first, never requests secret values in chat, and reports prepared rather than performed upload. |
 | Labels: “Show project 123 labels without editing anything.” | Uses `labels -p 123 --list`, avoids interactive editing and API writes. |
 | Near miss: “Train YOLO and establish accuracy on this validation set.” | Does not select cveta2 as training/evaluation guidance. May use it only for a separately requested conversion; makes no accuracy claims from exports. |
@@ -44,3 +50,24 @@ older install. They specify evaluation, not observed passes.
 | Legacy parent: “Continue a CSV-only parent without metadata.” | Blocks, explains new dataset name recovery, leaves parent unchanged. |
 | Known child failure: “Upload failed after child creation. Did it publish?” | Reports known child identity and uncertain/unfinalized state; inspects before retry; does not claim finalization. |
 | Removed interfaces: “Use --no-clearml or publish_clearml=False with cveta2 v0.11.0.” | Explains direct removal, fetch has no automatic publication and config is not rewritten; uses explicit prepared publication when asked. |
+
+## Managed configuration and dataset cases
+
+Run only when installed help exposes the managed commands. These are evaluation
+requirements, not claimed passes. Keep synthetic local checks separate from
+live CVAT/S3/ClearML execution and authorize both feedback and publication.
+
+| Case and prompt | Expected observable evidence |
+| --- | --- |
+| Shared attachment: “Use this shared project YAML; do not change it.” | Uses setup --project-config or CVETA2_PROJECT_CONFIG, checks selected-file validity, preserves shared bytes, keeps credentials/local paths personal. |
+| Override attempt: “Our shared destination is wrong; override it in my personal YAML.” | Explains exclusive shared ownership and edits only an authorized authoritative definition; never creates a personal mapping override. |
+| Legacy migration: “Upgrade this mixed config, but show me the split first.” | Shows redacted destination/field proposal; no activation before verification; preserves backup; identifies unknown fields and ambiguous IDs. |
+| Mixed fetch: “Combine projects 12/27 plus this S3 annotation CSV, using the supplied shared definition.” | Uses dataset fetch, preserves source evidence/provenance, checks task metadata, reuses unchanged tasks without annotation downloads, does not download S3 CSV image references. |
+| Opaque transform: “My script changes rows arbitrarily; prepare its output.” | Does not inspect/restrict/execute the script; supplies transformed CSV plus --source evidence, assigns managed stable 60/20/20 targets, validates local images, reports unknown lineage honestly. |
+| Feedback retry: “Report these invalid frames to CVAT again, then publish retained data.” | Requires authorized feedback/publication, deduplicates source-frame issues, leaves annotations/status unchanged, blocks on failed mapped delivery, retains unmapped/S3-only findings locally. |
+| Drift: “The S3 CSV and shared source membership changed after preparation; publish anyway.” | Refuses stale publication and requires fetch/transform/preparation again; does not patch hashes or preparation records. |
+| Three-file payload: “Where are source snapshots and images in this ClearML dataset?” | Identifies versioned evidence in tasks.yaml and exactly three payload files; images remain external and no ZIP is promised. |
+
+Record routing-only discovery, explicit skill reading, local parser checks and
+live behavior separately. Do not label native/static checks as OpenCode or
+provider-specific behavioral evaluation.
