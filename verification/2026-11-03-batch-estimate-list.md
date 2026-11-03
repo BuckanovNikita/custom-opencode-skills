@@ -68,3 +68,20 @@ without repeating every output column, fallback detail or exit-code expectation.
 It is not full coverage of every rubric item. The new evaluation evidence is included
 in final architecture scope. Version/changelog agree at 0.7.2. Collection publication
 follows the actual CY release; no installed packages or host configuration changed.
+
+## Verified tool publication (2026-11-04, Moscow)
+
+CY master and annotated `v0.45.0` were published at
+`850557ccba23f5e39a6fbdcca77e64fb1aab6a5b`, following feature `a89e486`.
+The compatible queue main commit is `4cf32f0cd84730aebd3cf930829f80ba47d5af24`
+(package 0.1.8). Exact remote branch/tag and peeled tag refs were verified.
+The stable CY canonical run passed 4,735 ordinary cases plus all static/import
+checks; the actual post-hook CY0.45.0/queue0.1.8 pair passed 583 queue cases
+with seven physical opt-ins deselected after normal resolution, dependency and
+source/installed identity checks. Required generated documentation checks passed.
+
+The changed examples match the published
+[CY release source](https://github.com/BuckanovNikita/clearml-yolo/tree/v0.45.0)
+and its batch-estimation contract. Collection 0.7.2 follows that tool publication.
+No installed skill, host configuration, live OpenCode/DeepSeek evaluation, model
+quality, physical GPU, NFS or ClearML publication claim was added.
