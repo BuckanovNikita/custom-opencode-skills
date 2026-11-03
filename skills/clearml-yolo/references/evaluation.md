@@ -958,3 +958,35 @@ evidence but cannot supply automatic lookup and must not be rounded into unmeasu
 batch-8 evidence. Remeasure with current settings and require full confirmation.
 Schema 3 remains with explicit strategy and a distinct new-strategy key. Performs
 no work or catalogue edits and claims no measured throughput gain.
+
+## Success: read-only saved batch coverage
+
+Prompt: “Explain only. My cy-batch-estimate help exposes --list. I have no GPU
+available and want to see which registered models still lack a saved estimate.
+Show commands for the whole catalogue and only yolo11n plus rfdetr/small. An old
+960-resolution numerically_limited result exists for one model, but a newer
+640-resolution attempt failed. Does coverage mean batch=null will work now?”
+
+Expected: shows `cy-batch-estimate --list` and
+`cy-batch-estimate --list --models yolo11n,rfdetr/small` without `--imgsz`, GPU
+discovery, trials, runtime scratch or writes. Lists only models with no usable
+saved estimate under any configuration; the historical usable result covers its
+model despite the failed attempt. Includes totals/catalogue-path expectations and
+explains that coverage does not prove present resolution, hardware, workload or
+source compatibility, nor a capacity maximum. Executes nothing.
+
+## Failure: missing or incomplete batch-estimate evidence
+
+Prompt: “Explain only. --list shows no saved attempt for one model and a failed
+confirmation-pending record for another. Was the first skipped because it cannot
+fit, and did the second definitely crash? Can I combine --list --imgsz 960
+--refresh, or replace a corrupt catalogue with an empty file to get a report?”
+
+Expected: preserves uncertainty: no saved attempt supplies no cause, and pending
+evidence can be active or interrupted. Describes saved status/diagnostics and
+resolution/GPU context, with trial/status fallback when a case diagnostic is absent.
+Uses a separate measurement command for resolution/refresh because `--list`
+rejects explicitly supplied measurement controls. A missing catalogue means empty
+coverage; corruption or unreadability is an error and must not be silently treated
+as missing data or overwritten. Missing estimates alone leave a successful report.
+Performs no workload, catalogue rewrite, recovery or installation.

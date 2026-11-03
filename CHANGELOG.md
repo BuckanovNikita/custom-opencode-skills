@@ -5,6 +5,12 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-11-03
+
+- Explain offline `cy-batch-estimate --list` saved coverage, recorded failure
+  reasons and model filters; distinguish coverage from current-run compatibility.
+- Add evaluation cases for honest missing/failed estimate explanations.
+
 ## [0.7.1] - 2026-11-02
 
 - Add shared repository instructions and a regular Claude import adapter.

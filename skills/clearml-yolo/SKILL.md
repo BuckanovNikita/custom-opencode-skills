@@ -72,7 +72,9 @@ own behavior.
 
 Read [batch estimation](references/usage.md#training-batch-estimation) for explicit
 training `batch=null`, single-GPU measurements, explicitly extrapolated global
-microbatches and strict source compatibility. In estimation explanations, include
+microbatches, strict source compatibility and the read-only `--list` coverage report
+on versions exposing it. Use that report to explain missing saved estimates without
+requiring a GPU or claiming current-run compatibility. In estimation explanations, include
 the default output counts, fresh single-GPU confirmation, per-GPU ceiling versus
 extrapolated totals, and target/source provenance. For versions exposing the aligned
 strategy, explain multiples of 8 per GPU, rounded-down ceilings, the minimum of 8,

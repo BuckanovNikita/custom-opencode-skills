@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Saved batch-estimate coverage guidance",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/2026-11-03-batch-estimate-list.md",
+    "VERSION",
+    "CHANGELOG.md",
+    "verification/2026-11-03-batch-estimate-list-evaluations.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected package instructions, usage and evaluation references, collection maintenance/release policy and companion CY CLI/core/storage boundaries. This change affects portable prose and evaluation prompts only, with collection release metadata handled by the parent. It introduces no executable modules, import/dependency contracts, installed copies or machine configuration. The CY parent owns runtime implementation and application acceptance."
+}

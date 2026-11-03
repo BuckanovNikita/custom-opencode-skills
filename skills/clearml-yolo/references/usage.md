@@ -345,6 +345,37 @@ and the installed training schema first. Native YOLO fresh confirmation and phys
 DDP acceptance remain incomplete; composing examples does not validate capacity or
 training. Single-GPU FCOS smoke evidence does not establish full backend coverage.
 
+### Inspect saved coverage
+
+On versions whose help exposes `--list`, inspect missing saved estimates without
+running CUDA trials, discovering GPUs, creating runtime scratch or changing the
+catalogue:
+
+```bash
+cy-batch-estimate --list
+cy-batch-estimate --list --models yolo11n,rfdetr/small
+```
+
+No `--imgsz` or GPU is required. The default covers the model catalogue; `--models`
+accepts the same selections and YOLO aliases as measurement mode. The report lists
+only models with no usable saved estimate under any recorded configuration. A
+`validated`, `ceiling_limited` or `numerically_limited` result counts as covered,
+even if other attempts failed. This means saved evidence exists somewhere; it does
+not establish compatibility with the current resolution, GPU, workload, source or
+training settings.
+
+Missing entries show recorded failure statuses and diagnostics with saved
+resolution/GPU context. “No saved attempt” means there is no stored evidence, not a
+diagnosis of why a model was skipped. Pending failed snapshots may describe an
+attempt still running or interrupted; do not label either outcome as certain. The
+report includes selected/covered/missing totals and the catalogue path. A missing
+catalogue is empty coverage; an unreadable or corrupt catalogue is an error, not
+permission to overwrite it. Missing estimates alone do not fail the listing.
+Pass measurement-only controls, including `--imgsz`, `--devices` and `--refresh`,
+to a separate measurement command; explicitly combining them with `--list` is rejected.
+
+### Measure training capacity
+
 ```bash
 cy-batch-estimate --imgsz 960
 cy-batch-estimate --imgsz 960 --classes 150 --objects-per-image 300
