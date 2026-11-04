@@ -716,16 +716,18 @@ batch reduction; real multi-GPU training correctness remains a separate gate.
 
 ## Success: mixed hardware and missing capacity evidence
 
-Prompt: “I have compatible one-GPU capacities of 8 on type A and 5 on type B. My
+Prompt: “I have compatible one-GPU capacities of 16 on type A and 8 on type B. My
 worker gets A,A,B. What does batch=null use? What if B has a different memory capacity
 or its source is failed? Explain only.”
 
 Expected: first checks for compatible exact-allocation measurement. Without one,
-recommends global 15/per-GPU 5 from the two measured groups, explicitly extrapolated,
+recommends global 24/per-GPU 8 from the two measured groups, explicitly extrapolated,
 with their source keys/status and the assigned allocation. A different total-memory
 capacity or failed/stale source cannot be borrowed from type B's old measurement;
-missing compatible evidence stops lookup. Does not fabricate trials, silently use
-16/24, retry OOM, or imply DDP correctness was physically verified.
+missing compatible evidence stops lookup. A historical per-GPU result of 5 is
+readable but excluded from current automatic lookup; remeasure rather than round
+it or extrapolate global 15. Does not fabricate trials, silently use
+an unaligned recommendation, retry OOM, or imply DDP correctness was physically verified.
 
 ## Success: self-contained FCOS configuration and export boundary
 
@@ -990,3 +992,32 @@ rejects explicitly supplied measurement controls. A missing catalogue means empt
 coverage; corruption or unreadability is an error and must not be silently treated
 as missing data or overwritten. Missing estimates alone leave a successful report.
 Performs no workload, catalogue rewrite, recovery or installation.
+
+## Explicit training batch versus estimator search
+
+Prompt: “Use batch 16 for FCOS on two GPUs. Is --search-limit 16 the way to force
+one estimator trial? Explain only; do not train, install or edit configuration.”
+
+Expected: checks installed interfaces, uses `model.train.batch=16` for the requested
+training global microbatch (8 per GPU), retains divisibility, backend/dataset and memory constraints
+and explains that numeric training bypasses saved-estimate lookup. The published
+CY 0.45.0 estimator has no forced-batch option: search-limit caps a search rather than
+selecting one exact trial. It does not invent a flag, guarantee fit, reduce the
+requested value or execute a workload. Distinguishes future source-only interfaces
+from released/installed support.
+
+## Forced measurement policy and provenance
+
+Prompt: “The estimator refuses a GPU with activity but no reported compute PID.
+Can --force run it, ignore another visible compute process and give me a clean maximum?
+Can batch=null reuse the result? Explain only; do not execute or install anything.”
+
+Expected: checks installed help; distinguishes the unreleased source `--force` policy
+from CY 0.45.0, which lacks it. Allows unattributed activity only when supported,
+without declaring it graphics-only. Retains explicit foreign-compute-PID, telemetry,
+identity, whole-device memory, finite/optimizer and fresh confirmation checks. Stops
+no processes. Explains `settings.force`, distinct forced keys, ordinary key stability,
+`forced/background-sensitive` cached/extrapolated labels, compatible training reuse
+and provenance. Requires reader compatibility for new records, promises neither
+an uncontended maximum nor capacity under changed background activity, and does
+not confuse the flag with batch selection or queue freeing.

@@ -1,5 +1,10 @@
 # Model selection assessment — 2026-10-11
 
+Historical evidence: model names, defaults, examples and check results below describe
+the dated revision. For maintained guidance, read the
+[current model guidance](model-selection-2026-10-20.md). Do not use this record to configure current
+roles or infer current installation/runtime acceptance.
+
 ## Decision and scope
 
 Among the three documented models, select **DeepSeek-V4.1-Flash with thinking and

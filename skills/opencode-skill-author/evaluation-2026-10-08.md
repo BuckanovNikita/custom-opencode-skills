@@ -1,5 +1,10 @@
 # Evaluation evidence — 2026-10-08
 
+Historical evidence: model names, defaults, examples and check results below describe
+the dated revision. For maintained guidance, read the
+[current model guidance](references/model-guidance.md). Do not use this record to configure current
+roles or infer current installation/runtime acceptance.
+
 This report records package checks and native-agent drafting exercises. It does
 not establish execution quality on Kimi-K2.6, DeepSeek-V4.1-Flash, or OpenCode.
 

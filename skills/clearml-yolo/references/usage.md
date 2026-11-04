@@ -474,6 +474,28 @@ is specific to this example, not a general hardware guarantee. After upgrading t
 numerical recovery, rerun failed cases; the implementation fingerprint invalidates
 previous measurements. Never edit failed catalogue entries into successes.
 
+### Forced measurement in newer source
+
+The inspected unreleased source adds `cy-batch-estimate --force`; CY 0.45.0 does
+not expose it. Use it only when the actual installed help and matching source expose
+the policy. It permits nonzero utilization and activity without attributable compute
+PIDs. That is not proof of graphics-only activity: the driver may omit competing
+compute processes. Explicit foreign compute PIDs, missing/invalid telemetry and
+hardware identity mismatches still reject measurement. Whole-device memory budgets
+include the observed background baseline; finite checks, all optimizer paths and
+fresh winner confirmation remain required. Existing processes remain running.
+
+The new catalogue records `settings.force` and distinguishes forced measurement
+keys; false preserves ordinary source keys. Recommendations using any forced source,
+including cached/extrapolated results, carry `forced/background-sensitive`. Compatible
+training lookup can reuse them and retains the source policy in provenance. They
+measure the recorded background conditions, not an uncontended maximum or guaranteed
+capacity under changing activity. Older strict readers must upgrade before reading
+new records containing this setting. Omit `--force` for ordinary idle checks. This
+estimator flag neither fixes a numeric batch nor frees queue reservations.
+
+### Saved recommendation compatibility
+
 The versioned atomic catalogue is `CY_HOME/.config/clearml-yolo/batch-estimates.json`.
 It retains actual global/per-GPU measurements, diagnostics and provenance. Compatible
 completed cases are reused; refresh invalidates matching success before reprobes.
@@ -504,6 +526,21 @@ divisible by N and remains workload-specific. It is not a measured multi-GPU max
 Exact lookup and extrapolation preserve limitations and diagnostics, with
 `numerically_limited` taking precedence over `ceiling_limited` and then `validated`. Derive recommendations during lookup/reporting;
 never create synthetic trials or rewrite measured evidence.
+
+### Explicit numeric training batches
+
+To fix the training batch explicitly, provide a positive integer through the backend's
+training field: `ultralytics.batch=16` for YOLO or `model.train.batch=16` for native
+backends. For native multi-GPU training this is the global microbatch, must divide
+evenly across the selected GPUs and remains subject to backend/dataset constraints
+and available memory. A numeric batch bypasses
+saved-estimate lookup; it does not measure available memory or guarantee a successful
+run. Preserve the requested value on failure instead of silently reducing it.
+
+The published CY 0.45.0 estimator has no `--force` option. `--search-limit` caps a
+capacity search; it does not force one trial at exactly that batch. Check the actual
+installed help before proposing newer interfaces. Training numeric batches and
+estimator controls are separate contracts.
 
 Only explicit training null selects saved evidence; numeric defaults stay unchanged:
 

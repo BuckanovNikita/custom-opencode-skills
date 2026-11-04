@@ -13,17 +13,21 @@
 
 ## Просмотр и установка
 
+Сопровождение исходников и проверка через `--list` не требуют установки.
+Устанавливайте навыки только на предназначенном для них целевом хосте по отдельному
+запросу; проверка исходников не подтверждает работу установленной копии или OpenCode.
+
 Нужны Node.js с `npx`, Git и доступ к этому приватному репозиторию через GitHub SSH.
 Проверить список навыков без установки:
 
 ```bash
-npx --yes skills@1.7.1 add git@github.com:BuckanovNikita/corp-skills.git --list
+npx --yes skills@1.7.1 add git@github.com:BuckanovNikita/custom-opencode-skills.git --list
 ```
 
 Установить выбранный навык для OpenCode в текущий проект:
 
 ```bash
-npx --yes skills@1.7.1 add git@github.com:BuckanovNikita/corp-skills.git \
+npx --yes skills@1.7.1 add git@github.com:BuckanovNikita/custom-opencode-skills.git \
   --skill opencode-skill-author --agent opencode
 ```
 

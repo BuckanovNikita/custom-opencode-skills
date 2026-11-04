@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "task": "Reconcile portable legacy and batch guidance without installation",
+  "scope": [
+    "README.md",
+    "MAINTENANCE.md",
+    "CHANGELOG.md",
+    "VERSION",
+    "skills/clearml-yolo",
+    "skills/opencode-orchestration",
+    "skills/opencode-skill-author",
+    "docs/plans/source-guidance-20261104"
+  ],
+  "impact": "none",
+  "rationale": "Inspected portable Markdown entrypoints, historical references, evaluation prompts and published CY option/training contracts. Changes clarify source guidance, validation boundaries and release metadata only; no executable helper, runtime module, dependency, import contract, host setting or installed export changes."
+}

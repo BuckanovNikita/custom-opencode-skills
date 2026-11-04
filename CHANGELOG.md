@@ -5,6 +5,17 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-11-04
+
+- Label superseded model-selection/evaluation records as historical and link current
+  guidance; use the canonical collection remote in installation examples.
+- Correct mixed-hardware automatic batch evaluation to require aligned per-GPU
+  evidence; explain explicit numeric training batches separately from search limits.
+- Describe the unreleased estimator `--force` policy and background-sensitive
+  provenance without implying support in published CY 0.45.0.
+- Clarify source-only routing/behavior acceptance and separate requested target-host
+  installation checks; source maintenance requires no local skill installation.
+
 ## [0.7.2] - 2026-11-03
 
 - Explain offline `cy-batch-estimate --list` saved coverage, recorded failure

@@ -68,6 +68,22 @@ record host version, provider, resolved model, mode/effort, prompt, output and
 artifact checks. If that runtime is unavailable, say so; native agent evaluation
 and static checks do not establish DeepSeek performance.
 
+## Source-only acceptance
+
+Source maintenance does not require installation on the author's PC. When installation
+is excluded, run list-only discovery and package checks against the source tree.
+Evaluate routing in a fresh context supplied only the available names/descriptions;
+evaluate instruction application separately using explicit package reads. Record
+these as native source-based evaluations, including the host and observed outputs.
+They do not prove automatic routing in OpenCode or performance on its target models.
+
+Installed-copy acceptance applies only to a requested installation on its intended
+host: compare that copy to its released source and verify actual host discovery and
+runtime behavior there. Keep such work separate when outside the current scope.
+A source-only release may report those outcomes as untested without treating local
+installation as a prerequisite. Preserve dated historical evidence; label superseded
+model guidance and link the maintained reference rather than rewriting old results.
+
 ## DeepSeek V4.1 Flash authoring
 
 Use outcome-first task contracts: required inputs, observed facts, conditional
