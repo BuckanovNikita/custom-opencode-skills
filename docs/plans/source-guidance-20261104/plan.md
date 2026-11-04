@@ -17,7 +17,7 @@ No executable module, dependency, import contract or host configuration changes.
 - [x] Validate metadata, packaged links, Markdown and list-only discovery.
 - [x] Evaluate routing from descriptions and explanation behavior in fresh contexts.
 - [x] Reconcile final scope, obtain independent review and validate acceptance.
-- [ ] Publish a patch commit and annotated Git tag; verify remote refs.
+- [x] Publish a patch commit and annotated Git tag; verify remote refs.
 
 Independent read-only contract investigation can overlap parent documentation work.
 Behavior evaluation follows edits; final independent review follows parent checks.

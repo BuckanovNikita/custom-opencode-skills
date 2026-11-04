@@ -114,3 +114,13 @@ export changes. Architecture acceptance validation passed. Final Markdown lint
 checked 86 files with zero issues; changed-file links and Git whitespace passed.
 Version/changelog agree at 0.7.3. Commit/tag publication remains the post-commit
 release step and its actual receipt is appended after remote verification.
+
+## Verified publication
+
+Published annotated `v0.7.3` and main atomically at
+`241b9cfb1b0492e3edadcc2283c20628e7c80bc1`. Remote main and peeled tag both matched
+that commit; annotated tag object is `bcc55959d27fcad126de4fcf8298141da4d9b625`.
+The release checkout was clean and remote main was an ancestor before tagging.
+This follow-up receipt completes the ledger without moving the immutable tag.
+No GitHub Release, package publication, asset, deployment or skill installation
+was created. Original authoring HEAD remained `670b0be` with its existing dirty paths.
