@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "task": "CY pipeline warning completion guidance",
+  "scope": [
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/pipeline-outcomes-20261105",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected CY runtime interfaces and outcome artifacts. This collection changes usage prose and evaluation prompts only; no executable module, dependency, host setting or installed skill export changes."
+}

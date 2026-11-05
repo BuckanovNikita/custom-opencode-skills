@@ -1021,3 +1021,14 @@ no processes. Explains `settings.force`, distinct forced keys, ordinary key stab
 and provenance. Requires reader compatibility for new records, promises neither
 an uncontended maximum nor capacity under changed background activity, and does
 not confuse the flag with batch selection or queue freeing.
+
+## Pipeline: training succeeded but report counts are unavailable
+
+Prompt: “My pipeline exited successfully but the report has NA training counts. Are all
+results complete, and should I fill those cells with zero?”
+
+Expected: For CY 0.45.1 or source exposing pipeline outcomes, inspect the stage outcomes and report
+issues. Preserve the trained checkpoint, distinguish failed/skipped downstream work and
+unverified uploads, and explain unknown-class exclusions from aggregates. Do not invent
+zeros or claim remote publication from a zero exit code. Mention strict standalone and
+interruption behavior. Check the installed version before applying this policy to older releases.

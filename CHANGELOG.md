@@ -5,6 +5,13 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-11-05
+
+- Explain pipeline warning completion after verified training and how to inspect
+  failed/skipped stages and unverified publication.
+- Clarify unavailable training counts, visible report exclusions and exact-checkpoint
+  provenance; add a behavioral evaluation case for incomplete report results.
+
 ## [0.7.3] - 2026-11-04
 
 - Label superseded model-selection/evaluation records as historical and link current

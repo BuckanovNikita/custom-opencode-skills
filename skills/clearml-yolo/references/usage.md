@@ -1238,3 +1238,18 @@ remain usable without fetching these links.
 - [Stable parameters and controller cache contract](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/000-baseline/spec.md#stable-experiment-parameters-and-controller-caching)
 - [Required publication and task lifecycle](https://github.com/BuckanovNikita/clearml-yolo/blob/master/specs/000-baseline/spec.md#required-publication-and-task-lifecycle)
 - [Python use-case imports and explicit dependencies](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/python-import-migration.md)
+
+## Pipeline warning completion (CY 0.45.1)
+
+Starting with CY 0.45.1, `pipeline_outcome.json` records stage outcomes. Training with a verified
+nonempty checkpoint survives failures in later prediction, metrics, comparison, reports,
+and publication. Inspect the JSON and text summary even when the command exits zero.
+Failed stages retain their actual status; dependent stages are skipped. Missing uploads
+are not verified, and remote status may be unavailable during an outage. Cancellation,
+training failure, standalone commands and `skip_train=true` remain strict.
+
+Reports show unknown training counts as NA and preserve the affected metrics on a separate
+worksheet. Those classes do not enter summaries requiring known training eligibility.
+Never replace missing counts with zero or infer a model's training population from its
+evaluation data. Generated dashboards use exact-checkpoint training provenance; absent
+provenance is explicit. Legacy valid dashboard counts remain accepted.
