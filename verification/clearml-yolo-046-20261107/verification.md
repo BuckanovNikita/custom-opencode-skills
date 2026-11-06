@@ -88,3 +88,15 @@ No OpenCode, target-model or fresh independent behavioral evaluation ran in this
 bounded task; source checks do not establish host routing or model performance.
 No native training, GPU job, download, ClearML stand, installation, tag or push
 was performed. Independent review and the collection release remain owner tasks.
+
+## Verifier follow-up — 2026-11-07
+
+- The forced-policy evaluation case in
+  `skills/clearml-yolo/references/evaluation.md` carried pre-existing wording,
+  "Requires reader compatibility for new records", which contradicted `v0.46.0`
+  `docs/batch-estimation.md:112-121` and `usage.md`. It now states that older
+  strict readers need an upgrade only before reading a catalogue containing
+  forced records, and that ordinary records omit false and stay readable by
+  earlier CY.
+- Commit `fa0780a` is not hook-verified: no hook executed. The re-run checks of
+  this follow-up are the acceptance gate.

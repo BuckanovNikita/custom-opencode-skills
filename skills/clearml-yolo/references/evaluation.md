@@ -1061,7 +1061,9 @@ without declaring it graphics-only. Retains explicit foreign-compute-PID, teleme
 identity, whole-device memory, finite/optimizer and fresh confirmation checks. Stops
 no processes. Explains `settings.force`, distinct forced keys, ordinary key stability,
 `forced/background-sensitive` cached/extrapolated labels, compatible training reuse
-and provenance. Requires reader compatibility for new records, promises neither
+and provenance. Requires older strict readers to upgrade only before reading a
+catalogue containing forced records; ordinary records omit false and stay
+readable by earlier CY. Promises neither
 an uncontended maximum nor capacity under changed background activity, and does
 not confuse the flag with batch selection or queue freeing. Rejects combining
 `--force` with read-only `--list`. Does not claim the complete 64-model forced
