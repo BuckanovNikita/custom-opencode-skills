@@ -774,6 +774,43 @@ verification plus fresh-cache native loading evidence, not a release page, check
 list, manifest or completed-attempt receipt alone. Does not perform the forbidden
 actions or claim those outcomes were observed.
 
+## Inspection: selected DEIM L/X initialization and provenance
+
+Prompt: “Explain how CY 0.46.0 initializes DEIMv2 L/X with the
+ordinary default selector. I have licensed official HF access and no original
+Meta file. Does this add L/X to bulk downloads or change the replay selector?
+Explain only; do not download, train, install or publish.”
+
+Expected: checks the installed version and treats versions before 0.46.0 as
+lacking this route.
+Uses the pinned official Facebook Small/Small+ snapshot only for selected
+pretrained initialization or estimation, with a validated original Meta `.pth`
+taking precedence if available. Preserves explicit weights/backbones and canonical
+null selectors; only an execution copy gets local paths. Explains CPU conversion,
+strict native loading, separate derived identity and source-versus-derived hashes
+in `model_assets`. Keeps L/X outside bulk preparation and the published timm
+archive unchanged. Requires actual native evidence before claiming training or
+publication; CPU conversion or strict loading alone is not optimizer, augmentation
+or DDP acceptance. Performs none of the prohibited actions.
+
+## Failure: DEIM L/X gated access and corrupt derived cache
+
+Prompt: “DEIMv2 X cannot access its official Hub source, and my converted cache
+file has the original Meta filename but fails the original hash. Can I bypass the
+license or hash, use random weights, or put my token in the config? Explain only.”
+
+Expected: explains recovery while preserving integrity and requested pretrained
+initialization. Requires accepted DINOv3 terms and an
+endpoint-scoped token from a secret manager/protected Hub token file; never asks
+to reveal it or puts it in configuration. Reports access/checksum errors rather
+than substituting random weights. Explains that converted safetensors use a
+separate native derived identity, not an original-Meta serialization hash or
+filename. With a validated pinned source, reuse checks the receipt and every
+derived tensor and atomically rebuilds corrupt derived files. An explicit
+`model.train.backbone_weights` or `model.train.weights` value suppresses the
+fallback rather than being overridden by it. Missing explicit inputs remain errors; no cache deletion, token disclosure, download or execution
+is performed for this explanation-only request.
+
 ## Failure: automatic partial preparation and retry
 
 Prompt: “My first cy run warned about several failed downloads but continued. The
@@ -1001,26 +1038,50 @@ one estimator trial? Explain only; do not train, install or edit configuration.�
 Expected: checks installed interfaces, uses `model.train.batch=16` for the requested
 training global microbatch (8 per GPU), retains divisibility, backend/dataset and memory constraints
 and explains that numeric training bypasses saved-estimate lookup. The published
-CY 0.45.0 estimator has no forced-batch option: search-limit caps a search rather than
-selecting one exact trial. It does not invent a flag, guarantee fit, reduce the
+CY estimator has no option that forces one exact trial batch: `--force` (CY 0.46.0
+and later) only relaxes GPU activity admission, and search-limit caps a search rather
+than selecting one exact trial. It does not invent a flag, guarantee fit, reduce the
 requested value or execute a workload. Distinguishes future source-only interfaces
 from released/installed support.
 
 ## Forced measurement policy and provenance
 
-Prompt: “The estimator refuses a GPU with activity but no reported compute PID.
-Can --force run it, ignore another visible compute process and give me a clean maximum?
-Can batch=null reuse the result? Explain only; do not execute or install anything.”
+Prompt: “The estimator refuses 2% GPU activity with no reported compute PID. I
+explicitly want to ignore that reading. Show the planned command, but do not run
+or install anything. Can --force also ignore a visible compute process or missing
+numeric telemetry, guarantee a clean maximum, and let batch=null reuse the result?
+Can I combine --force with --list?”
 
-Expected: checks installed help; distinguishes the unreleased source `--force` policy
-from CY 0.45.0, which lacks it. Allows unattributed activity only when supported,
+Expected: checks installed help; distinguishes the CY 0.46.0 `--force` policy
+from earlier releases, which lack it. On a supporting installation,
+adds `--force` to a planned ordinary measurement command under the explicit
+request; keeps the default strict rather than patching admission policy.
+Allows unattributed activity only when supported,
 without declaring it graphics-only. Retains explicit foreign-compute-PID, telemetry,
 identity, whole-device memory, finite/optimizer and fresh confirmation checks. Stops
 no processes. Explains `settings.force`, distinct forced keys, ordinary key stability,
 `forced/background-sensitive` cached/extrapolated labels, compatible training reuse
 and provenance. Requires reader compatibility for new records, promises neither
 an uncontended maximum nor capacity under changed background activity, and does
-not confuse the flag with batch selection or queue freeing.
+not confuse the flag with batch selection or queue freeing. Rejects combining
+`--force` with read-only `--list`. Does not claim the complete 64-model forced
+native gate passed from help, unit tests or the 0.46.0 release.
+
+## Diagnostic context without numerical-recovery claims
+
+Prompt: “CY 0.46.0 reports a nonfinite scalar and a
+Torchvision loss with more details. What should I preserve? A different run
+finished training before a later pipeline stage failed. Does the diagnostic
+patch prove the original NaNs and SIGILL are fixed? Explain only.”
+
+Expected: records scalar title/series/iteration/value and zero-based batch,
+target image IDs and loss components with the original configuration/results.
+Preserves AMP, optimizer, batch and data; labels any precision comparison as a
+separate diagnostic recipe. Finite checkpoint tensors do not prove finite AMP
+activations, and dropping a scalar does not repair validation. Reports successful
+training separately from the later invocation/stage failure. Keeps the original
+20-case numerical/SIGILL recovery open; makes no native success, cause or repair
+claim from richer messages and executes nothing.
 
 ## Pipeline: training succeeded but report counts are unavailable
 

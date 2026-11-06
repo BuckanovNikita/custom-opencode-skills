@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task": "Reconcile clearml-yolo guidance with released CY 0.46.0 force, DINOv3 HF and diagnostic behavior",
+  "scope": [
+    "skills/clearml-yolo/SKILL.md",
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/dinov3-selected-20261105",
+    "verification/clearml-yolo-046-20261107",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "impact": "none",
+  "rationale": "Inspected the clearml-yolo entrypoint, usage and evaluation references, and CY tag v0.46.0 (60edd4b): docs/batch-estimation.md, docs/model-assets.md, entrypoints/batch_estimate.py, adapters/assets/execution.py, adapters/torchvision/training.py, adapters/observability/capture.py and the dinov3-hf-native bug records. This collection change relabels and corrects portable prose and explanation-only evaluation prompts and records dated evidence; no executable helper, dependency, command interface, import contract, host setting or installed skill export changes. CY owns runtime architecture and native acceptance."
+}

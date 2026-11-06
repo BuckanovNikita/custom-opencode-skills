@@ -474,25 +474,40 @@ is specific to this example, not a general hardware guarantee. After upgrading t
 numerical recovery, rerun failed cases; the implementation fingerprint invalidates
 previous measurements. Never edit failed catalogue entries into successes.
 
-### Forced measurement in newer source
+### Forced measurement (CY 0.46.0)
 
-The inspected unreleased source adds `cy-batch-estimate --force`; CY 0.45.0 does
-not expose it. Use it only when the actual installed help and matching source expose
-the policy. It permits nonzero utilization and activity without attributable compute
+CY 0.46.0 adds `cy-batch-estimate --force`; earlier releases do not expose it.
+Check the actual installed version and help before proposing it. Help output is not
+evidence of native acceptance. The default remains strict. When the user explicitly
+requests ignoring a small nonzero utilization reading, use the supported flag rather
+than changing the ordinary admission policy:
+
+```bash
+cy-batch-estimate --imgsz 960 --devices 0 --force
+```
+
+Add the usual `--models` selection (for example `deimv2/l,deimv2/x`) and `--jobs 1`
+to scope or serialize the forced search.
+
+The opt-in policy permits nonzero utilization and activity without attributable compute
 PIDs. That is not proof of graphics-only activity: the driver may omit competing
 compute processes. Explicit foreign compute PIDs, missing/invalid telemetry and
 hardware identity mismatches still reject measurement. Whole-device memory budgets
 include the observed background baseline; finite checks, all optimizer paths and
 fresh winner confirmation remain required. Existing processes remain running.
 
-The new catalogue records `settings.force` and distinguishes forced measurement
-keys; false preserves ordinary source keys. Recommendations using any forced source,
+The catalogue persists `settings.force` only for forced searches, and measurement
+keys distinguish forced and ordinary searches. Ordinary records omit the default
+false policy, preserving historical source keys and readability by earlier CY.
+Recommendations using any forced source,
 including cached/extrapolated results, carry `forced/background-sensitive`. Compatible
 training lookup can reuse them and retains the source policy in provenance. They
 measure the recorded background conditions, not an uncontended maximum or guaranteed
 capacity under changing activity. Older strict readers must upgrade before reading
-new records containing this setting. Omit `--force` for ordinary idle checks. This
+a catalogue containing forced records. Omit `--force` for ordinary idle checks. This
 estimator flag neither fixes a numeric batch nor frees queue reservations.
+`cy-batch-estimate --list` rejects `--force` and every other measurement option;
+list saved coverage separately from measurement.
 
 ### Saved recommendation compatibility
 
@@ -537,8 +552,9 @@ and available memory. A numeric batch bypasses
 saved-estimate lookup; it does not measure available memory or guarantee a successful
 run. Preserve the requested value on failure instead of silently reducing it.
 
-The published CY 0.45.0 estimator has no `--force` option. `--search-limit` caps a
-capacity search; it does not force one trial at exactly that batch. Check the actual
+CY releases before 0.46.0 have no estimator `--force` option. From CY 0.46.0,
+`--force` only relaxes GPU activity admission; no release forces one trial at an
+exact batch. `--search-limit` caps a capacity search; it does not select that batch. Check the actual
 installed help before proposing newer interfaces. Training numeric batches and
 estimator controls are separate contracts.
 
@@ -632,7 +648,7 @@ publication amendment, it includes the shared `dinov3_small` timm checkpoint and
 native Hub configuration once for Faster R-CNN and FCOS. Check the installed
 catalogue and pinned manifest: older snapshots exclude DINOv3, and uploading a new
 release does not upgrade an older installation. DEIMv2 large/xlarge remain excluded;
-their explicit selection retains existing execution and access behavior. Shared
+their explicit selection uses the selected-model route below. Shared
 backbones use a shared native cache entry.
 
 Actual `cy` pipeline execution attempts this catalogue before model construction,
@@ -713,6 +729,42 @@ Face API endpoint; `HF_TOKEN` or standard SDK token configuration provides
 endpoint-scoped authentication. Do not send credentials to unrelated origins or
 expose them in examples/reports. URL construction or HTTP transfer alone does not
 establish native offline loading.
+
+### Selected DEIMv2 L/X initialization
+
+CY 0.46.0 adds this route; earlier releases keep the previous L/X behavior. Verify
+the installed version before relying on it. For selected `deimv2/l` or `deimv2/x` pretrained training and
+batch estimation, a locally validated original Meta `.pth` takes precedence. If
+absent, the selected-model resolver uses the pinned official Facebook Hub snapshot:
+`facebook/dinov3-vits16-pretrain-lvd1689m` for L and
+`facebook/dinov3-vits16plus-pretrain-lvd1689m` for X. Accept the repository's DINOv3
+license and provide `HF_TOKEN` through a secret manager or the standard protected
+Hugging Face token file for network access. Do not ask to reveal the token. A
+complete validated snapshot, including native `config.json`, supports offline reuse;
+unauthorized access or checksum failures remain errors.
+
+CY converts the official Transformers safetensors on CPU into the pinned native
+DEIM layout, strictly loads them and atomically caches a separate derived
+`hf-dinov3-to-deim-v1.pth`. It preserves the pinned source URL, commit and SHA-256,
+converter/native revisions and the separate converted-file SHA-256 in `model_assets`.
+Converted serialization is not the original Meta file and must not be renamed or
+validated against its original serialization hash. Reuse checks the receipt and
+every derived tensor against the pinned source; corrupt derived files are rebuilt.
+
+Explicit `model.train.weights` and `model.train.backbone_weights` remain
+authoritative; missing explicit inputs fail. Pretrained initialization must be
+enabled and unsuperseded for the fallback to apply. Prediction/checkpoint loading
+does not request a pretrained backbone. No extra flag is required, and only an
+execution copy receives resolved paths: canonical `run` settings retain the
+original selectors, including a null `model.train.backbone_weights`. This route
+does not expand `cy-download-weights` or the published archive catalogue, change
+the timm backbone used by Faster R-CNN/FCOS, or remove DEIMv2's separate
+non-commercial restriction. Download/preparation and config inspection alone do
+not prove native training or publication; CPU conversion and strict loading
+alone do not establish optimizer updates, augmentation or DDP correctness. CY
+0.46.0's own records report native selected L/X training cases passing but leave
+selected L/X batch-estimation acceptance open; do not claim a successful L/X
+estimate without its catalogue evidence.
 
 ### Proxy setup after a failed download
 
@@ -1078,6 +1130,25 @@ for exact options and evidence packaging. Offline/property or existing CPU/Gloo 
 cannot establish GPU/NCCL/publication success.
 
 ## Evidence and failure handling
+
+### Contextual numerical failures
+
+CY 0.46.0 enriches nonfinite diagnostics: rejected
+native scalars identify title, series, iteration and value; shared Torchvision
+training loss failures identify the zero-based batch, target image IDs and
+individual loss components before backward/update. Preserve that context with
+the failing configuration and native results. Richer messages do not repair
+the numerical computation. A finite checkpoint does not establish finite AMP
+activations, and removing a rejected scalar does not repair native validation.
+Keep AMP, optimizer, batch and data unchanged in the scientific run; any precision
+comparison is a separately identified diagnostic recipe.
+
+Successful training can precede a failure in a later pipeline stage. Report the
+training outcome and the complete invocation outcome separately, using the
+actual failure stage and evidence. Neither these diagnostics nor that distinction
+establish recovery of the original full campaign, its NaNs or SIGILL. Do not
+claim the full native forced estimator matrix passed from unit tests, help or the
+0.46.0 release; CY's own records keep that gate open.
 
 ### ClearML parameters and cached pipeline steps
 

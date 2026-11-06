@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "task": "Combined CY DINOv3, campaign diagnostics and forced estimation guidance",
+  "scope": [
+    "skills/clearml-yolo/references/usage.md",
+    "skills/clearml-yolo/references/evaluation.md",
+    "verification/dinov3-selected-20261105"
+  ],
+  "impact": "none",
+  "rationale": "Inspected portable skill entrypoint, usage/evaluation prose, CY selected asset routing, pinned HF identities, strict CPU converter and model-assets documentation. This companion changes portable explanation and evaluation text only; no runtime module, dependency, executable helper, command interface, import contract, host metadata or installed copy changes. CY owns runtime architecture and native acceptance. Source capability is explicitly unreleased until parent acceptance. Resumed combined-release scope also inspects estimator CLI/core key and selection policy, GPU admission/monitoring and memory accounting, plus scalar/Torchvision diagnostic boundaries. Planned additions remain explanation-only usage/evaluation text with no module, executable contract, dependency or installed-host change; the application owns runtime acceptance."
+}

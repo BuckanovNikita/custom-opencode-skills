@@ -79,9 +79,9 @@ the default output counts, fresh single-GPU confirmation, per-GPU ceiling versus
 extrapolated totals, and target/source provenance. For versions exposing the aligned
 strategy, explain multiples of 8 per GPU, rounded-down ceilings, the minimum of 8,
 and remeasurement of unaligned saved recommendations; explicit numeric training
-batches retain their behavior. For newer source exposing estimator `--force`, read
+batches retain their behavior. For CY 0.46.0 or later estimator `--force`, read
 its forced-measurement policy there: activity tolerance is conditional, recommendations
-remain background-sensitive, and CY 0.45.0 does not expose the flag. For numerical
+remain background-sensitive, and releases before 0.46.0 lack the flag. For numerical
 failures, read the
 recovery and catalogue-migration guidance there; require fresh confirmation and
 retain numerical limitations and diagnostics. GPU count alone does not prevent

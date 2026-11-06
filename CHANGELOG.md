@@ -5,6 +5,17 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+## [0.7.5] - 2026-11-07
+
+- Document the CY 0.46.0 estimator `--force` policy: opt-in admission of
+  unattributed GPU activity, retained telemetry/foreign-PID/memory checks,
+  forced-only `settings.force` persistence, `forced/background-sensitive` labels
+  and `--list` rejection; correct earlier wording that tied force to CY 0.45.x.
+- Explain the CY 0.46.0 selected DEIMv2 L/X initialization from pinned official
+  Hugging Face DINOv3 snapshots, its derived-checkpoint provenance and limits.
+- Describe CY 0.46.0 contextual nonfinite diagnostics without numerical-recovery
+  claims; add explanation-only evaluation cases for these behaviors.
+
 ## [0.7.4] - 2026-11-05
 
 - Explain pipeline warning completion after verified training and how to inspect
