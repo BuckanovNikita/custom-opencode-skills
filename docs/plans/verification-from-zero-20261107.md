@@ -22,7 +22,7 @@ paragraph whose facts are already recorded by tag `v0.6.6` and
 
 ## Checklist
 
-Run from a fresh clone of `git@github.com:BuckanovNikita/corp-skills.git` at `main`.
+Run from a fresh clone of `git@github.com:BuckanovNikita/custom-opencode-skills.git` at `main`.
 Record observed results in a new dated verification record, not in this file.
 
 ### Setup
