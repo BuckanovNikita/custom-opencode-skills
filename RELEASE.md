@@ -24,14 +24,10 @@ From the repository root, with Node.js/npm and Git available:
 
 ```bash
 DISABLE_TELEMETRY=1 npx --yes skills@1.7.1 add . --list
-npx --yes markdownlint-cli2@0.23.3 '*.md' 'skills/**/*.md' 'verification/**/*.md' 'docs/**/*.md'
-git diff --check
 ```
 
 These commands may cache CLI dependencies but do not install skills. Confirm every
-expected skill appears. Validate changed skill frontmatter, unique YAML keys,
-name/folder agreement, metadata, local links, and bundled resources following the
-[package validation guide](skills/opencode-skill-author/references/validation.md).
+expected skill appears. Inspect package metadata and bundled resources when changing package behavior.
 Check inactive agent examples separately; they are not skill frontmatter. Keep
 provider/model placeholders explicit until an owner chooses to configure them.
 Record behavioral checks separately from live target-model execution; do not claim
@@ -40,14 +36,12 @@ skill changes and keep dated evidence with the affected skill or under `verifica
 For tool usage changes, follow [MAINTENANCE.md](MAINTENANCE.md): reconcile the skill
 with current source and native workflow evidence before releasing the collection.
 
-Before committing, inspect `git status`, the complete diff, and the staged diff.
-Stage explicit release paths only, preserving other changes. Commit with a
-Conventional Commit message such as `feat: add orchestration skill and versioning`
-or `chore(release): prepare v0.1.1`. Do not bypass hooks or clean unrelated changes.
+Review the release diff and stage only its explicit paths, preserving unrelated
+changes. Do not bypass hooks. Use the commit convention above.
 
 ## Tag and push
 
-After committing all intended release files, run this block from the repository
+After committing all intended release files and obtaining separate push authorization, run this block from the repository
 root with Bash. It stops on a dirty tree, malformed version, missing changelog entry,
 wrong branch, or a pre-existing local/remote tag. Fetch first to detect remote work;
 if `origin/main` is not an ancestor of `HEAD`, reconcile it and rerun validation.

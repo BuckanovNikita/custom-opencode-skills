@@ -2,8 +2,7 @@
 
 This repository owns portable skill sources. Tool repositories own executable
 interfaces and public contracts. Installed skills are distribution copies, not
-authoring sources. A user-facing feature is complete only after its affected
-usage guidance is current and verified, or an inspected no-change reason is recorded.
+authoring sources. Keep usage guidance current when a user-facing interface changes.
 
 ## Ownership and triggers
 
@@ -35,8 +34,6 @@ schema and command output as evidence; specifications alone describe intent.
    the task authorizes them. Validate the package using the checks below.
 5. Record tool branch/version/commit, changed skill paths, checks, review and
    limitations in dated evidence. Link the companion changes across repositories.
-   Missing source access or required checks remain open documentation tasks;
-   do not label the feature complete with stale usage guidance.
 6. Follow each repository's commit/release workflow within existing authorization.
    Publish the tool implementation before claiming its new interface is released;
    label unreleased examples explicitly if they must land first. Publish this
@@ -52,15 +49,14 @@ From the collection root:
 
 ```bash
 DISABLE_TELEMETRY=1 npx --yes skills@1.7.1 add . --list
-npx --yes markdownlint-cli2@0.23.3 '*.md' 'skills/**/*.md' 'verification/**/*.md' 'docs/**/*.md'
-git diff --check
 ```
 
-Validate frontmatter, unique keys, name/folder agreement and packaged local links
-using the [package validation guide](skills/opencode-skill-author/references/validation.md).
-Check every changed command/field against tool help or source. Tool-repository doc
-tests alone do not validate these external packages. Obtain fresh independent
-review for substantive changes after integration and checks.
+Obtain fresh independent review for substantive changes after integration and
+behavioral checks.
+
+When changing a skill package, validate frontmatter, unique keys and name/folder
+agreement so the host can discover and load it. Follow the functional metadata
+rules in the [package validation guide](skills/opencode-skill-author/references/validation.md).
 
 Run the relevant package's evaluation prompts in fresh contexts. Separate routing
 from explicit skill reading, and record observed results. For a live OpenCode run,

@@ -107,7 +107,6 @@ Inspect the schema and compose the config; do not launch training yet.
 
 ```bash
 DISABLE_TELEMETRY=1 npx --yes skills@1.7.1 add . --list
-npx --yes markdownlint-cli2@0.23.3 '*.md' 'skills/**/*.md' 'verification/**/*.md' 'docs/**/*.md'
 ```
 
 Если репозиторий недоступен, проверьте права GitHub и SSH-аутентификацию. Если
