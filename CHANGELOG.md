@@ -5,6 +5,9 @@ no packages or release assets are published.
 
 ## [Unreleased]
 
+- Remove the cveta2 and clearml-yolo usage skills; the tool repositories no
+  longer maintain portable copies here.
+
 ## [0.7.5] - 2026-11-07
 
 - Document the CY 0.46.0 estimator `--force` policy: opt-in admission of

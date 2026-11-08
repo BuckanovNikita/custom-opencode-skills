@@ -8,8 +8,6 @@
 | --- | --- |
 | [opencode-skill-author](skills/opencode-skill-author/SKILL.md) | Создание и адаптация навыков для DeepSeek-V4.1-Flash, GLM-5.3 и Qwen3.8-27B; отдельные рекомендации по задачам и проверке. |
 | [opencode-orchestration](skills/opencode-orchestration/SKILL.md) | Оркестрация Python/ML: DeepSeek для координации и реализации, GLM для независимой проверки и сложной инженерной работы, необязательный Qwen для визуального анализа. |
-| [cveta2](skills/cveta2/SKILL.md) | Работа с CVAT: выгрузка и загрузка разметки, конвертация датасетов, метки, кэш и проверка результатов. |
-| [clearml-yolo](skills/clearml-yolo/SKILL.md) | Запуск и проверка обучения, предсказаний, метрик и сравнения моделей через Hydra; ClearML, конфигурация и отдельная очередь GPU. |
 
 ## Просмотр и установка
 
@@ -34,7 +32,6 @@ npx --yes skills@1.7.1 add git@github.com:BuckanovNikita/custom-opencode-skills.
 Для глобальной установки добавьте `--global`. Установка навыка не настраивает
 провайдера, модель или права инструментов OpenCode.
 Для навыка оркестрации замените имя после `--skill` на `opencode-orchestration`.
-Для работы с инструментами используйте `--skill cveta2` или `--skill clearml-yolo`.
 Каждый пакет устанавливается отдельно и содержит собственные примеры и проверки.
 Примеры агентов в его каталоге `examples/agents/` не активируются автоматически:
 перед отдельным подключением укажите доступные идентификаторы моделей и проверьте
@@ -76,21 +73,7 @@ Use opencode-skill-author to create a standalone skill that reviews CSV quality
 against a supplied schema and writes a Markdown report. Do not install it.
 ```
 
-Примеры запросов к навыкам инструментов:
-
-```text
-Use cveta2 to export project 123 to a new directory without images or ClearML
-publication. Check the CSV outputs and report partial results.
-
-Use clearml-yolo to prepare a training configuration for my ground_truth.csv.
-Inspect the schema and compose the config; do not launch training yet.
-```
-
-При добавлении возможностей в инструменты их этап обновления документации
-требует проверить и обновить соответствующий навык. Канонические пути, порядок
-проверки и обработка недоступного репозитория описаны в
-[MAINTENANCE.md](MAINTENANCE.md). Проверки этой версии и ограничения исполнения
-на целевой модели — в [отчёте](verification/2026-10-14-tool-usage.md).
+Порядок сопровождения и проверки навыков описан в [MAINTENANCE.md](MAINTENANCE.md).
 
 Рекомендации для моделей и сценарии проверки находятся в каталоге навыка.
 Границы первоначальных проверок описаны в

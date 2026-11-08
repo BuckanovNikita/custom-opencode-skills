@@ -1,43 +1,7 @@
-# Maintain tool usage skills
+# Maintain skills
 
-This repository owns portable skill sources. Tool repositories own executable
-interfaces and public contracts. Installed skills are distribution copies, not
-authoring sources. Keep usage guidance current when a user-facing interface changes.
-
-## Ownership and triggers
-
-| Tool | Canonical package | Native workflow owner |
-| --- | --- | --- |
-| cveta2 | [skills/cveta2](skills/cveta2/SKILL.md) | [Engineering documentation stage](https://github.com/BuckanovNikita/cveta2/blob/main/.specify/memory/engineering.md#portable-usage-skill) |
-| clearml-yolo | [skills/clearml-yolo](skills/clearml-yolo/SKILL.md) | [Agent documentation stage](https://github.com/BuckanovNikita/clearml-yolo/blob/master/docs/agent-workflow.md#portable-usage-skill-maintenance) |
-
-Check skill impact for additions, fixes, removals and changed defaults affecting
-commands, public API, configuration, authentication, input/output formats, model
-support, resource use, publication, errors or recovery. Internal refactors with
-unchanged usage can record an explicit no-change decision. Treat current source,
-schema and command output as evidence; specifications alone describe intent.
-
-## Feature-to-skill workflow
-
-1. During the tool's native planning stage, inspect the relevant package and record
-   affected files/sections. Add skill update and validation tasks dependent on the
-   implementation. Preserve completed history when resuming a feature or bug.
-2. After implementation, reconcile that scope against the final diff. Update the
-   entrypoint only for essential routing or decisions; put detailed options and
-   examples in its references. Keep required resources inside the package.
-3. Cover the new or changed behavior in its evaluation cases, including a failure
-   or missing-input case when relevant. Preserve task boundaries and existing
-   authorization. An example must not imply that config composition proves a live
-   service, training run or publication succeeded.
-4. Verify documented interfaces against the implemented version. Use isolated
-   local fixtures for examples that write files; run service workloads only when
-   the task authorizes them. Validate the package using the checks below.
-5. Record tool branch/version/commit, changed skill paths, checks, review and
-   limitations in dated evidence. Link the companion changes across repositories.
-6. Follow each repository's commit/release workflow within existing authorization.
-   Publish the tool implementation before claiming its new interface is released;
-   label unreleased examples explicitly if they must land first. Publish this
-   collection through [RELEASE.md](RELEASE.md). Reinstallation is a separate task.
+This repository owns portable skill sources. Installed skills are distribution
+copies, not authoring sources.
 
 No local checkout path, private endpoint, credential value or machine capacity
 belongs in these packages. Read machine-specific requirements from the user's
