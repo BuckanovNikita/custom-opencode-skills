@@ -11,9 +11,13 @@ maintenance and release procedures own package verification and delivery.
 
 Keep README.md in Russian and other instructions/documentation in English.
 
-## Issue tracker and delivery
+## Agent skills
 
-Active issues and plans live in Linear (team `SIP`, project `custom-opencode-skills`). Delivery is a
-GitHub PR from a task branch: agents push the branch and open the PR, humans merge. Read
-[the tracker guidance](docs/agents/issue-tracker.md) before planning, picking up or delivering
-work. Readiness labels are in [triage labels](docs/agents/triage-labels.md).
+### Issue tracker
+
+Active issues and plans live in Linear (team `SIP`, project `custom-opencode-skills`). Delivery is a GitHub PR from a task branch: agents push the branch and open the PR, humans merge. Read [the tracker guidance](docs/agents/issue-tracker.md) before planning, picking up or delivering work.
+
+### Triage labels
+
+Readiness and category roles are Linear labels, separate from lifecycle state. See
+[triage labels](docs/agents/triage-labels.md).
