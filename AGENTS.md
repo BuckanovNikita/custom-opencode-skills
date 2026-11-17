@@ -7,7 +7,9 @@ versioning, changelog, checks, independent review and Git-tag-only release.
 
 Keep `AGENTS.md` authoritative and `CLAUDE.md` a regular `@AGENTS.md` import adapter.
 Keep machine-specific setup and credentials outside portable packages. The linked
-maintenance and release procedures own package verification and delivery.
+maintenance and release procedures own package verification and releases; changes reach
+`main` through the PR delivery below, except the release commit that the separately
+authorized [release procedure](RELEASE.md#tag-and-push) pushes together with its tag.
 
 Keep README.md in Russian and other instructions/documentation in English.
 
